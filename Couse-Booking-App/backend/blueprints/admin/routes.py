@@ -13,7 +13,7 @@ con, cursor = get_db_connection()
 
 @admin_bp.route("/update-current-course/<int:id>", methods=['PUT'])
 @jwt_required()
-@role_required(["administrator"])
+@role_required(["admin"])
 def update_current_course(id):
     try:
         data = request.json
@@ -43,7 +43,7 @@ def update_current_course(id):
 
 @admin_bp.route("/update-user-info/<int:id>", methods=['PUT'])
 @jwt_required()
-@role_required(["administrator"])
+@role_required(["admin"])
 def update_user_info(id):
     try:
         data = request.json
@@ -71,8 +71,8 @@ def update_user_info(id):
 
 @admin_bp.route("/update-course/<int:id>", methods=['PUT'])
 @jwt_required()
-@role_required(["administrator"])
-def update_course():
+@role_required(["admin"])
+def update_course(id):
     try:
 
         data = request.json
@@ -107,7 +107,7 @@ def update_course():
 
 @admin_bp.route("/get-users", methods=["GET"])
 @jwt_required()
-@role_required(["administrator"])
+@role_required(["admin"])
 def get_all_users():
     try:
         query = """
@@ -132,7 +132,7 @@ def get_all_users():
 
 @admin_bp.route("/get-all-current-courses", methods=["GET"])
 @jwt_required()
-@role_required(["administrator"])
+@role_required(["admin"])
 def get_all_current_courses():
     try:
         query = """
@@ -153,9 +153,9 @@ def get_all_current_courses():
     #     con.close()  # Zatvori konekciju
 
 
-@admin_bp.route("/admin-courses", methods=["GET"])
+@admin_bp.route("/get-courses", methods=["GET"])
 @jwt_required()
-@role_required(["administrator"])
+@role_required(["admin"])
 def get_all_courses():
     try:
         query = """
@@ -179,7 +179,7 @@ def get_all_courses():
 
 @admin_bp.route("/add-user", methods=["POST"])
 @jwt_required()
-@role_required(["administrator"])
+@role_required(["admin"])
 def add_user():
     try:
         data = request.json
@@ -191,12 +191,13 @@ def add_user():
         #     file.save(file_path)
         #     file_url = f'/uploads/{filename}'
 
+        password = generate_password_hash(data['password'])
         query = """
         INSERT INTO user (first_name, last_name, email, phone_number, biography, user_image_url, password_hash, rola)
         VALUES (%s, %s, %s, %s, %s,  %s, %s, %s)
         """
         values = (data['first_name'], data['last_name'], data['email'], data['phone_number'], data['biography'], 'null',
-                  data['password_hash'], data['rola'])
+                  password, data['rola'])
 
         cursor.execute(query, values)
         con.commit()
@@ -212,7 +213,7 @@ def add_user():
 
 @admin_bp.route("/add-current-course", methods=["POST"])
 @jwt_required()
-@role_required(["administrator"])
+@role_required(["admin"])
 def add_current_course():
     try:
         # Dobijanje podataka iz zahteva
@@ -240,7 +241,7 @@ def add_current_course():
 
 @admin_bp.route("/add-course", methods=["POST"])
 @jwt_required()
-@role_required(["administrator"])
+@role_required(["admin"])
 def add_course():
     try:
         data = request.json
@@ -273,7 +274,7 @@ def add_course():
 
 @admin_bp.route("/delete-course/<int:id>", methods=['DELETE'])
 @jwt_required()
-@role_required(["administrator"])
+@role_required(["admin"])
 def delete_course():
     try:
 
@@ -301,11 +302,9 @@ def delete_course():
 
 @admin_bp.route("/delete-current-course/<int:id>", methods=['DELETE'])
 @jwt_required()
-@role_required(["administrator"])
-def delete_current_course():
+@role_required(["admin"])
+def delete_current_course(id):
     try:
-
-        data = request.json
 
         query = """
         DELETE FROM current_courses WHERE id = %s;
@@ -333,11 +332,9 @@ def delete_current_course():
 
 @admin_bp.route("/delete-user/<int:id>", methods=['DELETE'])
 @jwt_required()
-@role_required(["administrator"])
-def delete_user():
+@role_required(["admin"])
+def delete_user(id):
     try:
-
-        data = request.json
 
         query = """
         DELETE FROM user WHERE id = %s;
@@ -347,7 +344,7 @@ def delete_user():
         #     data['id']
         # )
 
-        cursor.execute(query, )
+        cursor.execute(query, (id, ))
 
         con.commit()
 
