@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request
 from database import get_db_connection
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from decoraotrs import role_required
+from utils import check_course_availability
+from datetime import datetime
 import pymysql
 
 users_bp = Blueprint('users', __name__)
@@ -29,10 +31,6 @@ def show_user_profile():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekciju
-
 
 @users_bp.route("/user-courses", methods=["GET"])
 @jwt_required()
@@ -43,8 +41,7 @@ def show_user_courses():
         user_id = claims.get('user_id')
 
         query = """
-            SELECT 
-                user.id AS user_id, 
+            SELECT  
                 course.name AS course_name, 
                 course.id AS course_id, 
                 current_courses.id AS current_course_id, 
@@ -74,6 +71,20 @@ def show_user_courses():
 
 @users_bp.route("/book-course", methods=["POST"])
 @jwt_required()
+def count_members():
+    try:
+        data = request.json
+        aviable = check_course_availability(data['current_course_id'])
+
+        if (aviable):
+            return book_course()
+        else:
+            return jsonify({"message": "All seats are reserved!"})
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return jsonify({"message": "You need to register or login to book a course!"})
+
+
 def book_course():
     try:
         claims = get_jwt()
@@ -82,7 +93,7 @@ def book_course():
         data = request.json
 
         query = """
-        INSERT INTO user_course (user_id,course_id) 
+        INSERT INTO user_course (user_id,course_id)
         VALUES (%s, %s)
         """
         values = (user_id, data['course_id'])
@@ -100,10 +111,6 @@ def book_course():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "You need to register or login to book a course!"})
-
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekciju
 
 
 @users_bp.route("/professor-courses", methods=["GET"])
