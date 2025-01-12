@@ -13,23 +13,13 @@ def get_courses():
 
         data = request.json
 
-        # query = """
-        #     SELECT course.id, course.name,course.max_members, course.course_image_url,
-        #         current_courses.id, user.user_image_url,current_courses.duration,
-        #         current_courses.level, current_courses.price, current_courses.start_at
-        #     FROM course
-        #     JOIN current_courses ON course.id = current_courses.course_id
-        #     JOIN user ON user.id = current_courses.user_id
-        #     ;
-        # """
         query = """
-            SELECT course.id, course.name,course.max_members, course.course_image_url,
-                current_courses.id, user.user_image_url,current_courses.duration,
-                current_courses.level, current_courses.price, current_courses.start_at
+            SELECT course.id, course.name, course.course_image_url,
+                current_courses.id,current_courses.start_at,
+                current_courses.level, current_courses.price, current_courses.max_members
             FROM course
             JOIN current_courses ON course.id = current_courses.course_id
-            JOIN user ON user.id = current_courses.user_id
-            WHERE status != 'inactive' AND language LIKE %s AND level LIKE %s;
+            WHERE  language LIKE %s AND level LIKE %s;
         """
 
         language = data['language']
@@ -44,12 +34,12 @@ def get_courses():
         values = (language, level)
         cursor.execute(query, values)
         data = cursor.fetchall()
+        # return jsonify(data)
         aviable_courses = []
 
         for course in data:
 
-            aviability = check_course_availability(
-                course.get('current_courses.id'))
+            aviability = check_course_availability(course)
 
             if (aviability):
 

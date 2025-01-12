@@ -1,32 +1,33 @@
 from database import get_db_connection
 from datetime import datetime
 
+
 con, cursor = get_db_connection()
 
 
-def check_course_availability(course_id):
+def check_course_availability(course):
     try:
-
+        # print(course)
         query = """
-              SELECT COUNT(*) AS current_number,start_at from user_course JOIN current_courses on user_course.course_id = current_courses.id WHERE current_courses.id=%s;"""
+              SELECT COUNT(*) AS current_number FROM user_course WHERE course_id=%s;"""
 
-        value = course_id
-
+        value = course.get('id')
         cursor.execute(query, (value, ))
-        course = cursor.fetchone()
 
-        current_number = course.get("current_number")
+        result = cursor.fetchone()
+
+        current_number = result.get("current_number")
 
         start_date = course.get("start_at")
+        start_date_ms = int(start_date.timestamp()*1000)
 
         date = datetime.now()
+        date_ms = int(date.timestamp()*1000)
 
-        query = "SELECT max_members FROM course where course.id=%s"
-        cursor.execute(query, (value, ))
-        max_members = cursor.fetchone()
-        max_members = max_members.get("max_members")
+        max_members = course.get('max_members')
+        #  or date_ms > start_date_ms
 
-        if (current_number == max_members or date >= start_date):
+        if (current_number == max_members or date_ms > start_date_ms):
             return False
         else:
             return True

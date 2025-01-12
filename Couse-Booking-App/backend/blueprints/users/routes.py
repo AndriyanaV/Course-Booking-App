@@ -3,6 +3,7 @@ from database import get_db_connection
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from decoraotrs import role_required
 from utils import check_course_availability
+from werkzeug.security import generate_password_hash
 from datetime import datetime
 import pymysql
 
@@ -20,7 +21,7 @@ def show_user_profile():
 
     try:
         query = """
-        SELECT *
+        SELECT first_name, last_name, email,phone_number,biography,user_image_url
         FROM user
         WHERE user.id=%s
         """
@@ -41,18 +42,18 @@ def show_user_courses():
         user_id = claims.get('user_id')
 
         query = """
-            SELECT  
-                course.name AS course_name, 
-                course.id AS course_id, 
-                current_courses.id AS current_course_id, 
-                current_courses.start_at, 
-                current_courses.end_at, 
-                current_courses.price, 
-                current_courses.level 
-            FROM course 
-            JOIN current_courses ON course.id = current_courses.course_id 
-            JOIN user_course ON user_course.course_id = current_courses.id 
-            JOIN user ON user.id = user_course.user_id 
+            SELECT
+                course.name AS course_name,
+                course.id AS course_id,
+                current_courses.id AS current_course_id,
+                current_courses.start_at,
+                current_courses.end_at,
+                current_courses.price,
+                current_courses.level
+            FROM course
+            JOIN current_courses ON course.id = current_courses.course_id
+            JOIN user_course ON user_course.course_id = current_courses.id
+            JOIN user ON user.id = user_course.user_id
             WHERE user.id = %s;
         """
         cursor.execute(query, (user_id,))
@@ -64,20 +65,26 @@ def show_user_courses():
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "Error"})
 
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekciju
-
 
 @users_bp.route("/book-course", methods=["POST"])
 @jwt_required()
 def count_members():
     try:
-        data = request.json
-        aviable = check_course_availability(data['current_course_id'])
+        course_id = request.json
+
+        query = """
+            SELECT
+                current_courses.id,current_courses.start_at,
+                current_courses.max_members
+            FROM current_courses
+            WHERE id=%s
+        """
+        cursor.execute(query, (course_id, ))
+        course = cursor.fetchone()
+        aviable = check_course_availability(course)
 
         if (aviable):
-            return book_course()
+            return book_course(course_id)
         else:
             return jsonify({"message": "All seats are reserved!"})
     except Exception as e:
@@ -85,18 +92,18 @@ def count_members():
         return jsonify({"message": "You need to register or login to book a course!"})
 
 
-def book_course():
+def book_course(course_id):
     try:
         claims = get_jwt()
         user_id = claims.get('user_id')
 
-        data = request.json
+        # data = request.json
 
         query = """
         INSERT INTO user_course (user_id,course_id)
         VALUES (%s, %s)
         """
-        values = (user_id, data['course_id'])
+        values = (user_id, course_id)
 
         cursor.execute(query, values)
         con.commit()
@@ -126,10 +133,10 @@ def show_professor_courses():
         SELECT course.name,
             current_courses.start_at,
             current_courses.end_at,
-            current_courses.level 
-        FROM course 
-        JOIN current_courses ON course.id = current_courses.course_id 
-        JOIN user ON user.id = current_courses.user_id 
+            current_courses.level
+        FROM course
+        JOIN current_courses ON course.id = current_courses.course_id
+        JOIN user ON user.id = current_courses.user_id
         WHERE user.id = %s;
         """
 
