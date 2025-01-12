@@ -20,12 +20,12 @@ def update_current_course(id):
 
         query = """
         UPDATE current_courses
-        SET price = %s, duration = %s, start_at = %s, end_at = %s, status = %s, level = %s, location = %s
+        SET price = %s, duration = %s, start_at = %s, end_at = %s, level = %s, location = %s
         WHERE id = %s
         """
         values = (
             data['price'], data['duration'], data['start_at'], data['end_at'],
-            data['status'], data['level'], data['location'],
+            data['level'], data['location'],
             id
         )
 
@@ -79,12 +79,12 @@ def update_course(id):
 
         query = """
         UPDATE course
-        SET name = %s, max_members = %s, language = %s
+        SET name = %s,  language = %s
         WHERE id = %s
         """
 
         values = (
-            data['name'], data['max_members'], data['language'], id
+            data['name'], data['language'], id
         )
 
         cursor.execute(query, values)
@@ -125,32 +125,25 @@ def get_all_users():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekciju
 
-
-@admin_bp.route("/get-all-current-courses", methods=["GET"])
+@admin_bp.route("/get-all-current-courses/<int:id>", methods=["GET"])
 @jwt_required()
 @role_required(["admin"])
-def get_all_current_courses():
+def get_all_current_courses(id):
     try:
         query = """
         SELECT course.*,
             current_courses.*
         FROM course
-        JOIN current_courses ON course.id = current_courses.course_id;
+        JOIN current_courses ON course.id = current_courses.course_id
+        WHERE course.id=%s;
         """
-        cursor.execute(query)
+        cursor.execute(query, (id, ))
         data = cursor.fetchall()
         return jsonify(data)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekciju
 
 
 @admin_bp.route("/get-courses", methods=["GET"])
@@ -168,10 +161,6 @@ def get_all_courses():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while fetching courses."}), 500
-
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekciju
 
 
 # CREATE
@@ -206,10 +195,6 @@ def add_user():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekciju
-
 
 @admin_bp.route("/add-current-course", methods=["POST"])
 @jwt_required()
@@ -220,11 +205,11 @@ def add_current_course():
         data = request.json
 
         query = """
-            INSERT INTO current_courses (course_id, user_id, price, duration, start_at, end_at, status, level,location)
+            INSERT INTO current_courses (course_id, user_id, price, duration, start_at, end_at, max_members, level,location)
             VALUES (%s,  %s, %s, %s, %s, %s, %s,%s,%s)
             """
         values = (data['course_id'], data['user_id'], data['price'], data['duration'], data['start_at'],
-                  data['end_at'], data['status'], data['level'], data['location'])
+                  data['end_at'], data['max_members'], data['level'], data['location'])
 
         cursor.execute(query, values)
         con.commit()
@@ -233,10 +218,6 @@ def add_current_course():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekcij
 
 
 @admin_bp.route("/add-course", methods=["POST"])
@@ -254,11 +235,11 @@ def add_course():
         #     file_url = f'/uploads/{filename}'
 
         query = """
-        INSERT INTO course (name, course_image_url, max_members, language)
+        INSERT INTO course (name, course_image_url,language)
         VALUES (%s, %s, %s, %s)
         """
         values = (data['name'], "null",
-                  data['max_members'], data['language'])
+                  data['language'])
 
         cursor.execute(query, values)
         con.commit()
@@ -266,10 +247,6 @@ def add_course():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekcij
 
 
 @admin_bp.route("/delete-course/<int:id>", methods=['DELETE'])
@@ -294,10 +271,6 @@ def delete_course():
 
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while deleting the course."}), 500
-
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekcij
 
 
 @admin_bp.route("/delete-current-course/<int:id>", methods=['DELETE'])
@@ -325,10 +298,6 @@ def delete_current_course(id):
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while deleting the course."}), 500
 
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekcij
-
 
 @admin_bp.route("/delete-user/<int:id>", methods=['DELETE'])
 @jwt_required()
@@ -340,10 +309,6 @@ def delete_user(id):
         DELETE FROM user WHERE id = %s;
         """
 
-        # values = (
-        #     data['id']
-        # )
-
         cursor.execute(query, (id, ))
 
         con.commit()
@@ -354,7 +319,3 @@ def delete_user(id):
 
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while deleting the user."}), 500
-
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekcij
