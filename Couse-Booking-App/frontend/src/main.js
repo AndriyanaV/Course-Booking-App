@@ -4,7 +4,8 @@ import App from './App.vue'
 import Vue3Toastify from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import router from './router'
- import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/css/bootstrap.css'
+
 
 
 

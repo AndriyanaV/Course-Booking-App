@@ -9,6 +9,8 @@ auth_bp = Blueprint('auth', __name__)
 
 con, cursor = get_db_connection()
 
+img_base_url = 'http://127.0.0.1:5000/uploads/course/'
+
 
 def create_token(email, role, user_id):
     additional_claims = {
