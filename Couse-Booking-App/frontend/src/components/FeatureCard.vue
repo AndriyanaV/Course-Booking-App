@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="feature-card-container d-flex flex-column justify-content-center align-items-center gap-3"
+		class="flex flex-column items-center justify-center gap-[20px] w-[350px] bg-[#00015B] h-fill text-white text-[30px] font-gilroy rounded"
 	>
 		<div class="img-feature-container">
 			<img :src="imgSrc" />

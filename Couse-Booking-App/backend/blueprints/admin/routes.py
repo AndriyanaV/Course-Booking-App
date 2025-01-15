@@ -3,6 +3,26 @@ from database import get_db_connection
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decoraotrs import role_required
 from werkzeug.security import generate_password_hash
+import os
+import uuid
+
+UPLOAD_FOLDER = 'uploads/course'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'svg'}
+
+
+def generate_unique_filename(filename):
+    # Generiši jedinstveni ID
+    unique_id = str(uuid.uuid4())
+    # Ekstraktuj ekstenziju fajla
+    extension = os.path.splitext(filename)[1]
+    # Kreiraj jedinstveno ime fajla
+    unique_filename = f"{unique_id}{extension}"
+    return unique_filename
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -69,22 +89,33 @@ def update_user_info(id):
         return jsonify({"error": "Internal server error"}), 500
 
 
+img_base_url = 'http://127.0.0.1:5000/uploads/course/'
+UPLOAD_FOLDER = 'uploads/course'
+
+
 @admin_bp.route("/update-course/<int:id>", methods=['PUT'])
-@jwt_required()
-@role_required(["admin"])
+# @jwt_required()
+# @role_required(["admin"])
 def update_course(id):
     try:
 
-        data = request.json
+        file = request.files['file']
+        file_url = str(img_base_url+file.filename)
+        print(file.filename)
+
+        if file:
+            file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+
+        data = request.form.to_dict()
 
         query = """
         UPDATE course
-        SET name = %s,  language = %s
+        SET name = %s,course_image_url=%s,  language = %s
         WHERE id = %s
         """
 
         values = (
-            data['name'], data['language'], id
+            data['name'], file_url, data['language'], id
         )
 
         cursor.execute(query, values)
@@ -97,10 +128,6 @@ def update_course(id):
 
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while updating the course."}), 500
-
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekciju
 
 
 # READ
