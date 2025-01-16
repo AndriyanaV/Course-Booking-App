@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="flex flex-column items-center justify-center gap-[20px] w-[350px] bg-[#00015B] h-fill text-white text-[30px] font-gilroy rounded"
+		class="flex flex-column items-center justify-center gap-[20px] w-[400px] bg-[#06088C] h-fill text-white text-[30px] font-gilroy rounded"
 	>
 		<div class="img-feature-container">
 			<img :src="imgSrc" />

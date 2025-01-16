@@ -10,16 +10,6 @@ UPLOAD_FOLDER = 'uploads/course'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'svg'}
 
 
-def generate_unique_filename(filename):
-    # Generiši jedinstveni ID
-    unique_id = str(uuid.uuid4())
-    # Ekstraktuj ekstenziju fajla
-    extension = os.path.splitext(filename)[1]
-    # Kreiraj jedinstveno ime fajla
-    unique_filename = f"{unique_id}{extension}"
-    return unique_filename
-
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -56,9 +46,9 @@ def update_current_course(id):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
-    # finally:
-    #     cursor.close()  # Zatvori kursor
-    #     con.close()  # Zatvori konekciju
+
+img_base_url_user = 'http://127.0.0.1:5000/uploads/user/'
+UPLOAD_FOLDER_USER = 'uploads/user'
 
 
 @admin_bp.route("/update-user-info/<int:id>", methods=['PUT'])
@@ -66,7 +56,19 @@ def update_current_course(id):
 @role_required(["admin"])
 def update_user_info(id):
     try:
-        data = request.json
+        file = request.files['file']
+
+        if file:
+            name_without_extension, file_extension = os.path.splitext(
+                file.filename)
+            img_name = name_without_extension+str(id)+file_extension
+            file.save(os.path.join(UPLOAD_FOLDER_USER, img_name))
+
+        else:
+            img_name = 'anonymous'+'.jpg'
+
+        file_url = str(img_base_url_user+img_name)
+        data = request.form.to_dict()
 
         query = """
         UPDATE user
@@ -76,7 +78,7 @@ def update_user_info(id):
         password = generate_password_hash(data['password'])
         values = (
             data['first_name'], data['last_name'], data['email'], data['phone_number'],
-            data['biography'], None, password, data['rola'],
+            data['biography'], file_url, password, data['rola'],
             id
         )
 
@@ -89,22 +91,21 @@ def update_user_info(id):
         return jsonify({"error": "Internal server error"}), 500
 
 
-img_base_url = 'http://127.0.0.1:5000/uploads/course/'
-UPLOAD_FOLDER = 'uploads/course'
+img_base_url_course = 'http://127.0.0.1:5000/uploads/course/'
+UPLOAD_FOLDER_COURSE = 'uploads/course'
 
 
 @admin_bp.route("/update-course/<int:id>", methods=['PUT'])
-# @jwt_required()
-# @role_required(["admin"])
+@jwt_required()
+@role_required(["admin"])
 def update_course(id):
     try:
 
         file = request.files['file']
-        file_url = str(img_base_url+file.filename)
-        print(file.filename)
+        file_url = str(img_base_url_course+file.filename)
 
         if file:
-            file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+            file.save(os.path.join(UPLOAD_FOLDER_COURSE, file.filename))
 
         data = request.form.to_dict()
 
@@ -142,6 +143,8 @@ def get_all_users():
             first_name,
             last_name,
             email,
+            phone_number,
+            user_image_url,
             rola
         FROM user;
         """
@@ -193,40 +196,62 @@ def get_all_courses():
 # CREATE
 
 
-@admin_bp.route("/add-user", methods=["POST"])
-@jwt_required()
-@role_required(["admin"])
+@admin_bp.route("/add-user", methods=["GET"])
+# @jwt_required()
+# @role_required(["admin"])
 def add_user():
     try:
-        data = request.json
 
-        # file = data['file']
-        # if file and allowed_file(file.filename):
-        #     filename = secure_filename(file.filename)
-        #     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        #     file.save(file_path)
-        #     file_url = f'/uploads/{filename}'
+        # file = request.files['file']
+        data = request.form.to_dict()
 
         password = generate_password_hash(data['password'])
         query = """
-        INSERT INTO user (first_name, last_name, email, phone_number, biography, user_image_url, password_hash, rola)
-        VALUES (%s, %s, %s, %s, %s,  %s, %s, %s)
+        INSERT INTO user (first_name, last_name, email, phone_number, biography, password_hash, rola)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
-        values = (data['first_name'], data['last_name'], data['email'], data['phone_number'], data['biography'], 'null',
+        values = (data['first_name'], data['last_name'], data['email'], data['phone_number'], data['biography'],
                   password, data['rola'])
 
         cursor.execute(query, values)
+        # con.commit()
+
+        cursor.execute("SELECT LAST_INSERT_ID() ")
+        last_id = cursor.fetchone()
+        last_id = last_id.get('LAST_INSERT_ID()')
+        print(last_id)
+
+        file = request.files['file']
+
+        if file:
+            name_without_extension, file_extension = os.path.splitext(
+                file.filename)
+            img_name = name_without_extension+str(last_id)+file_extension
+
+        else:
+            img_name = 'anonymous'+'.jpg'
+
+        file_url = str(img_base_url_user+img_name)
+        file.save(os.path.join(UPLOAD_FOLDER_USER, img_name))
+
+        query = "UPDATE user SET user_image_url=%s WHERE id=%s"
+
+        values = (file_url, last_id)
+
+        cursor.execute(query, values)
         con.commit()
-        return jsonify({"message": "You've added new user sucessfully!"})
+
+        return jsonify({"message": "You've added new user sucessfully!"}, 200)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+        return jsonify({"message": "Error!"})
 
 
-@admin_bp.route("/add-current-course", methods=["POST"])
+@admin_bp.route("/add-current-course/<int:id>", methods=["POST"])
 @jwt_required()
 @role_required(["admin"])
-def add_current_course():
+def add_current_course(id):
     try:
         # Dobijanje podataka iz zahteva
         data = request.json
@@ -235,7 +260,7 @@ def add_current_course():
             INSERT INTO current_courses (course_id, user_id, price, duration, start_at, end_at, max_members, level,location)
             VALUES (%s,  %s, %s, %s, %s, %s, %s,%s,%s)
             """
-        values = (data['course_id'], data['user_id'], data['price'], data['duration'], data['start_at'],
+        values = (id, data['user_id'], data['price'], data['duration'], data['start_at'],
                   data['end_at'], data['max_members'], data['level'], data['location'])
 
         cursor.execute(query, values)
@@ -252,20 +277,19 @@ def add_current_course():
 @role_required(["admin"])
 def add_course():
     try:
-        data = request.json
+        file = request.files['file']
+        file_url = str(img_base_url_course+file.filename)
 
-        # file = data['file']
-        # if file and allowed_file(file.filename):
-        #     filename = secure_filename(file.filename)
-        #     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        #     file.save(file_path)
-        #     file_url = f'/uploads/{filename}'
+        if file:
+            file.save(os.path.join(UPLOAD_FOLDER_COURSE, file.filename))
+
+        data = request.form.to_dict()
 
         query = """
         INSERT INTO course (name, course_image_url,language)
         VALUES (%s, %s, %s, %s)
         """
-        values = (data['name'], "null",
+        values = (data['name'], file_url,
                   data['language'])
 
         cursor.execute(query, values)
@@ -279,10 +303,8 @@ def add_course():
 @admin_bp.route("/delete-course/<int:id>", methods=['DELETE'])
 @jwt_required()
 @role_required(["admin"])
-def delete_course():
+def delete_course(id):
     try:
-
-        data = request.json
 
         query = """
         DELETE FROM course WHERE id = %s;
@@ -309,10 +331,6 @@ def delete_current_course(id):
         query = """
         DELETE FROM current_courses WHERE id = %s;
         """
-
-        # values = (
-        #     data['id']
-        # )
 
         cursor.execute(query, (id,))
 
