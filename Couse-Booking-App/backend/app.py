@@ -25,11 +25,19 @@ app.register_blueprint(auth_bp, url_prefix='/')
 
 
 @app.route("/uploads/course/<file_name>", methods=['GET'])
-def return_file(file_name):
+def return_course_img(file_name):
     try:
         return send_from_directory('uploads/course', file_name)
     except FileNotFoundError:
-        return ('no')
+        return ('error')
+
+
+@app.route("/uploads/user/<file_name>", methods=['GET'])
+def return_user_img(file_name):
+    try:
+        return send_from_directory('uploads/user', file_name)
+    except FileNotFoundError:
+        return ('error')
 
 
 if __name__ == "__main__":

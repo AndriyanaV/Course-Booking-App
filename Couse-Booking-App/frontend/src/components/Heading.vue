@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<h2 :style="{ color: color, fontSize: fontSize }">{{ heading }}</h2>
+	<div class="container flex justify-center w-full font-gilroy">
+		<h1 :style="{ color: color }" class="text-h1 font-medium">{{ heading }}</h1>
 	</div>
 </template>
 
@@ -8,13 +8,8 @@
 	defineProps({
 		heading: String,
 		color: String,
-		fontSize: String,
 	});
 </script>
 
 <style scoped>
-	h2 {
-		font-family: "Gilroy";
-		font-weight: 500;
-	}
 </style>

@@ -1,7 +1,7 @@
 
 
 <template>
-	<div class="inactive d-flex align-items-center" @click="handleClick">
+	<div :class="isActive ? 'inactive' : 'active'" @click="handleClick()">
 		<p>{{ language }}</p>
 	</div>
 </template>
@@ -14,6 +14,10 @@
 	});
 
 	let isActive = ref(true);
+
+	function handleClick() {
+		this.isActive = !this.isActive;
+	}
 </script>
 
 <style scoped>
