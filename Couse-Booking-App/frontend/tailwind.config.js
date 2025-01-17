@@ -19,6 +19,10 @@ export default {
       fontSize: {
         'h1': '70px', 
       },
+      boxShadow: {
+        custom: '0 0px 3px rgba(0, 0, 0, 0.25)', // Prilagođena senka
+      },
+      
     },
   },
   plugins: [],

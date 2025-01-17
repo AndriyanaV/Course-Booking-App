@@ -30,12 +30,12 @@ def update_current_course(id):
 
         query = """
         UPDATE current_courses
-        SET price = %s, duration = %s, start_at = %s, end_at = %s, level = %s, location = %s
+        SET user_id=%s, price = %s, duration = %s, start_at = %s, end_at = %s, level = %s, location = %s,max_members="%s", lessons="%s"
         WHERE id = %s
         """
         values = (
-            data['price'], data['duration'], data['start_at'], data['end_at'],
-            data['level'], data['location'],
+            data['professor'], data['price'], data['duration'], data['start_at'], data['end_at'],
+            data['level'], data['location'], data['max_members'], data['lessons'],
             id
         )
 
@@ -45,6 +45,7 @@ def update_current_course(id):
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+        return jsonify({"message": "Error"}), 500
 
 
 img_base_url_user = 'http://127.0.0.1:5000/uploads/user/'
@@ -197,8 +198,8 @@ def get_all_courses():
 
 
 @admin_bp.route("/add-user", methods=["GET"])
-# @jwt_required()
-# @role_required(["admin"])
+@jwt_required()
+@role_required(["admin"])
 def add_user():
     try:
 

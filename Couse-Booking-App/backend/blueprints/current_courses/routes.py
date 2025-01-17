@@ -14,13 +14,26 @@ def get_courses():
         data = request.json
 
         query = """
-            SELECT course.id, course.name, course.course_image_url,
-                current_courses.id,current_courses.start_at,
-                current_courses.level, current_courses.price, current_courses.max_members
-            FROM course
-            JOIN current_courses ON course.id = current_courses.course_id
-            WHERE  language LIKE %s AND level LIKE %s;
-        """
+            SELECT 
+    course.id, 
+    course.name, 
+    course.course_image_url,
+    current_courses.id, 
+    current_courses.start_at,
+    current_courses.level, 
+    current_courses.price, 
+    current_courses.max_members, 
+    current_courses.lessons
+    FROM 
+        course
+    JOIN 
+        current_courses 
+    ON 
+        course.id = current_courses.course_id
+    WHERE  
+        language LIKE %s 
+        AND level LIKE %s;
+    """
 
         language = data['language']
         level = data['level']

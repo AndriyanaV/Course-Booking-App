@@ -33,6 +33,7 @@
 		justify-content: center;
 		align-items: center;
 		cursor: pointer;
+
 		/* font-weight: 200; */
 	}
 

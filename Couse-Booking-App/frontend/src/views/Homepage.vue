@@ -41,7 +41,7 @@
 				>
 					<label
 						for="countries_disabled"
-						class="block mb-0 text-[#4E32BA] text-xl font-medium text-gray-900 dark:text-[ #4E32BA] min-w-fit"
+						class="block mb-0 text-[#4E32BA] text-[18px] font-medium min-w-fit"
 					>
 						Select a level
 					</label>
