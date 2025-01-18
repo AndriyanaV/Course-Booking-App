@@ -26,9 +26,15 @@
 			<div
 				class="container max-w-[1320px] mx-auto flex flex-row justify-between items-start"
 			>
-				<LanguageFilterCard language="All" />
-				<LanguageFilterCard language="English" />
-				<LanguageFilterCard language="French" />
+				<LanguageFilterCard language="All" @click="changeLanguage('')" />
+				<LanguageFilterCard
+					language="English"
+					@click="changeLanguage('english')"
+				/>
+				<LanguageFilterCard
+					language="French"
+					@click="changeLanguage('french')"
+				/>
 			</div>
 		</section>
 
@@ -49,7 +55,7 @@
 						id="countries_disabled"
 						class="bg-black-70 border border-[#4E32BA] text-[#4E32BA] text-sm rounded-lg focus:ring-blue-200 focus:border-[ #15074d] block w-full p-3 dark:bg-gray-100 dark:border-[ #15074d] dark:placeholder-gray-400 dark:text-[#4E32BA] dark:focus:ring-blue-500 dark:focus:border-[#15074d]"
 					>
-						<option selected>Choose the level</option>
+						<option selected disabled>Choose the level</option>
 						<option value="begginer">Beginner</option>
 						<option value="intermediate">Intermediate</option>
 						<option value="advanced">Advanced</option>
@@ -62,24 +68,54 @@
 			<div
 				class="container max-w-[1320px] flex justify-start items-start m-0 flex-wrap gap-[40px] p-0"
 			>
-				<LanguageCard />
-				<LanguageCard />
-				<LanguageCard />
-				<LanguageCard />
+				<div v-for="course in courses" :key="course.id">
+					<LanguageCard :course="course" />
+				</div>
 			</div>
 		</section>
 	</section>
 </template>
 
 <script setup>
+	import { ref, onMounted, watch } from "vue";
+	import axios from "axios";
 	import FeatureCard from "@/components/FeatureCard.vue";
 	import Heading from "@/components/Heading.vue";
 	import LanguageFilterCard from "@/components/LanguageFilterCard.vue";
 	import LanguageCard from "@/components/LanguageCard.vue";
 
-	function select(el) {
-		console.log(el);
+	let courses = ref([]);
+	let selectedLanguage = ref("");
+	let selectedLevel = ref();
+
+	function changeLanguage(language) {
+		selectedLanguage.value = language;
+		console.log("pokrenuto");
 	}
+
+	watch(selectedLanguage, () => {
+		getCourses();
+		console.log("d");
+	});
+
+	async function getCourses() {
+		await axios
+			.get("api/current-courses/get-courses", {
+				params: {
+					language: selectedLanguage.value,
+					level: selectedLevel.value,
+				},
+			})
+			.then((response) => {
+				courses.value = response.data;
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	}
+
+	getCourses();
 </script>
 
 <style scoped>

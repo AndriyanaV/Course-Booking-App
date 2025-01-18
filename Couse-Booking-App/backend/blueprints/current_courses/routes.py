@@ -10,8 +10,18 @@ con, cursor = get_db_connection()
 @current_courses_bp.route("/get-courses", methods=["GET"])
 def get_courses():
     try:
+        # Ako nije prosleđen, koristi "%" kao default
+        language = request.args.get("language", default="%")
+        # Ako nije prosleđen, koristi "%" kao default
+        level = request.args.get("level", default="%")
 
-        data = request.json
+        if (language == ""):
+            language = "%"
+
+        if (level == ""):
+            level = "%"
+
+        print(f"Language: {language}, Level: {level}")
 
         query = """
             SELECT 
@@ -22,7 +32,8 @@ def get_courses():
     current_courses.start_at,
     current_courses.level, 
     current_courses.price, 
-    current_courses.max_members, 
+    current_courses.max_members,
+    current_courses.duration, 
     current_courses.lessons
     FROM 
         course
@@ -34,15 +45,6 @@ def get_courses():
         language LIKE %s 
         AND level LIKE %s;
     """
-
-        language = data['language']
-        level = data['level']
-
-        if (language == ""):
-            language = "%"
-
-        if (level == ""):
-            level = "%"
 
         values = (language, level)
         cursor.execute(query, values)
@@ -63,7 +65,7 @@ def get_courses():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return jsonify({"message": "greska"})
+        return jsonify({"message": "We don't have course to offer!"})
 
 
 @current_courses_bp.route("/course-info/<int:id>", methods=["GET"])
