@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.first-letter-uppercase::first-letter {
+  text-transform: uppercase;
+}
+
 html {
   padding: 0px;
   margin: 0px;

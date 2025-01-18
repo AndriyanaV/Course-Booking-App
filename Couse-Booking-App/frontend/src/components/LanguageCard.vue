@@ -1,10 +1,10 @@
 <template>
 	<div
-		class="flex flex-column justify-center items-start rounded-lg bg-[rgba(239,239,239,0.45)] border-0 rounded-md gap-[20px] w-[413px] pb-[20px] shadow-custom"
+		class="card-container flex flex-column justify-center items-start rounded-lg bg-[rgba(239,239,239,0.45)] border-0 rounded-md gap-[20px] pb-[20px] shadow-custom w-[413px]"
 		style="background-color: rgba(239, 239, 239, 0.45)"
 	>
 		<div class="w-full h-[270px] m-0">
-			<img src="/images/english-language-course.png" class="h-full w-full" />
+			<img :src="course.course_image_url" class="h-full w-full" />
 		</div>
 		<div
 			class="flex items-center justify-between gap-[40px] h-[64px] w-full py-[10px] pl-[20px]"
@@ -12,11 +12,11 @@
 			<div
 				class="w-[115px] h-[45px] shadow-[0px_0px_5px_rgba(0,_0,_0,_0.25)] text-center flex items-center justify-center text-[#252525] text-[16px] cursor-pointer"
 			>
-				<p>Intermediate</p>
+				<p class="first-letter-uppercase">{{ course.level }}</p>
 			</div>
 			<div class="w-[57%] flex justify-center h-full items-center">
 				<h4 class="text-black text-[20px] font-gilroy font-semibold">
-					English Language
+					{{ course.name }}
 				</h4>
 			</div>
 		</div>
@@ -30,7 +30,7 @@
 				<div class="w-[32px] h-[32px]">
 					<img src="/images/clock.svg" class="w-full h-full" />
 				</div>
-				<p class="text-[16px]">9 Weeks</p>
+				<p class="text-[16px]">{{ course.duration }} Weeks</p>
 			</div>
 			<div
 				class="flex w-fit mh-[55px] gap-[8px] flex items-center justify-center"
@@ -38,7 +38,7 @@
 				<div class="w-[32px] h-[32px]">
 					<img src="/images/lessons.svg" class="w-full h-full" />
 				</div>
-				<p class="text-[16px]">14 Lessons</p>
+				<p class="text-[16px]">{{ course.lessons }} Lessons</p>
 			</div>
 			<div
 				class="flex w-fit mh-[55px] gap-[8px] flex items-center justify-center"
@@ -46,7 +46,7 @@
 				<div class="w-[32px] h-[32px]">
 					<img src="/images/start.svg" class="w-full h-full" />
 				</div>
-				<p class="text-[16px]">12.1.2024</p>
+				<p class="text-[16px]">{{ course.start_at }}</p>
 			</div>
 		</div>
 
@@ -64,114 +64,17 @@
 			<div
 				class="text-[16px] font-bold w-[75px] text-[#00000e] text-[16px] flex items-center justify-center border border-[#c5c5c5] h-[42px]"
 			>
-				<span class="font-bold"> $130 </span>
+				<span class="font-bold"> {{ course.price + "$" }} </span>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
+	defineProps({
+		course: Object,
+	});
 </script>
 
 <style scoped>
-	/* .card {
-																																																																																																																					border-radius: 10px;
-																																																																																																																					background: #efefef;
-																																																																																																																					border: none;
-																																																																																																																					gap: 20px;
-																																																																																																																				}
-
-																																																																																																																				.course-img-container {
-																																																																																																																					width: 100%;
-																																																																																																																					height: 270px;
-																																																																																																																				}
-
-																																																																																																																				.level-language-container {
-																																																																																																																					gap: 40px;
-																																																																																																																					height: 64px;
-																																																																																																																					width: 100%;
-																																																																																																																					align-items: center;
-																																																																																																																				}
-
-																																																																																																																				.level-container {
-																																																																																																																					width: 27%;
-																																																																																																																					height: 70%;
-																																																																																																																					box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
-																																																																																																																					text-align: center;
-																																																																																																																					display: flex;
-																																																																																																																					align-items: center;
-																																																																																																																					justify-content: center;
-																																																																																																																					color: #252525;
-																																																																																																																					font-size: 16px;
-																																																																																																																				}
-
-																																																																																																																				.language-container {
-																																																																																																																					width: 57%;
-																																																																																																																					display: flex;
-																																																																																																																					justify-content: center;
-																																																																																																																					align-items: center;
-																																																																																																																				}
-
-																																																																																																																				h4 {
-																																																																																																																																		color: black;
-																																																																																																																																		font-size: 20px;
-																																																																																																																																		font-family: "Gilroy";
-																																																																																																																																		font-weight: 600;
-																																																																																																																																	} 
-
-																																																																																																																				.language-description {
-																																																																																																																					width: 100%;
-																																																																																																																					color: #a2a2a2;
-																																																																																																																					font-size: 16px;
-																																																																																																																					display: flex;
-																																																																																																																					justify-content: center;
-																																																																																																																					gap: 56px;
-																																																																																																																				}
-
-																																																																																																																				.duration {
-																																																																																																																					display: flex;
-																																																																																																																					gap: 4px;
-																																																																																																																					width: 85px;
-																																																																																																																					height: 55px;
-																																																																																																																				}
-
-																																																																																																																				.week-img-container {
-																																																																																																																					width: 28px;
-																																																																																																																					height: 28px;
-																																																																																																																				}
-
-																																																																																																																				.week-img-container img {
-																																																																																																																					width: 100%;
-																																																																																																																					height: 100%;
-																																																																																																																				}
-
-																																																																																																																				.buttons-container {
-																																																																																																																					padding: 0px 19px;
-																																																																																																																					display: flex;
-																																																																																																																					width: 100%;
-																																																																																																																					justify-content: space-between;
-																																																																																																																					height: 64px;
-																																																																																																																				}
-
-																																																																																																																				.buttons-container button {
-																																																																																																																					width: 120px;
-																																																																																																																					height: 42px;
-																																																																																																																				}
-
-																																																																																																																				.price-container {
-																																																																																																																					width: 75px;
-																																																																																																																					height: 42px;
-																																																																																																																					color: #00000e;
-																																																																																																																					font-size: 16px;
-																																																																																																																					display: flex;
-																																																																																																																					align-items: center;
-																																																																																																																					font-size: 16px;
-																																																																																																																					border: 1px solid #c5c5c5;
-																																																																																																																					justify-content: center;
-																																																																																																																				}
-
-																																																																																																																				.price-container p {
-																																																																																																																					font-size: 16px;
-																																																																																																																					font-weight: 600px;
-																																																																																																																				} */
 </style>
