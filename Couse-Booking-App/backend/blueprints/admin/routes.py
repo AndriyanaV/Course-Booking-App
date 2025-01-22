@@ -177,7 +177,7 @@ def get_all_current_courses(id):
         print(f"An unexpected error occurred: {e}")
 
 
-@admin_bp.route("/get-courses", methods=["GET"])
+@admin_bp.route("/get-all-courses", methods=["GET"])
 @jwt_required()
 @role_required(["admin"])
 def get_all_courses():

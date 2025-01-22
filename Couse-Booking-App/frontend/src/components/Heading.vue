@@ -1,6 +1,11 @@
 <template>
 	<div class="container flex justify-center w-full font-gilroy">
-		<h1 :style="{ color: color }" class="text-h1 font-medium">{{ heading }}</h1>
+		<h1
+			:style="{ color: color, fontWeight: fontWeight }"
+			class="text-h1 font-medium"
+		>
+			{{ heading }}
+		</h1>
 	</div>
 </template>
 
@@ -8,6 +13,7 @@
 	defineProps({
 		heading: String,
 		color: String,
+		fontWeight: String,
 	});
 </script>
 

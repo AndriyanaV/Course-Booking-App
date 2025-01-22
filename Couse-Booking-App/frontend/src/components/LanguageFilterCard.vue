@@ -1,7 +1,7 @@
 
 
 <template>
-	<div :class="isActive ? 'inactive' : 'active'" @click="handleClick()">
+	<div :class="isActive ? 'inactive' : 'active'">
 		<p>{{ language }}</p>
 	</div>
 </template>
@@ -11,13 +11,14 @@
 
 	defineProps({
 		language: String,
+		isActive: Boolean,
 	});
 
-	let isActive = ref(true);
+	// let isActive = ref(true);
 
-	function handleClick() {
-		this.isActive = !this.isActive;
-	}
+	// function handleClick() {
+	// 	this.isActive = !this.isActive;
+	// }
 </script>
 
 <style scoped>

@@ -25,7 +25,6 @@ def check_course_availability(course):
         date_ms = int(date.timestamp()*1000)
 
         max_members = course.get('max_members')
-        #  or date_ms > start_date_ms
 
         if (current_number == max_members or date_ms > start_date_ms):
             return False

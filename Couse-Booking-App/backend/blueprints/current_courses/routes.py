@@ -25,15 +25,15 @@ def get_courses():
 
         query = """
             SELECT 
-    course.id, 
+    course.id AS course_id, 
     course.name, 
     course.course_image_url,
     current_courses.id, 
     current_courses.start_at,
     current_courses.level, 
     current_courses.price, 
-    current_courses.max_members,
-    current_courses.duration, 
+    CEIL(DATEDIFF(end_at, start_at) / 7) AS weeks_duration,
+    current_courses.max_members, 
     current_courses.lessons
     FROM 
         course
@@ -49,6 +49,7 @@ def get_courses():
         values = (language, level)
         cursor.execute(query, values)
         data = cursor.fetchall()
+
         # return jsonify(data)
         aviable_courses = []
 
@@ -61,6 +62,12 @@ def get_courses():
                 aviable_courses.append(course)
                 print("i spot avilable course")
 
+        query = "SELECT DATE(start_at) AS samo_datum FROM current_courses;"
+
+        cursor.execute(query)
+        date = cursor.fetchall()
+        print(date)
+
         return jsonify(aviable_courses)
 
     except Exception as e:
@@ -71,9 +78,11 @@ def get_courses():
 @current_courses_bp.route("/course-info/<int:id>", methods=["GET"])
 def show_clicked_course(id):
     try:
+
         query = """
             SELECT course.*,
                 current_courses.*,
+                CEIL(DATEDIFF(end_at, start_at) / 7) AS weeks_duration,
                 user.biography,
                 user.first_name,
                 user.last_name,

@@ -18,7 +18,9 @@ def create_token(email, role, user_id):
         "user_id": user_id
     }
 
-    return create_access_token(identity={"email": email}, additional_claims=additional_claims)
+    token = create_access_token(
+        identity={"email": email}, additional_claims=additional_claims)
+    return token, additional_claims
 
 
 def role_required(roles):
@@ -96,8 +98,13 @@ def login_user():
         user_id = user['id']
 
         # Kreiraj JWT token sa rolom
-        token = create_token(email, role, user_id)
-        return jsonify(message="Login successful.", access_token=token), 200
+        token, claims = create_token(email, role, user_id)
+        return jsonify(
+            message="Login successful.",
+            access_token=token,
+            role=claims["role"],
+            user_id=claims["user_id"]
+        ), 200
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
