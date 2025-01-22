@@ -14,7 +14,7 @@ from flask import Blueprint
 app = Flask(__name__)
 
 app.config["JWT_SECRET_KEY"] = 'e2b6fc2a9bfb5d70d4d5c7ad67e2a6f5016a82c49e9bc0af3a1c7e879bb10f6a'
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=3)
 jwt = JWTManager(app)
 
 

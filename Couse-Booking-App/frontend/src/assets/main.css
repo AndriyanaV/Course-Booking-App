@@ -3,6 +3,38 @@
 @tailwind components;
 @tailwind utilities;
 
+.title-desc {
+  @apply w-[1100px] h-[90px] flex flex-row overflow-hidden gap-[2px] rounded-sm;
+}
+
+.title {
+  @apply w-[40%]  h-full bg-[#9989B4] text-white flex items-center justify-center font-medium text-[32px] font-gilroy capitalize;
+}
+
+.description {
+  @apply w-[60%] h-full bg-white text-[#A49D9D] flex items-center justify-center font-medium text-[24px] font-gilroy font-normal capitalize;
+}
+
+.card {
+  @apply w-[413px] h-[460px] flex flex-col items-center justify-start gap-[20px] bg-[rgba(239,239,239,0.45)] rounded-md shadow-custom;
+}
+
+.level {
+  @apply w-[115px] h-[45px] text-center flex items-center justify-center text-[#252525] text-[16px] cursor-pointer bg-gray-200 gap-[20px];
+}
+
+.edit {
+  @apply w-[100px] h-[45px] text-center flex items-center justify-center text-[#white] text-[16px] cursor-pointer bg-[#0048C1] gap-[10px] rounded;
+}
+
+.preview {
+  @apply w-[113px] h-[45px] text-center flex items-center hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-[#020342] rounded gap-[10px];
+}
+
+.delete {
+  @apply w-[113px] h-[45px] text-center flex items-center hover:bg-gray-200 border border-red-500 text-white font-semibold py-2 px-4  rounded gap-[10px];
+}
+
 .first-letter-uppercase::first-letter {
   text-transform: uppercase;
 }
@@ -17,7 +49,7 @@ body {
   padding: 0px;
   width: 100%;
   font-family: "Gilroy";
-  min-height: 2000px;
+  min-height: 100vh;
 }
 
 * {
