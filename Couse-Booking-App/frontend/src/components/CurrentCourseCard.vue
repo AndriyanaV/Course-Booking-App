@@ -1,5 +1,5 @@
 <template>
-	<div class="card w-[413px]">
+	<div class="card w-[413px] pb-[20px]">
 		<div class="w-full h-[265px]">
 			<img :src="currentCourse.course_image_url" class="w-full h-full" />
 		</div>
@@ -26,20 +26,62 @@
 				<p>{{ startDate }}god. - {{ endDate }}god.</p>
 			</div>
 		</div>
-		<div
+		<!-- <div
 			class="w-full h-[65px] flex items-cnter gap-[10px] px-[19px] justify-between"
 		>
 			<div class="edit">
 				<i class="fas fa-edit" style="color: #ffffff"></i>
 				<p class="text-white font-gilroy">Edit</p>
 			</div>
-			<div class="preview">
+			<div
+				class="preview cursor-pointer"
+				@click="
+					$router.push({
+						name: 'CourseInfo',
+						query: { courseId: currentCourse.id },
+					})
+				"
+			>
 				<i class="fa-solid fa-eye" style="color: #020342"></i>
 				<p class="font-gilroy text-[#020342]">Preview</p>
 			</div>
 			<div class="delete">
 				<i class="fa-solid fa-trash-can" style="color: #db0021"></i>
 				<p class="font-gilroy text-red-500">Delete</p>
+			</div>
+		</div> -->
+		<div
+			class="flex gap-[10px] h-[30px] w-[30%] items-start justify-start pr-[15px] pt-[3px] w-full pl-[20px]"
+		>
+			<div
+				class="w-[23px] h-[23px] cursor-pointer"
+				@click="
+					$router.push({
+						name: 'UpdateCurrentCourse',
+						query: { courseId: currentCourse.id },
+					})
+				"
+			>
+				<img src="/images/edit.png" class="w-full h-full" />
+			</div>
+
+			<div
+				class="w-[23px] h-[23px] cursor-pointer"
+				@click="
+					$router.push({
+						name: 'CourseInfo',
+						query: { courseId: currentCourse.id },
+					})
+				"
+			>
+				<img src="/images/eye.png" class="w-full h-full" />
+			</div>
+
+			<div
+				class="w-[23px] h-[23px] cursor-pointer"
+				@click="deleteCurrentCourse"
+			>
+				<img src="/images/delete.png" class="w-full h-full" />
 			</div>
 		</div>
 	</div>
@@ -48,15 +90,38 @@
 <script setup>
 	import { formatDate } from "@/composables/formatDate.js";
 	import { ref } from "vue";
+	import axios from "axios";
+	import { toast } from "vue3-toastify";
+
+	const emit = defineEmits(["currentCourseRemoved"]);
+
 	const props = defineProps({
 		currentCourse: Object,
 	});
 
+	// const id = Number(props.currentCourse.id);
+	// console.log("id je");
+	// console.log(typeof id);
+
 	let startDate = ref("");
 	let endDate = ref("");
 
+	//const token = localStorage.getItem("access_token");
+
 	startDate.value = formatDate(props.currentCourse.start_at, false);
 	endDate.value = formatDate(props.currentCourse.end_at, false);
+
+	const deleteCurrentCourse = async () => {
+		try {
+			const response = await axios.delete(
+				`/api/admin/delete-current-course/${props.currentCourse.id}`
+			);
+			toast.success(response.data.message);
+			emit("currentCourseRemoved", props.currentCourse);
+		} catch (error) {
+			toast.error(error.response.data.message || error.message);
+		}
+	};
 </script>
 
 <style>

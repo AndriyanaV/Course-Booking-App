@@ -30,11 +30,11 @@ def update_current_course(id):
 
         query = """
         UPDATE current_courses
-        SET user_id=%s, price = %s, duration = %s, start_at = %s, end_at = %s, level = %s, location = %s,max_members="%s", lessons="%s"
+        SET user_id=%s, price = %s,  start_at = %s, end_at = %s, level = %s, location = %s,max_members=%s, lessons=%s
         WHERE id = %s
         """
         values = (
-            data['professor'], data['price'], data['duration'], data['start_at'], data['end_at'],
+            data['professor'], data['price'], data['start_at'], data['end_at'],
             data['level'], data['location'], data['max_members'], data['lessons'],
             id
         )
@@ -102,13 +102,22 @@ UPLOAD_FOLDER_COURSE = 'uploads/course'
 def update_course(id):
     try:
 
-        file = request.files['file']
-        file_url = str(img_base_url_course+file.filename)
+        query = "SELECT  * FROM course WHERE id=%s"
+        cursor.execute(query, (id,))
+        course = cursor.fetchone()
+
+        file = request.files.get('file')
 
         if file:
+            file_url = str(img_base_url_course+file.filename)
             file.save(os.path.join(UPLOAD_FOLDER_COURSE, file.filename))
 
+        else:
+            file_url = course['course_image_url']
+
         data = request.form.to_dict()
+        name = data.get('name', course['name'])
+        language = data.get('language', course['language'])
 
         query = """
         UPDATE course
@@ -117,7 +126,7 @@ def update_course(id):
         """
 
         values = (
-            data['name'], file_url, data['language'], id
+            name, file_url, language, id
         )
 
         cursor.execute(query, values)
@@ -162,14 +171,21 @@ def get_all_users():
 @role_required(["admin"])
 def get_all_current_courses(id):
     try:
+        level = request.args.get('level', '%')
+        if (level == ""):
+            level = "%"
+
+        # print("level je"+level)
+
         query = """
-        SELECT course.*,
+        SELECT course.id AS course_id,course.name,course.course_image_url,course.language,
             current_courses.*
         FROM course
         JOIN current_courses ON course.id = current_courses.course_id
-        WHERE course.id=%s;
+        WHERE course.id=%s AND level LIKE %s;
         """
-        cursor.execute(query, (id, ))
+        values = (id, level)
+        cursor.execute(query, values)
         data = cursor.fetchall()
         return jsonify(data)
 
@@ -182,10 +198,54 @@ def get_all_current_courses(id):
 @role_required(["admin"])
 def get_all_courses():
     try:
+        language = request.args.get('language', '%')
+
+        print(language)
+
         query = """
-        SELECT * FROM course
+        SELECT * FROM course WHERE language LIKE %s;
         """
-        cursor.execute(query)
+
+        cursor.execute(query, (language,))
+        data = cursor.fetchall()
+        return jsonify(data)
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return jsonify({"message": "An error occurred while fetching courses."}), 500
+
+
+@admin_bp.route("/get-course/<int:id>", methods=["GET"])
+@jwt_required()
+@role_required(["admin"])
+def get_course(id):
+    try:
+
+        query = """
+        SELECT * FROM course WHERE id=%s;
+        """
+
+        cursor.execute(query, (id,))
+        data = cursor.fetchone()
+        return jsonify(data)
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return jsonify({"message": "An error occurred while fetching courses."}), 500
+
+
+@admin_bp.route("/get-professors", methods=["GET"])
+@jwt_required()
+@role_required(["admin"])
+def get_professors():
+    try:
+
+        query = """
+        SELECT id,first_name,last_name FROM user WHERE rola LIKE %s;
+        """
+        rola = 'professor'
+
+        cursor.execute(query, (rola,))
         data = cursor.fetchall()
         return jsonify(data)
 
@@ -249,20 +309,20 @@ def add_user():
         return jsonify({"message": "Error!"})
 
 
-@admin_bp.route("/add-current-course/<int:id>", methods=["POST"])
+@admin_bp.route("/add-current-course", methods=["POST"])
 @jwt_required()
 @role_required(["admin"])
-def add_current_course(id):
+def add_current_course():
     try:
         # Dobijanje podataka iz zahteva
         data = request.json
 
         query = """
-            INSERT INTO current_courses (course_id, user_id, price, duration, start_at, end_at, max_members, level,location)
-            VALUES (%s,  %s, %s, %s, %s, %s, %s,%s,%s)
+            INSERT INTO current_courses (course_id, user_id, price, start_at, end_at, max_members, level,location,lessons)
+            VALUES (%s,  %s, %s, %s, %s, %s, %s,%s, %s)
             """
-        values = (id, data['user_id'], data['price'], data['duration'], data['start_at'],
-                  data['end_at'], data['max_members'], data['level'], data['location'])
+        values = (data['course_id'], data['user_id'], data['price'],  data['start_at'],
+                  data['end_at'], data['max_members'], data['level'], data['location'], data['lessons'])
 
         cursor.execute(query, values)
         con.commit()
@@ -284,11 +344,17 @@ def add_course():
         if file:
             file.save(os.path.join(UPLOAD_FOLDER_COURSE, file.filename))
 
+        else:
+            return jsonify({"message": "Image is required!"})
+
         data = request.form.to_dict()
+
+        if 'name' not in data or 'language' not in data:
+            return jsonify({"message": "Name and language fields are required!"})
 
         query = """
         INSERT INTO course (name, course_image_url,language)
-        VALUES (%s, %s, %s, %s)
+        VALUES (%s, %s, %s)
         """
         values = (data['name'], file_url,
                   data['language'])
@@ -299,6 +365,7 @@ def add_course():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+        return ("Error")
 
 
 @admin_bp.route("/delete-course/<int:id>", methods=['DELETE'])

@@ -4,13 +4,14 @@ from utils import check_course_availability
 
 current_courses_bp = Blueprint('current_courses', __name__)
 
-con, cursor = get_db_connection()
+# con, cursor = get_db_connection()
 
 
 @current_courses_bp.route("/get-courses", methods=["GET"])
 def get_courses():
     try:
         # Ako nije prosleđen, koristi "%" kao default
+        con, cursor = get_db_connection()
         language = request.args.get("language", default="%")
         # Ako nije prosleđen, koristi "%" kao default
         level = request.args.get("level", default="%")
@@ -78,7 +79,7 @@ def get_courses():
 @current_courses_bp.route("/course-info/<int:id>", methods=["GET"])
 def show_clicked_course(id):
     try:
-
+        con, cursor = get_db_connection()
         query = """
             SELECT course.*,
                 current_courses.*,
