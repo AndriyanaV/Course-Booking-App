@@ -3,7 +3,7 @@
 		<section
 			class="main w-full flex flex-column items-center relative h-[1000px] m-0 p-0"
 		>
-			<Navbar bgColor="bg-transparent" />
+			<Navbar bgColor="bg-red-500" />
 			<section class="min-w-[100%] absolute top-0">
 				<div class="container min-w-[100%] p-0">
 					<img src="/images/Hero-img.svg" class="min-w-[100%]" />
@@ -124,21 +124,22 @@
 				console.log(error);
 			});
 	}
-
-	getCourses();
+	onMounted(() => {
+		getCourses();
+	});
 </script>
 
 <style scoped>
 	/* .select-wrapper {
-																																																																																									position: relative;
-																																																																																								}
+																																																																																												position: relative;
+																																																																																											}
 
-																																																																																								.select-wrapper::after {
-																																																																																									content: "▼";
-																																																																																									font-size: 1rem;
-																																																																																									top: 1rem;
-																																																																																									right: 10px;
-																																																																																									position: absolute;
-																																																																																									color: #5a189a;
-																																																																																								} */
+																																																																																											.select-wrapper::after {
+																																																																																												content: "▼";
+																																																																																												font-size: 1rem;
+																																																																																												top: 1rem;
+																																																																																												right: 10px;
+																																																																																												position: absolute;
+																																																																																												color: #5a189a;
+																																																																																											} */
 </style>

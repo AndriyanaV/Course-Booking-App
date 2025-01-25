@@ -3,6 +3,12 @@ import Homepage from '@/views/Homepage.vue';
 import CourseInfo from '@/views/CourseInfo.vue';
 import AllCourses from '@/views/AllCourses.vue';
 import AllCurrentCourses from '@/views/AllCurrentCourses.vue';
+import AllUsers from '@/views/AllUsers.vue';
+import AddCourse from '@/views/AddCourse.vue';
+import UpdateCourse from '@/views/UpdateCourse.vue';
+import CourseCardInfo from '@/views/CourseCardInfo.vue';
+import AddCurrentCourse from '@/views/AddCurrentCourse.vue'
+import UpdateCurrentCourse from '@/views/UpdateCurrentCourse.vue'
 import Login from '@/views/Login.vue';
 
 
@@ -37,6 +43,50 @@ const router = createRouter({
       component: AllCurrentCourses,
       props: true,
     },
+    {
+      path: "/all-users",
+      name: "AllUsers",
+      component: AllUsers
+     
+    },
+    {
+      path: "/add-course",
+      name: "AddCourse",
+      component: AddCourse
+     
+    },
+    {
+      path: "/update-course",
+      name: "UpdateCourse",
+      component: UpdateCourse,
+      props: true,
+     
+    },
+    {
+      path: "/course-card-info/:id",
+      name: "CourseCardInfo",
+      component: CourseCardInfo,
+      props: true,
+     
+    },
+    {
+      path: "/add-current-course",
+      name: "AddCurrentCourse",
+      component: AddCurrentCourse,
+      
+      
+     
+    },
+    {
+      path: "/update-current-course",
+      name: "UpdateCurrentCourse",
+      component: UpdateCurrentCourse,
+      
+      
+     
+    }
+
+
 
   ]
     

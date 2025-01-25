@@ -24,15 +24,35 @@
 }
 
 .edit {
-  @apply w-[100px] h-[45px] text-center flex items-center justify-center text-[#white] text-[16px] cursor-pointer bg-[#0048C1] gap-[10px] rounded;
+  @apply w-[100px] h-[40px] text-center flex items-center justify-center text-[#white] text-[16px] cursor-pointer bg-[#0048C1] gap-[10px] rounded;
 }
 
 .preview {
-  @apply w-[113px] h-[45px] text-center flex items-center hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-[#020342] rounded gap-[10px];
+  @apply w-[113px] h-[40px] text-center flex items-center hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-[#020342] rounded gap-[10px];
 }
 
 .delete {
-  @apply w-[113px] h-[45px] text-center flex items-center hover:bg-gray-200 border border-red-500 text-white font-semibold py-2 px-4  rounded gap-[10px];
+  @apply w-[113px] h-[40px] text-center flex items-center hover:bg-gray-200 border border-red-500 text-white font-semibold py-2 px-4  rounded gap-[10px];
+}
+
+.form-row {
+  @apply w-full flex gap-[20px] h-[140px];
+}
+
+.column {
+  @apply w-[49%] flex flex-col gap-[20px] h-full;
+}
+
+.label-form {
+  @apply text-[#14003B] text-[18px] font-gilroy font-medium;
+}
+
+.input-container {
+  @apply w-[80%] bg-white h-[60px];
+}
+
+.input-el {
+  @apply w-full rounded-xl h-full border pl-[10px];
 }
 
 .first-letter-uppercase::first-letter {

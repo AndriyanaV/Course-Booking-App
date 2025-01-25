@@ -28,7 +28,8 @@
 
 			.then((response) => {
 				course.value = response.data;
-				console.log(response.data);
+				console.log("course inf");
+				console.log(course.value);
 			})
 			.catch(function (error) {
 				console.log(error);
