@@ -5,8 +5,8 @@
 </script>
 
 <template>
-	<RouterView />
 	<Navbar />
+	<RouterView />
 </template>
 
 

@@ -4,7 +4,7 @@
 		style="background-color: rgba(239, 239, 239, 0.45)"
 	>
 		<div class="w-full h-[270px] m-0">
-			<img :src="course.course_image_url" class="h-full w-full" />
+			<img :src="course.course_image_url" class="h-full w-full rounded-md" />
 		</div>
 		<div
 			class="flex items-center justify-between gap-[40px] h-[64px] w-full py-[10px] pl-[20px]"

@@ -2,7 +2,7 @@
 	<div
 		class="w-[413px] h-fit flex flex-col items-center justify-start gap-[15px] bg-[rgba(239,239,239,0.45)] rounded-md shadow-custom pb-[15px]"
 	>
-		<div class="w-full h-[265px]">
+		<div class="w-full h-[265px] rounded-md">
 			<img :src="course.course_image_url" class="w-full h-full rounded-md" />
 		</div>
 
@@ -72,23 +72,19 @@
 	});
 
 	const deleteCourse = async () => {
-		try {
-			const token = localStorage.getItem("access_token");
-			const response = await axios.delete(
-				`api/admin/delete-course/${props.course.id}`,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
-			toast.success(response.data.message);
-			emit("courseRemoved", props.course);
-		} catch (error) {
-			toast.error(
-				error.response?.data?.message ||
-					"An error occurred while deleting the course."
-			);
+		if (confirm("Are you sure?")) {
+			try {
+				const response = await axios.delete(
+					`api/admin/delete-course/${props.course.id}`
+				);
+				toast.success(response.data.message);
+				emit("courseRemoved", props.course);
+			} catch (error) {
+				toast.error(
+					error.response?.data?.message ||
+						"An error occurred while deleting the course."
+				);
+			}
 		}
 	};
 </script>

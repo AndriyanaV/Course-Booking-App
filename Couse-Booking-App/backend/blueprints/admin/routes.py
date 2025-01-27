@@ -52,36 +52,47 @@ img_base_url_user = 'http://127.0.0.1:5000/uploads/user/'
 UPLOAD_FOLDER_USER = 'uploads/user'
 
 
-@admin_bp.route("/update-user-info/<int:id>", methods=['PUT'])
+@admin_bp.route("/update-user/<int:id>", methods=['PUT'])
 @jwt_required()
 @role_required(["admin"])
 def update_user_info(id):
     try:
-        file = request.files['file']
+        query = "SELECT  * FROM user WHERE id=%s"
+        cursor.execute(query, (id,))
+        user = cursor.fetchone()
+
+        file = request.files.get('file')
 
         if file:
-            name_without_extension, file_extension = os.path.splitext(
-                file.filename)
-            img_name = name_without_extension+str(id)+file_extension
-            file.save(os.path.join(UPLOAD_FOLDER_USER, img_name))
+            file_url = str(img_base_url_user+file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER_USER, file.filename))
 
         else:
-            img_name = 'anonymous'+'.jpg'
+            file_url = user['user_image_url']
 
-        file_url = str(img_base_url_user+img_name)
         data = request.form.to_dict()
+
+        firstName = data.get('first_name', user['first_name'])
+        lastName = data.get('last_name', user['last_name'])
+        phoneNumber = data.get('phone_number', user['phone_number'])
+        email = data.get('email', user['email'])
+        biography = data.get('biography', user['biography'])
+        rola = data.get('rola', user['rola'])
+        password = data.get('password')
+
+        if password:
+            hashed_password = generate_password_hash(password)
+        else:
+            hashed_password = user['password_hash']
 
         query = """
         UPDATE user
         SET first_name = %s, last_name = %s, email = %s, phone_number = %s, biography = %s, user_image_url = %s, password_hash=%s, rola=%s
         WHERE id = %s
         """
-        password = generate_password_hash(data['password'])
-        values = (
-            data['first_name'], data['last_name'], data['email'], data['phone_number'],
-            data['biography'], file_url, password, data['rola'],
-            id
-        )
+
+        values = (firstName, lastName, email, phoneNumber,
+                  biography, file_url, hashed_password, rola, id)
 
         cursor.execute(query, values)
         con.commit()
@@ -148,6 +159,7 @@ def update_course(id):
 @role_required(["admin"])
 def get_all_users():
     try:
+        con, cursor = get_db_connection()
         query = """
         SELECT id,
             first_name,
@@ -160,6 +172,30 @@ def get_all_users():
         """
         cursor.execute(query)
         data = cursor.fetchall()
+        return jsonify(data)
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+
+@admin_bp.route("/get-user/<int:id>", methods=["GET"])
+@jwt_required()
+@role_required(["admin"])
+def get_user(id):
+    try:
+        query = """
+        SELECT id,
+            first_name,
+            last_name,
+            email,
+            phone_number,
+            biography,
+            user_image_url,
+            rola
+        FROM user WHERE id=%s;
+        """
+        cursor.execute(query, (id,))
+        data = cursor.fetchone()
         return jsonify(data)
 
     except Exception as e:
@@ -256,23 +292,22 @@ def get_professors():
 
 # CREATE
 
-
-@admin_bp.route("/add-user", methods=["GET"])
+@admin_bp.route("/add-user", methods=["POST"])
 @jwt_required()
 @role_required(["admin"])
 def add_user():
     try:
-
-        # file = request.files['file']
+        con, cursor = get_db_connection()
+        file = request.files.get('file')
         data = request.form.to_dict()
 
         password = generate_password_hash(data['password'])
         query = """
-        INSERT INTO user (first_name, last_name, email, phone_number, biography, password_hash, rola)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO user (first_name, last_name, email, phone_number, biography, password_hash, rola, user_image_url)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         values = (data['first_name'], data['last_name'], data['email'], data['phone_number'], data['biography'],
-                  password, data['rola'])
+                  password, data['rola'], None)
 
         cursor.execute(query, values)
         # con.commit()
@@ -282,18 +317,19 @@ def add_user():
         last_id = last_id.get('LAST_INSERT_ID()')
         print(last_id)
 
-        file = request.files['file']
+        # file = request.files['file']
+        print(file)
 
         if file:
             name_without_extension, file_extension = os.path.splitext(
                 file.filename)
             img_name = name_without_extension+str(last_id)+file_extension
+            file.save(os.path.join(UPLOAD_FOLDER_USER, img_name))
 
         else:
-            img_name = 'anonymous'+'.jpg'
+            img_name = 'anonymous'+'.png'
 
         file_url = str(img_base_url_user+img_name)
-        file.save(os.path.join(UPLOAD_FOLDER_USER, img_name))
 
         query = "UPDATE user SET user_image_url=%s WHERE id=%s"
 
@@ -373,6 +409,7 @@ def add_course():
 @role_required(["admin"])
 def delete_course(id):
     try:
+        print(id)
 
         query = """
         DELETE FROM course WHERE id = %s;

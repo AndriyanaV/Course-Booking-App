@@ -26,30 +26,7 @@
 				<p>{{ startDate }}god. - {{ endDate }}god.</p>
 			</div>
 		</div>
-		<!-- <div
-			class="w-full h-[65px] flex items-cnter gap-[10px] px-[19px] justify-between"
-		>
-			<div class="edit">
-				<i class="fas fa-edit" style="color: #ffffff"></i>
-				<p class="text-white font-gilroy">Edit</p>
-			</div>
-			<div
-				class="preview cursor-pointer"
-				@click="
-					$router.push({
-						name: 'CourseInfo',
-						query: { courseId: currentCourse.id },
-					})
-				"
-			>
-				<i class="fa-solid fa-eye" style="color: #020342"></i>
-				<p class="font-gilroy text-[#020342]">Preview</p>
-			</div>
-			<div class="delete">
-				<i class="fa-solid fa-trash-can" style="color: #db0021"></i>
-				<p class="font-gilroy text-red-500">Delete</p>
-			</div>
-		</div> -->
+
 		<div
 			class="flex gap-[10px] h-[30px] w-[30%] items-start justify-start pr-[15px] pt-[3px] w-full pl-[20px]"
 		>
@@ -112,14 +89,16 @@
 	endDate.value = formatDate(props.currentCourse.end_at, false);
 
 	const deleteCurrentCourse = async () => {
-		try {
-			const response = await axios.delete(
-				`/api/admin/delete-current-course/${props.currentCourse.id}`
-			);
-			toast.success(response.data.message);
-			emit("currentCourseRemoved", props.currentCourse);
-		} catch (error) {
-			toast.error(error.response.data.message || error.message);
+		if (confirm("Are you sure?")) {
+			try {
+				const response = await axios.delete(
+					`/api/admin/delete-current-course/${props.currentCourse.id}`
+				);
+				toast.success(response.data.message);
+				emit("currentCourseRemoved", props.currentCourse);
+			} catch (error) {
+				toast.error(error.response.data.message || error.message);
+			}
 		}
 	};
 </script>

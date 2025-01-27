@@ -25,7 +25,10 @@
 					</p>
 				</div>
 				<div class="w-full flex items-center h-[33%] justify-center pt-[20px]">
-					<p class="text-[#5C55AA] font-bold font-gilroy text-[14px]">
+					<p
+						v-if="user.phone_number != 0"
+						class="text-[#5C55AA] font-bold font-gilroy text-[14px]"
+					>
 						{{ user.phone_number }}
 					</p>
 				</div>
@@ -33,10 +36,26 @@
 			<div
 				class="w-full h-[50%] gap-[10px] flex items-end justify-end gap-[10px] pb-[8px] pr-[8px]"
 			>
-				<div class="cursor-pointer">
+				<div
+					class="cursor-pointer"
+					@click="
+						$router.push({
+							name: 'UpdateUser',
+							query: { userId: user.id },
+						})
+					"
+				>
 					<i class="fas fa-edit fa-lg" style="color: #1f11df"></i>
 				</div>
-				<div class="cursor-pointer">
+				<div
+					class="cursor-pointer"
+					@click="
+						$router.push({
+							name: 'UserInfo',
+							query: { userId: user.id },
+						})
+					"
+				>
 					<i class="fa-solid fa-eye fa-lg" style="color: #022f7e"></i>
 				</div>
 				<div class="cursor-pointer">

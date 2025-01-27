@@ -1,13 +1,13 @@
 <template>
 	<div class="w-[1200px] bg-white py-[20px] px-[40px] rounded shadow">
 		<div class="form wraper w-full flex flex-col gap-[40px]">
-			<form class="w-full" @submit.prevent="AddCurrentCourse()">
+			<form class="w-full" @submit.prevent="addCurrentCourse()">
 				<div class="form-row">
 					<div class="column">
 						<label for="max_members" class="label-form"> Price ($) </label>
 						<div class="input-container">
 							<input
-								v-model="price"
+								v-model="form.price"
 								type="text"
 								placeholder="Enter price of course"
 								id="price"
@@ -20,7 +20,7 @@
 						<label for="max_members" class="label-form"> Max Members </label>
 						<div class="input-container">
 							<input
-								v-model="members"
+								v-model="form.members"
 								type="text"
 								placeholder="Enter max members of course"
 								id="max_members"
@@ -35,7 +35,7 @@
 						<label for="max_members" class="label-form"> Start Date </label>
 						<div class="input-container">
 							<input
-								v-model="startAt"
+								v-model="form.startAt"
 								type="datetime-local"
 								placeholder="Enter start date of course"
 								id="start_at"
@@ -48,7 +48,7 @@
 						<label for="max_members" class="label-form"> End Date </label>
 						<div class="input-container">
 							<input
-								v-model="endAt"
+								v-model="form.endAt"
 								type="date"
 								placeholder="Enter end date of course"
 								id="end_at"
@@ -63,7 +63,7 @@
 						<label for="location" class="label-form"> Location </label>
 						<div class="input-container">
 							<input
-								v-model="location"
+								v-model="form.location"
 								type="text"
 								placeholder="Enter location of course"
 								id="location"
@@ -78,7 +78,7 @@
 						</label>
 						<div class="input-container">
 							<input
-								v-model="lessons"
+								v-model="form.lessons"
 								type="number"
 								placeholder="Enter number of lessons of course"
 								id="lessons"
@@ -93,7 +93,7 @@
 						<label for="location" class="label-form"> Level </label>
 						<div class="input-container">
 							<select
-								v-model="level"
+								v-model="form.level"
 								id="countries"
 								class="h-[64px] bg-white border border-gray-300 text-black text-sm font-gilroy rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							>
@@ -108,7 +108,7 @@
 						<label for="max_members" class="label-form"> Pforessor </label>
 						<div class="input-container">
 							<select
-								v-model="professor"
+								v-model="form.professor"
 								id="countries"
 								class="h-[64px] bg-white border border-gray-300 text-black text-sm font-gilroy rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							>
@@ -145,67 +145,78 @@
 	import { useRoute, useRouter } from "vue-router";
 	import { toast } from "vue3-toastify";
 
+	const emit = defineEmits(["activeCourseAdded"]);
+
 	const router = useRouter();
 
-	const props = defineProps({
-		courseId: String,
+	const professors = ref("");
+
+	const form = ref({
+		price: "",
+		members: "",
+		startAt: "",
+		endAt: "",
+		lessons: "",
+		professor: "",
+		location: "",
+		level: "",
 	});
 
-	const professors = ref("");
-	const courseId = Number(props.courseId);
-
-	const price = ref("");
-	const members = ref("");
-	const startAt = ref("");
-	const endAt = ref("");
-	const lessons = ref("");
-	const professor = ref("");
-	const location = ref("");
-	const level = ref("");
-
-	const AddCurrentCourse = async () => {
+	const addCurrentCourse = () => {
 		if (
-			!price.value ||
-			!members.value ||
-			!startAt.value ||
-			!endAt.value ||
-			!lessons.value ||
-			!professor.value ||
-			!location.value ||
-			!level.value
+			!form.value.price ||
+			!form.value.members ||
+			!form.value.startAt ||
+			!form.value.endAt ||
+			!form.value.lessons ||
+			!form.value.professor ||
+			!form.value.location ||
+			!form.value.level
 		) {
 			toast.error("Please enter all filds.");
 			return;
 		}
-
-		try {
-			const response = await axios.post("api/admin/add-current-course", {
-				course_id: courseId,
-				user_id: professor.value,
-				price: price.value,
-				start_at: startAt.value,
-				end_at: endAt.value,
-				max_members: members.value,
-				level: level.value,
-				location: location.value,
-				lessons: lessons.value,
-			});
-			router
-				.push(`/all-current-courses/${courseId}`)
-				.then(() => toast.success(response.data.message));
-		} catch (error) {
-			toast.error(error.response.data.message || error.message);
-		}
+		emit("activeCourseAdded", form.value);
 	};
+
+	// const AddCurrentCourse = async () => {
+	// 	if (
+	// 		!price.value ||
+	// 		!members.value ||
+	// 		!startAt.value ||
+	// 		!endAt.value ||
+	// 		!lessons.value ||
+	// 		!professor.value ||
+	// 		!location.value ||
+	// 		!level.value
+	// 	) {
+	// 		toast.error("Please enter all filds.");
+	// 		return;
+	// 	}
+
+	// 	try {
+	// 		const response = await axios.post("api/admin/add-current-course", {
+	// 			course_id: courseId,
+	// 			user_id: professor.value,
+	// 			price: price.value,
+	// 			start_at: startAt.value,
+	// 			end_at: endAt.value,
+	// 			max_members: members.value,
+	// 			level: level.value,
+	// 			location: location.value,
+	// 			lessons: lessons.value,
+	// 		});
+	// 		router
+	// 			.push(`/all-current-courses/${courseId}`)
+	// 			.then(() => toast.success(response.data.message));
+	// 	} catch (error) {
+	// 		toast.error(error.response.data.message || error.message);
+	// 	}
+	// };
 
 	const getProfessors = async () => {
 		try {
-			const token = localStorage.getItem("access_token");
-			const response = await axios.get("api/admin//get-professors", {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			const response = await axios.get("api/admin//get-professors");
 			professors.value = response.data;
 		} catch (error) {
 			toast.error(error);

@@ -1,24 +1,21 @@
 <template>
 	<div class="w-[1200px] bg-white py-[20px] px-[40px] rounded shadow">
 		<div class="form wraper w-full flex flex-col gap-[40px]">
-			<form class="w-full" @submit.prevent="updateCourse()">
+			<form class="w-full" @submit.prevent="updateUser()">
 				<div class="form-row w-full flex gap-[20px] h-[140px]">
 					<div class="column w-[49%] flex flex-col gap-[20px] h-full">
 						<label
 							for="name"
 							class="text-[#14003B] text-[18px] font-filroy font-medium"
 						>
-							Name
+							First Name
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
-								v-model="form.name"
+								v-model="form.firstName"
 								type="text"
-								placeholder="Enter course name"
-								id="courseName"
-								name="courseName"
+								placeholder="Enter your first name"
 								class="w-full rounded-xl h-full border pl-[10px]"
-								required
 							/>
 						</div>
 					</div>
@@ -27,20 +24,81 @@
 							for="course_language"
 							class="text-[#14003B] text-[18px] font-filroy font-medium"
 						>
-							Language
+							Last Name
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
-								v-model="form.language"
+								v-model="form.lastName"
 								type="text"
-								placeholder="Enter language"
-								id="language"
-								name="language"
+								placeholder="Enter your last name"
 								class="w-full rounded-xl h-full border pr-[5px] pl-[10px]"
-								required
 							/>
 						</div>
 					</div>
+				</div>
+				<div class="form-row">
+					<div class="column">
+						<label for="email" class="label-form"> Password </label>
+						<div class="input-container">
+							<input
+								v-model="form.password"
+								type="password"
+								placeholder="******"
+								class="input-el"
+							/>
+						</div>
+					</div>
+					<div class="column">
+						<label for="email" class="label-form"> Email </label>
+						<div class="input-container">
+							<input
+								v-model="form.email"
+								type="email"
+								placeholder="Enter your email address"
+								class="input-el"
+							/>
+						</div>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="column">
+						<label for="phumber" class="label-form"> Phone Number </label>
+						<div class="input-container">
+							<input
+								v-model="form.phoneNumber"
+								type="tel"
+								placeholder="Enter your phone number"
+								class="input-el"
+							/>
+						</div>
+					</div>
+					<div class="column">
+						<label for="email" class="label-form"> Rola </label>
+						<div class="input-container">
+							<select
+								v-model="form.rola"
+								class="h-[64px] bg-white border border-gray-300 text-black text-sm font-gilroy rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							>
+								<option selected disabled>Choose a Role</option>
+								<option value="user">User</option>
+								<option value="professor">Professor</option>
+								<option value="admin">Admin</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div
+					v-if="form.rola == 'professor'"
+					class="form-row flex-col mb-[20px]"
+				>
+					<label for="message" class="label-form">Biography</label>
+					<textarea
+						id="message"
+						v-model="form.biography"
+						rows="4"
+						class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="Write your thoughts here..."
+					></textarea>
 				</div>
 
 				<div
@@ -87,9 +145,6 @@
 										<span class="font-semibold">Click to upload</span> or drag
 										and drop
 									</p>
-									<!-- <p class="text-xs text-gray-500 dark:text-gray-400">
-										SVG, PNG, JPG or GIF (MAX. 800x400px)
-									</p> -->
 								</div>
 								<input
 									id="dropzone-file"
@@ -101,6 +156,7 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="w-full h-[100px] flex items-center justify-start mt-[20px]">
 					<div class="h-[50px] w-[150px]">
 						<button
@@ -116,7 +172,6 @@
 	</div>
 </template>
 
-
 <script setup>
 	import { ref, onMounted, customRef } from "vue";
 	import axios from "axios";
@@ -125,15 +180,36 @@
 	import { watch } from "vue";
 
 	const props = defineProps({
-		course: Object,
+		user: Object,
 	});
 
 	const form = ref({
-		name: "",
-		language: "",
+		firstName: "",
+		lastName: "",
+		email: "",
+		password: "",
+		rola: "",
+		phoneNumber: "",
+		biography: "",
 		image: "",
 		imagePreview: "",
 	});
+
+	watch(
+		() => props.user, // Pretpostavljam da se `user` prosleđuje kao prop
+		(newUser) => {
+			if (newUser) {
+				form.value.firstName = newUser.first_name || "";
+				form.value.lastName = newUser.last_name || "";
+				form.value.email = newUser.email || "";
+				form.value.rola = newUser.rola || "";
+				form.value.phoneNumber = newUser.phone_number || "";
+				form.value.biography = newUser.biography || "";
+				form.value.imagePreview = newUser.user_image_url || ""; // Ako je slika prisutna u user objektu
+			}
+		},
+		{ immediate: true } // Odmah prilikom inicijalizacije
+	);
 
 	const handleFileChange = (event) => {
 		const file = event.target.files[0];
@@ -150,26 +226,10 @@
 		form.value.imagePreview = URL.createObjectURL(file);
 	};
 
-	watch(
-		() => props.course,
-		(newCourse) => {
-			if (newCourse) {
-				form.value.name = newCourse.name || "";
-				form.value.language = newCourse.language || "";
-				form.value.imagePreview = newCourse.course_image_url || "";
-			}
-		},
-		{ immediate: true }
-	);
+	const emit = defineEmits(["userUpdated"]);
 
-	const emit = defineEmits(["courseUpdated"]);
-
-	const updateCourse = () => {
-		if (!form.value.name || !form.value.language) {
-			toast.error("Please enter all fields!");
-			return;
-		}
-		emit("courseUpdated", form.value);
+	const updateUser = () => {
+		emit("userUpdated", form.value);
 	};
 </script>
 
