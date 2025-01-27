@@ -1,7 +1,6 @@
 <template>
-	<Navbar bgColor="bg-gray" />
 	<section
-		class="w-full bg-[#F8F7F7] flex justify-start py-[20px] pt-[200px] flex-col items-center m-0 gap-[70px]"
+		class="w-full bg-[#F8F7F7] flex justify-start py-[20px] pt-[150px] flex-col items-center m-0 gap-[70px]"
 	>
 		<Heading heading="Course Info" color="#14003B" fontWeight="medium" />
 
@@ -15,14 +14,13 @@
 	import axios from "axios";
 	import Heading from "@/components/Heading.vue";
 	import CourseInfo from "@/components/CourseInfo.vue";
-	import Navbar from "@/components/Navbar.vue";
 
 	let course = ref({});
 
 	const route = useRoute();
 	const id = route.query.courseId;
 
-	async function getCourseInfo() {
+	const getCourseInfo = async () => {
 		await axios
 			.get(`api/current-courses/course-info/${id}`)
 
@@ -34,7 +32,7 @@
 			.catch(function (error) {
 				console.log(error);
 			});
-	}
+	};
 
 	getCourseInfo();
 </script>

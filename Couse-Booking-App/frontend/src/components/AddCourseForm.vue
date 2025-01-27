@@ -1,7 +1,7 @@
 <template>
 	<div class="w-[1200px] bg-white py-[20px] px-[40px] rounded shadow">
 		<div class="form wraper w-full flex flex-col gap-[40px]">
-			<form class="w-full">
+			<form class="w-full" @submit.prevent="AddCourse()">
 				<div class="form-row w-full flex gap-[20px] h-[140px]">
 					<div class="column w-[49%] flex flex-col gap-[20px] h-full">
 						<label
@@ -12,7 +12,7 @@
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
-								v-model="courseName"
+								v-model="form.courseName"
 								type="text"
 								placeholder="Enter course name"
 								id="courseName"
@@ -31,7 +31,7 @@
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
-								v-model="language"
+								v-model="form.language"
 								type="text"
 								placeholder="Enter language"
 								id="language"
@@ -42,25 +42,7 @@
 						</div>
 					</div>
 				</div>
-				<!-- <div class="form-row w-full flex gap-[20px] h-[140px]">
-					<div class="column w-[49%] flex flex-col gap-[20px] h-full">
-						<label
-							for="max_members"
-							class="text-[#14003B] text-[18px] font-filroy font-medium"
-						>
-							Max Members
-						</label>
-						<div class="w-[80%] bg-white h-[60px]">
-							<input
-								type="text"
-								placeholder="Enter max members of course"
-								id="max_members"
-								name="max_members"
-								class="w-full rounded-xl h-full border pl-[10px]"
-							/>
-						</div>
-					</div>
-				</div> -->
+
 				<div
 					class="image-cotainer w-full flex flex-col gap-[20px] h-[290px] pr-[20px]"
 				>
@@ -78,9 +60,9 @@
 								<div
 									class="flex flex-col items-center justify-center pt-5 pb-6 realtive"
 								>
-									<div v-if="imagePreview">
+									<div v-if="form.imagePreview">
 										<img
-											:src="imagePreview"
+											:src="form.imagePreview"
 											alt="Image preview"
 											style="max-width: 200px"
 											class="aboslute top-0"
@@ -105,9 +87,6 @@
 										<span class="font-semibold">Click to upload</span> or drag
 										and drop
 									</p>
-									<!-- <p class="text-xs text-gray-500 dark:text-gray-400">
-										SVG, PNG, JPG or GIF (MAX. 800x400px)
-									</p> -->
 								</div>
 								<input
 									id="dropzone-file"
@@ -124,7 +103,6 @@
 						<button
 							type="submit"
 							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[150px]"
-							@click.prevent="AddCourse()"
 						>
 							Add
 						</button>
@@ -138,71 +116,40 @@
 <script setup>
 	import { ref } from "vue";
 	import { toast } from "vue3-toastify";
-	import { useRouter } from "vue-router";
 	import axios from "axios";
 
-	const router = useRouter();
+	const emit = defineEmits(["courseAdded"]);
 
-	const courseName = ref("");
-	const language = ref("");
-	const image = ref(null); // Čuva informacije o fajlu
-	const imagePreview = ref(null);
+	const form = ref({
+		courseName: "",
+		language: "",
+		image: "",
+		imagePreview: "",
+	});
 
 	const handleFileChange = (event) => {
 		const file = event.target.files[0];
 		if (!file) {
-			image.value = null;
-			imagePreview.value = null;
+			form.value.image = null;
+			form.value.imagePreview = null;
 			return;
 		}
 		if (!file.type.startsWith("image/")) {
 			toast.error("Please upload a valid image file!");
 			return;
 		}
-		image.value = file;
-		imagePreview.value = URL.createObjectURL(file);
+		form.value.image = file;
+		form.value.imagePreview = URL.createObjectURL(file);
 	};
 
-	const AddCourse = async () => {
-		if (!image.value || !courseName.value || !language.value) {
+	const AddCourse = () => {
+		if (!form.value.image || !form.value.courseName || !form.value.language) {
 			toast.error("Please enter all fields!");
 			return;
 		}
-		const formData = new FormData();
-		formData.append("name", courseName.value);
-		formData.append("language", language.value);
-		formData.append("file", image.value);
-		const token = localStorage.getItem("access_token");
 
-		// for (const pair of formData.entries()) {
-		// 	console.log(`${pair[0]}: ${pair[1]}`);
-		// }
-
-		try {
-			const response = await axios.post("api/admin/add-course", formData, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			toast.success(response.data.message);
-			router.push({ name: "AllCourses" });
-		} catch (error) {
-			toast.error(error.message);
-		}
+		emit("courseAdded", form.value);
 	};
-
-	// const addCourse = async () => {
-	// 	try {
-	// 		axios.post("api/admin/add-course", formData, {
-	// 			headers: {
-	// 				Authorization: `Bearer ${token}`, // Dodajemo token u header
-	// 			},
-	// 		});
-	// 		toast.success("New course addedd sucessfully!");
-	// 	} catch (error) {
-	// 		toast.error(error.message);
-	// 	}
-	// };
 </script>
 
 <style>

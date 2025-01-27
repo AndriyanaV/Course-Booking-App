@@ -2,58 +2,43 @@
 	<div class="flex w-[1100px] flex-col justify-start items-center gap-[10px]">
 		<div class="title-desc">
 			<div class="title">
-				<p>Level</p>
+				<p>Ime</p>
 			</div>
 			<div class="description">
-				<p>{{ course.level }}</p>
+				<p>{{ user.first_name }}</p>
 			</div>
 		</div>
 		<div class="title-desc">
 			<div class="title">
-				<p>Duration</p>
+				<p>Last Name</p>
 			</div>
 			<div class="description">
-				<p>{{ course.weeks_duration }} Weeks</p>
+				<p>{{ user.last_name }}</p>
 			</div>
 		</div>
 		<div class="title-desc">
 			<div class="title">
-				<p>Price</p>
+				<p>email</p>
 			</div>
 			<div class="description">
-				<p>{{ course.price }}$</p>
+				<p class="lowercase">{{ user.email }}</p>
 			</div>
 		</div>
 		<div class="title-desc">
 			<div class="title">
-				<p>Number Of Lessons</p>
+				<p>Phone Number</p>
 			</div>
 			<div class="description">
-				<p>{{ course.lessons }}</p>
+				<p>{{ user.phone_number }}</p>
 			</div>
 		</div>
+
 		<div class="title-desc">
 			<div class="title">
-				<p>Start Date</p>
+				<p>Rola</p>
 			</div>
 			<div class="description">
-				<p>{{ startDate }}</p>
-			</div>
-		</div>
-		<div class="title-desc">
-			<div class="title">
-				<p>End Date</p>
-			</div>
-			<div class="description">
-				<p>{{ endDate }}</p>
-			</div>
-		</div>
-		<div class="title-desc">
-			<div class="title">
-				<p>Max Members</p>
-			</div>
-			<div class="description">
-				<p>{{ course.max_members }}</p>
+				<p>{{ user.rola }}</p>
 			</div>
 		</div>
 		<div class="w-full h-[350px] flex rounded-sm">
@@ -63,13 +48,10 @@
 				<div
 					class="w-full h-[90px] bg-[#9989B4] text-[#FFFF] flex flex-col items-center justify-center font-medium text-[32px] font-gilroy rounded-sm"
 				>
-					<p>Teacher</p>
+					<p>Photo</p>
 				</div>
 				<div class="w-full h-[250px] rounded-sm">
-					<img
-						:src="course.user_image_url"
-						class="w-full h-full rounded-b-sm"
-					/>
+					<img :src="user.user_image_url" class="w-full h-full rounded-b-sm" />
 				</div>
 			</div>
 			<div
@@ -78,14 +60,12 @@
 				<div
 					class="w-full h-[90px] flex bg-white justify-center items-center text-[24px] font-gilroy font-normal text-[#A49D9D] rounded-l-lg-md rounded-sm"
 				>
-					<p>{{ course.first_name }} {{ course.last_name }}</p>
+					<p v-if="user.rola == 'professor'">Biography</p>
 				</div>
 				<div
 					class="w-full h-[250px] bg-white text-[18px] font-gilroy font-normal text-[#A49D9D] px-[40px] rounded-sm"
 				>
-					<p>
-						{{ course.biography }}
-					</p>
+					<p>{{ user.biography }}</p>
 				</div>
 			</div>
 		</div>
@@ -93,32 +73,9 @@
 </template>
 
 <script setup>
-	import { formatDate } from "@/composables/formatDate.js";
-	import { ref, onMounted, watch } from "vue";
-
 	const props = defineProps({
-		course: Object,
+		user: Object,
 	});
-
-	let startDate = ref(null);
-	let endDate = ref(null);
-
-	const updateDates = () => {
-		startDate.value = formatDate(props.course.start_at, true);
-
-		endDate.value = formatDate(props.course.end_at, false);
-	};
-
-	onMounted(() => {
-		updateDates();
-	});
-
-	watch(
-		() => props.course,
-		() => {
-			updateDates();
-		}
-	);
 </script>
 
 <style>

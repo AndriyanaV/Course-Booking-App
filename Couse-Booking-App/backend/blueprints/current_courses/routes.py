@@ -99,3 +99,18 @@ def show_clicked_course(id):
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+
+
+@current_courses_bp.route("/get-language-options", methods=["GET"])
+def get_language_options():
+    try:
+        con, cursor = get_db_connection()
+        query = """
+            SELECT DISTINCT id, language FROM course;
+        """
+        cursor.execute(query)
+        data = cursor.fetchall()
+        return jsonify(data)
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
