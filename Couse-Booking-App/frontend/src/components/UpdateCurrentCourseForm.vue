@@ -201,12 +201,7 @@
 
 	const getProfessors = async () => {
 		try {
-			const token = localStorage.getItem("access_token");
-			const response = await axios.get("api/admin//get-professors", {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			const response = await axios.get("api/admin//get-professors");
 			professors.value = response.data;
 		} catch (error) {
 			toast.error(error);

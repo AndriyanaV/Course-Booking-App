@@ -165,7 +165,7 @@
 	const emit = defineEmits(["courseUpdated"]);
 
 	const updateCourse = () => {
-		if (!form.value.name || !form.value.language) {
+		if (!form.value.name || !form.value.language || !form.value.image) {
 			toast.error("Please enter all fields!");
 			return;
 		}

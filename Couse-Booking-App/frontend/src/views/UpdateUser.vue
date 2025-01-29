@@ -6,7 +6,7 @@
 
 <script setup>
 	import { useRoute, useRouter } from "vue-router";
-	import { ref } from "vue";
+	import { ref, onMounted } from "vue";
 	import axios from "axios";
 	import { toast } from "vue3-toastify";
 	import UpdateUserForm from "@/components/UpdateUserForm.vue";
@@ -17,15 +17,12 @@
 	const user = ref({});
 
 	const getUserInfo = async () => {
-		await axios
-			.get(`api/admin/get-user/${userId}`)
-
-			.then((response) => {
-				user.value = response.data;
-			})
-			.catch(function (error) {
-				console.log(error);
-			});
+		try {
+			const response = await axios.get(`api/admin/get-user/${userId}`);
+			user.value = response.data;
+		} catch (error) {
+			toast(error.message || error.response.data.message);
+		}
 	};
 
 	const updateUser = async (form) => {
@@ -50,7 +47,9 @@
 		}
 	};
 
-	getUserInfo();
+	onMounted(() => {
+		getUserInfo();
+	});
 </script>
 
 <style>

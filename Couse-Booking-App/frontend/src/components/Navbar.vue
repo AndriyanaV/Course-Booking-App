@@ -6,36 +6,46 @@
 			class="content w-[1320px] h-full flex items-center justify-between bg-[#f4f8ff]"
 		>
 			<div class="h-full flex items-center">
-				<RouterLink
-					class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
-					active-class="text-blue-600 font-bold"
-					to="/"
-					>Homepage</RouterLink
-				>
-				<RouterLink
-					class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
-					to="all-courses"
-					active-class="text-blue-600 font-bold"
-					>All Courses</RouterLink
-				>
-				<RouterLink
-					class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
-					to="all-users"
-					active-class="text-blue-600 font-bold"
-					>All Users</RouterLink
-				>
-				<RouterLink
-					class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
-					to="/"
-					active-class="text-blue-600 font-bold"
-					>My Courses</RouterLink
-				>
-				<RouterLink
-					class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
-					to="/"
-					active-class="text-blue-600 font-bold"
-					>My Courses</RouterLink
-				>
+				<div>
+					<RouterLink
+						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
+						active-class="text-blue-600 font-bold"
+						to="/"
+						>Homepage</RouterLink
+					>
+				</div>
+				<div>
+					<RouterLink
+						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
+						to="all-courses"
+						active-class="text-blue-600 font-bold"
+						>All Courses</RouterLink
+					>
+				</div>
+				<div>
+					<RouterLink
+						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
+						to="all-users"
+						active-class="text-blue-600 font-bold"
+						>All Users</RouterLink
+					>
+				</div>
+				<div>
+					<RouterLink
+						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
+						to="/user-courses"
+						active-class="text-blue-600 font-bold"
+						>My Courses</RouterLink
+					>
+				</div>
+				<div>
+					<RouterLink
+						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
+						to="/"
+						active-class="text-blue-600 font-bold"
+						>My Courses</RouterLink
+					>
+				</div>
 			</div>
 
 			<div class="flex h-full items-center gap-[15px]">
@@ -63,6 +73,18 @@
 </template>
 
 <script setup>
+	import { useUserRole } from "@/composables/useUserRole.js";
+	import { RouterLink, useRouter } from "vue-router";
+	import { toast } from "vue3-toastify";
+	import { onMounted } from "vue";
+
+	const router = useRouter();
+	const { userRole, checkUserRole } = useUserRole();
+	console.log(userRole.value);
+
+	onMounted(() => {
+		checkUserRole();
+	});
 </script>
 
 <style scoped>

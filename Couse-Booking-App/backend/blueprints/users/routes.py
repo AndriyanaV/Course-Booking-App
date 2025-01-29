@@ -16,17 +16,20 @@ con, cursor = get_db_connection()
 @jwt_required()
 def show_user_profile():
 
+    con, cursor = get_db_connection()
+
     claims = get_jwt()
     user_id = claims.get('user_id')
 
     try:
         query = """
-        SELECT first_name, last_name, email,phone_number,biography,user_image_url
+        SELECT id, first_name, last_name, email,phone_number,biography,user_image_url
         FROM user
         WHERE user.id=%s
         """
         cursor.execute(query, (user_id, ))
         data = cursor.fetchone()
+
         return jsonify(data)
 
     except Exception as e:
@@ -35,6 +38,7 @@ def show_user_profile():
 
 @users_bp.route("/user-courses", methods=["GET"])
 @jwt_required()
+@role_required(["user"])
 def show_user_courses():
     try:
 
@@ -43,9 +47,10 @@ def show_user_courses():
 
         query = """
             SELECT
-                course.name AS course_name,
+                course.name,
+                course.course_image_url,
                 course.id AS course_id,
-                current_courses.id AS current_course_id,
+                current_courses.id,
                 current_courses.start_at,
                 current_courses.end_at,
                 current_courses.price,
@@ -66,11 +71,11 @@ def show_user_courses():
         return jsonify({"message": "Error"})
 
 
-@users_bp.route("/book-course", methods=["POST"])
+@users_bp.route("/book-course/<int:id>", methods=["POST"])
 @jwt_required()
-def count_members():
+def count_members(id):
     try:
-        course_id = request.json
+        course_id = id
 
         query = """
             SELECT
@@ -131,6 +136,9 @@ def show_professor_courses():
 
         query = """
         SELECT course.name,
+            course.course_image_url,
+            current_courses.id,
+            current_courses.price,
             current_courses.start_at,
             current_courses.end_at,
             current_courses.level

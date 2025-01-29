@@ -27,70 +27,12 @@
 		</section>
 
 		<section class="w-full py-12 pr-0 flex justify-center">
-			<div class="w-[1320px] flex justify-center">
-				<div
-					class="container max-w-[50%] flex justify-center items-center m-0 pt-[10px] px-0"
-				>
-					<div class="select-wrapper w-[360px]">
-						<!-- <div>Selected: {{ selectedLevel }}</div> -->
-						<form
-							class="max-w-[358px] w-full h-full flex items-center gap-[15px] min-w-fit"
-						>
-							<label
-								for="countries_disabled"
-								class="block mb-0 text-[#4E32BA] text-[18px] font-medium min-w-fit"
-							>
-								Choose a level
-							</label>
-
-							<select
-								v-model="selectedLevel"
-								class="bg-black-70 border border-r-4 border-[#4E32BA] text-[#4E32BA] text-sm rounded-lg focus:ring-blue-200 focus:border-gray block w-full p-3 dark:bg-gray-100 dark:placeholder-gray-400 dark:text-[#4E32BA] dark:focus:ring-blue-500 dark:focus:border-[#15074d]"
-							>
-								<option disabled value="">Please select level you want</option>
-								<option value="">All Levels</option>
-								<option value="beginner">Beginner</option>
-								<option value="intermediate">Intermediate</option>
-								<option value="advanced">Advanced</option>
-							</select>
-						</form>
-					</div>
-				</div>
-				<div
-					class="container max-w-[50%] flex justify-center items-center m-0 pt-[10px] px-0"
-				>
-					<div class="select-wrapper w-[360px]">
-						<!-- <div>Selected: {{ selectedLevel }}</div> -->
-						<form
-							class="max-w-[358px] w-full h-full flex items-center gap-[15px] min-w-fit"
-						>
-							<label
-								for="countries_disabled"
-								class="block mb-0 text-[#4E32BA] text-[18px] font-medium min-w-fit"
-							>
-								Choose a language
-							</label>
-
-							<select
-								v-model="selectedLanguage"
-								class="bg-black-70 border border-r-4 border-[#4E32BA] text-[#4E32BA] text-sm rounded-lg focus:ring-blue-200 focus:border-gray block w-full p-3 dark:bg-gray-100 dark:placeholder-gray-400 dark:text-[#4E32BA] dark:focus:ring-blue-500 dark:focus:border-[#15074d] capitalize"
-							>
-								<option disabled value="">
-									Please select language you want
-								</option>
-								<option value="">All Languages</option>
-								<option
-									v-for="languageOption in languageOptions"
-									:key="languageOption.id"
-									:value="languageOption.language"
-									class="capitalize"
-								>
-									{{ languageOption.language }}
-								</option>
-							</select>
-						</form>
-					</div>
-				</div>
+			<div class="w-[1320px] flex justify-between px-[200px]">
+				<SelectLevel @levelSelected="setLevel" />
+				<SelectLanguage
+					@languageSelected="setLanguage"
+					:languageOptions="languageOptions"
+				/>
 			</div>
 		</section>
 
@@ -99,10 +41,12 @@
 				class="container max-w-[1320px] flex justify-start items-start m-0 flex-wrap gap-[40px] p-0"
 			>
 				<div v-if="courses.length === 0" class="w-full h-[100px] text-center">
-					<p class="font-gilroy">We still dont't have a course to offfer.</p>
+					<p class="font-gilroy text-[18px] text-[#4E32BA]">
+						We still dont't have a course to offfer.
+					</p>
 				</div>
 				<div v-for="course in courses" :key="course.id">
-					<LanguageCard :course="course" />
+					<LanguageCard :course="course" @courseBooking="bookCourse" />
 				</div>
 			</div>
 		</section>
@@ -112,25 +56,31 @@
 <script setup>
 	import { ref, onMounted, watch } from "vue";
 	import axios from "axios";
+	import { toast } from "vue3-toastify";
 	import FeatureCard from "@/components/FeatureCard.vue";
 	import Heading from "@/components/Heading.vue";
 	import LanguageFilterCard from "@/components/LanguageFilterCard.vue";
 	import LanguageCard from "@/components/LanguageCard.vue";
+	import SelectLanguage from "@/components/SelectLanguage.vue";
+	import SelectLevel from "@/components/SelectLevel.vue";
 	import Navbar from "@/components/Navbar.vue";
 
 	let courses = ref([]);
 	const languageOptions = ref([]);
 	let selectedLanguage = ref("");
-
 	const selectedLevel = ref("");
-
-	function changeLanguage(language) {
-		selectedLanguage.value = language;
-	}
 
 	watch([selectedLanguage, selectedLevel], () => {
 		getCourses();
 	});
+
+	const setLanguage = (language) => {
+		selectedLanguage.value = language;
+	};
+
+	const setLevel = (level) => {
+		selectedLevel.value = level;
+	};
 
 	const getCourses = async () => {
 		try {
@@ -146,19 +96,31 @@
 		}
 	};
 
-	const getLnaguageOptions = async () => {
+	const getLanguageOptions = async () => {
 		try {
 			const response = await axios.get(
 				"api/current-courses/get-language-options"
 			);
 			languageOptions.value = response.data;
 		} catch (error) {
-			console.log(error);
+			toast.error(error.message || error.response.data.message);
 		}
 	};
+
+	const bookCourse = async (id) => {
+		try {
+			if (confirm("Are you sure?")) {
+				const response = await axios.post(`api/users/book-course/${id}`);
+				toast.success(response.data.message);
+			}
+		} catch (error) {
+			toast.error(error.response.data.message || error.message);
+		}
+	};
+
 	onMounted(() => {
 		getCourses();
-		getLnaguageOptions();
+		getLanguageOptions();
 	});
 </script>
 

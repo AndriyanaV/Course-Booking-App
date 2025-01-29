@@ -16,7 +16,7 @@
 		<section class="w-full py-12 pr-0 flex justify-center">
 			<div class="w-[1320px] flex flex-wrap justify-between items-center">
 				<div v-for="user in allUsers" :key="user.id">
-					<UserCard :user="user" />
+					<UserCard :user="user" @userDeleted="filterUsers" />
 				</div>
 			</div>
 		</section>
@@ -25,7 +25,7 @@
 
 <script setup>
 	import axios from "axios";
-	import { ref } from "vue";
+	import { ref, onMounted } from "vue";
 	import { toast } from "vue3-toastify";
 	import Heading from "@/components/Heading.vue";
 	import UserCard from "@/components/UserCard.vue";
@@ -35,18 +35,20 @@
 
 	const getAllUsers = async () => {
 		try {
-			const response = await axios.get(`/api/admin/get-users`, {
-				headers: {
-					Authorization: `Bearer ${token}`, // Dodajemo token u header
-				},
-			});
+			const response = await axios.get("/api/admin/get-users");
 			allUsers.value = response.data;
 		} catch (error) {
 			toast.error(error.message);
 		}
 	};
 
-	getAllUsers();
+	const filterUsers = (deltedUser) => {
+		allUsers.value = allUsers.value.filter((user) => user.id != deltedUser.id);
+	};
+
+	onMounted(() => {
+		getAllUsers();
+	});
 </script>
 
 <style>

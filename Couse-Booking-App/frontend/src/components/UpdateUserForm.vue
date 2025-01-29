@@ -8,7 +8,7 @@
 							for="name"
 							class="text-[#14003B] text-[18px] font-filroy font-medium"
 						>
-							First Name
+							First Name (*)
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
@@ -24,7 +24,7 @@
 							for="course_language"
 							class="text-[#14003B] text-[18px] font-filroy font-medium"
 						>
-							Last Name
+							Last Name (*)
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
@@ -49,7 +49,7 @@
 						</div>
 					</div>
 					<div class="column">
-						<label for="email" class="label-form"> Email </label>
+						<label for="email" class="label-form"> Email (*)</label>
 						<div class="input-container">
 							<input
 								v-model="form.email"
@@ -229,6 +229,10 @@
 	const emit = defineEmits(["userUpdated"]);
 
 	const updateUser = () => {
+		if (!form.value.firstName || !form.value.lastName || !form.value.email) {
+			toast.error("Enter all require fields.");
+			return;
+		}
 		emit("userUpdated", form.value);
 	};
 </script>

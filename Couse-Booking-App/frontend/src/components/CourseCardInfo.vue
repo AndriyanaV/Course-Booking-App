@@ -30,18 +30,11 @@
 	});
 
 	const course = ref("");
-	const id = Number(props.courseId);
-	console.log(typeof id);
-	console.log(typeof Number(id));
+	const id = props.courseId;
+
 	const getCourse = async () => {
 		try {
-			const token = localStorage.getItem("access_token");
-
-			const response = await axios.get(`/api/admin/get-course/${id}`, {
-				headers: {
-					Authorization: `Bearer ${token}`, // Dodajemo token u header
-				},
-			});
+			const response = await axios.get(`/api/admin/get-course/${id}`);
 			course.value = response.data;
 		} catch (error) {
 			toast.error(error.response?.data?.message || error.message);

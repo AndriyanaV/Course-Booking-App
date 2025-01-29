@@ -11,7 +11,7 @@
 <script setup>
 	import UserInfo from "@/components/UserInfo.vue";
 	import Heading from "@/components/Heading.vue";
-	import { ref } from "vue";
+	import { ref, onMounted } from "vue";
 	import axios from "axios";
 	import { useRoute } from "vue-router";
 
@@ -34,7 +34,9 @@
 			});
 	};
 
-	getUserInfo();
+	onMounted(() => {
+		getUserInfo();
+	});
 </script>
 
 <style>

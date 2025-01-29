@@ -1,37 +1,14 @@
 <template>
-	<section class="w-full flex items-center flex-col">
+	<section class="w-full flex items-center flex-col pt-[150px]">
 		<section class="w-full py-12 pr-0 flex justify-center">
 			<Heading heading="All Current Courses" color="#4E32BA" />
 		</section>
 
 		<section class="w-[1320px] py-12 pr-0 flex justify-center">
 			<div
-				class="container max-w-[1320px] flex justify-start items-center m-0 pt-[10px] px-0"
+				class="container max-w-[1320px] flex justify-between items-center m-0 px-0"
 			>
-				<div class="select-wrapper w-[360px]">
-					<!-- <div>Selected: {{ selectedLevel }}</div> -->
-					<form
-						class="max-w-[358px] w-full h-full flex items-center gap-[15px] min-w-fit"
-					>
-						<label
-							for="countries_disabled"
-							class="block mb-0 text-[#4E32BA] text-[18px] font-medium min-w-fit"
-						>
-							Select a level
-						</label>
-
-						<select
-							v-model="selectedLevel"
-							class="bg-black-70 border border-r-4 border-[#4E32BA] text-[#4E32BA] text-sm rounded-lg focus:ring-blue-200 focus:border-gray block w-full p-3 dark:bg-gray-100 dark:placeholder-gray-400 dark:text-[#4E32BA] dark:focus:ring-blue-500 dark:focus:border-[#15074d]"
-						>
-							<option disabled value="">Please select level you want</option>
-							<option value="">All Levels</option>
-							<option value="beginner">Beginner</option>
-							<option value="intermediate">Intermediate</option>
-							<option value="advanced">Advanced</option>
-						</select>
-					</form>
-				</div>
+				<SelectLevel @levelSelected="setLevel" />
 			</div>
 			<div class="h-[60px] w-[200px]">
 				<button
@@ -73,10 +50,11 @@
 
 <script setup>
 	import { useRoute } from "vue-router";
-	import { ref, watch } from "vue";
+	import { ref, watch, onMounted } from "vue";
 	import { toast } from "vue3-toastify";
 	import axios from "axios";
 	import CurrentCourseCard from "@/components/CurrentCourseCard.vue";
+	import SelectLevel from "@/components/SelectLevel.vue";
 	import Heading from "@/components/Heading.vue";
 
 	const route = useRoute();
@@ -84,6 +62,10 @@
 
 	let currentCourses = ref("");
 	let selectedLevel = ref("");
+
+	const setLevel = (level) => {
+		selectedLevel.value = level;
+	};
 
 	watch(selectedLevel, () => {
 		getAllCurrentCourses();
@@ -118,7 +100,9 @@
 		);
 	};
 
-	getAllCurrentCourses();
+	onMounted(() => {
+		getAllCurrentCourses();
+	});
 </script>
 
 <style>
