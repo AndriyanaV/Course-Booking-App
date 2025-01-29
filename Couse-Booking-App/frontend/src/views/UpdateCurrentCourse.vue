@@ -9,14 +9,14 @@
 
 <script setup>
 	import { useRoute, useRouter } from "vue-router";
-	import { ref } from "vue";
+	import { ref, onMounted } from "vue";
 	import axios from "axios";
 	import { toast } from "vue3-toastify";
 	import UpdateCurrentCourseForm from "@/components/UpdateCurrentCourseForm.vue";
 
 	const route = useRoute();
 	const router = useRouter();
-	const courseId = Number(route.query.courseId);
+	const courseId = route.query.courseId;
 	const course = ref({});
 
 	const getCourseInfo = async () => {
@@ -91,7 +91,9 @@
 	// 	}
 	// };
 
-	getCourseInfo();
+	onMounted(() => {
+		getCourseInfo();
+	});
 </script>
 
 <style>

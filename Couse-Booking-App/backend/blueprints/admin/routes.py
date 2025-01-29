@@ -54,7 +54,7 @@ UPLOAD_FOLDER_USER = 'uploads/user'
 
 @admin_bp.route("/update-user/<int:id>", methods=['PUT'])
 @jwt_required()
-@role_required(["admin"])
+@role_required(["admin", "user"])
 def update_user_info(id):
     try:
         query = "SELECT  * FROM user WHERE id=%s"
@@ -235,6 +235,9 @@ def get_all_current_courses(id):
 def get_all_courses():
     try:
         language = request.args.get('language', '%')
+
+        if (language == ""):
+            language = '%'
 
         print(language)
 

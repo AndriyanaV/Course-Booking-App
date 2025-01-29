@@ -6,12 +6,13 @@
 
 <script setup>
 	import UpdateCourseForm from "@/components/UpdateCourseForm.vue";
-	import { useRoute } from "vue-router";
+	import { useRoute, useRouter } from "vue-router";
 	import { toast } from "vue3-toastify";
 	import axios from "axios";
 	import { ref, onMounted } from "vue";
 
 	const route = useRoute();
+	const router = useRouter();
 	const id = route.query.courseId;
 	const course = ref({});
 
@@ -32,7 +33,9 @@
 
 		try {
 			const response = await axios.put(`api/admin/update-course/${id}`, formData);
-			toast.success(response.data.message);
+			router
+				.push("/all-courses")
+				.then(() => toast.success(response.data.message));
 		} catch (error) {
 			toast.error(error.message);
 		}

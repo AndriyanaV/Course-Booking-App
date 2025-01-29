@@ -3,39 +3,12 @@
 		<section class="w-full py-12 pr-0 flex justify-center pt-[150px]">
 			<Heading heading="All  Courses" color="#4E32BA" />
 		</section>
-		<section class="w-[1320px] py-12 flex justify-center items-center">
-			<div
-				class="container max-w-[1320px] flex justify-start items-center m-0 pt-[10px] px-0"
-			>
-				<div class="select-wrapper w-[360px]">
-					<!-- <div>Selected: {{ selectedLanguage }}</div> -->
-					<form
-						class="max-w-[358px] w-full h-full flex items-center gap-[15px] min-w-fit"
-					>
-						<label
-							for="countries_disabled"
-							class="block mb-0 text-[#4E32BA] text-[18px] font-medium min-w-fit"
-						>
-							Chose a language
-						</label>
+		<section class="w-[1320px] py-12 flex justify-between items-center">
+			<SelectLanguage
+				@languageSelected="setLanguage"
+				:languageOptions="languageOptions"
+			/>
 
-						<select
-							v-model="selectedLanguage"
-							class="bg-black-70 border capitalize border-r-4 border-[#4E32BA] text-[#4E32BA] text-sm rounded-lg focus:ring-blue-200 focus:border-gray block w-full p-3 dark:bg-gray-100 dark:placeholder-gray-400 dark:text-[#4E32BA] dark:focus:ring-blue-500 dark:focus:border-[#15074d]"
-						>
-							<option value="%">All Languages</option>
-							<option
-								v-for="languageOption in languageOptions"
-								:key="languageOption.id"
-								:value="languageOption.language"
-								class="capitalize"
-							>
-								{{ languageOption.language }}
-							</option>
-						</select>
-					</form>
-				</div>
-			</div>
 			<div class="h-[60px] w-[150px]">
 				<button
 					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[150px]"
@@ -63,8 +36,13 @@
 	import { toast } from "vue3-toastify";
 	import Heading from "@/components/Heading.vue";
 	import CourseCard from "@/components/CourseCard.vue";
+	import SelectLanguage from "@/components/SelectLanguage.vue";
 
 	const languageOptions = ref([]);
+
+	const setLanguage = (language) => {
+		selectedLanguage.value = language;
+	};
 
 	let courses = ref("");
 	let selectedLanguage = ref(null);

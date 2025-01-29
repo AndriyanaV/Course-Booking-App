@@ -46,11 +46,14 @@
 				<div class="w-[32px] h-[32px]">
 					<img src="/images/start.svg" class="w-full h-full" />
 				</div>
-				<p class="text-[16px]">{{ formattedDate }}</p>
+				<p class="text-[16px]">{{ startDate }}</p>
 			</div>
 		</div>
 
-		<div class="px-[19px] flex w-full justify-between h-16 items-center">
+		<div
+			class="px-[19px] flex w-full justify-between h-16 items-center"
+			@click="bookCourse()"
+		>
 			<button
 				class="bg-blue-800 hover:bg-[#06088C] text-white font-medium py-2 px-4 border border-blue-800 rounded h-[42px]"
 			>
@@ -75,15 +78,21 @@
 
 <script setup>
 	import { ref, computed } from "vue";
+	import { formatDate } from "@/composables/formatDate.js";
+
 	const props = defineProps({
 		course: Object,
 	});
 
-	let date = new Date(props.course.start_at);
-	let day = date.getDate(); // Dan u mesecu (1-31)
-	let month = date.getMonth() + 1; // Mesec (1-12), zato što je `getMonth()` 0-indeksiran
-	let year = date.getUTCFullYear(); // Godina (četvorka)
-	let formattedDate = `${day}.${month}.${year}`;
+	const emit = defineEmits(["courseBooking"]);
+
+	const startDate = ref("");
+
+	startDate.value = formatDate(props.course.start_at, false);
+
+	const bookCourse = () => {
+		emit("courseBooking", props.course.id);
+	};
 </script>
 
 <style scoped>

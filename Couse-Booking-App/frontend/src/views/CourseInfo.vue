@@ -10,31 +10,30 @@
 
 <script setup>
 	import { useRoute } from "vue-router";
-	import { ref } from "vue";
+	import { ref, onMounted } from "vue";
 	import axios from "axios";
 	import Heading from "@/components/Heading.vue";
 	import CourseInfo from "@/components/CourseInfo.vue";
+	import { toast } from "vue3-toastify";
 
-	let course = ref({});
+	let course = ref("");
 
 	const route = useRoute();
 	const id = route.query.courseId;
 
 	const getCourseInfo = async () => {
-		await axios
-			.get(`api/current-courses/course-info/${id}`)
-
-			.then((response) => {
-				course.value = response.data;
-				console.log("course inf");
-				console.log(course.value);
-			})
-			.catch(function (error) {
-				console.log(error);
-			});
+		try {
+			const response = await axios.get(`api/current-courses/course-info/${id}`);
+			console.log(response.data);
+			course.value = response.data;
+		} catch (error) {
+			toast.error(error.message);
+		}
 	};
 
-	getCourseInfo();
+	onMounted(() => {
+		getCourseInfo();
+	});
 </script>
 
 

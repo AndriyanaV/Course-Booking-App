@@ -73,7 +73,7 @@ def get_courses():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return jsonify({"message": "We don't have course to offer!"})
+        return jsonify({"message": {e}})
 
 
 @current_courses_bp.route("/course-info/<int:id>", methods=["GET"])

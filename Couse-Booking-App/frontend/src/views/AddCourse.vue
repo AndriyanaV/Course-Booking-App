@@ -17,16 +17,12 @@
 		formData.append("name", form.courseName);
 		formData.append("language", form.language);
 		formData.append("file", form.image);
-		const token = localStorage.getItem("access_token");
 
 		try {
-			const response = await axios.post("api/admin/add-course", formData, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			toast.success(response.data.message);
-			router.push({ name: "AllCourses" });
+			const response = await axios.post("api/admin/add-course", formData);
+			router
+				.push("/all-courses")
+				.then(() => toast.success(response.data.message));
 		} catch (error) {
 			toast.error(error.message);
 		}

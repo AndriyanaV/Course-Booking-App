@@ -11,7 +11,11 @@ import AddCurrentCourse from '@/views/AddCurrentCourse.vue'
 import UpdateCurrentCourse from '@/views/UpdateCurrentCourse.vue'
 import UpdateUser from '@/views/UpdateUser.vue'
 import AddUser from '@/views/AddUser.vue'
+import UserCourses from '@/views/UserCourses.vue'
 import UserInfo from '@/views/UserInfo.vue'
+import ProfessorCourses from '@/views/ProfessorCourses.vue'
+import UserProfile from '@/views/UserProfile.vue'
+import UserProfileUpdate from '@/views/UserProfileUpdate.vue'
 import Login from '@/views/Login.vue';
 
 
@@ -29,6 +33,8 @@ const router = createRouter({
       path: "/course-info",
       name: "CourseInfo",
       component: CourseInfo,
+      
+      
     },
     {
       path: "/login",
@@ -102,7 +108,29 @@ const router = createRouter({
       path: "/update-user",
       name: "UpdateUser",
       component: UpdateUser,
+    },
+    {
+      path: "/user-courses",
+      name: "UserCourses",
+      component: UserCourses,
+    },
+    {
+      path: "/professor-courses",
+      name: "ProfessorCourses",
+      component: ProfessorCourses,
+    },
+    {
+      path: "/user-profile",
+      name: "UserProfile",
+      component: UserProfile,
+    },
+    {
+      path: "/user-profile-update",
+      name: "UserProfileUpdate",
+      component: UserProfileUpdate,
     }
+
+
 
 
 

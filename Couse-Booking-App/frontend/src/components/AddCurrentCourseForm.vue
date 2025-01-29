@@ -173,50 +173,15 @@
 			!form.value.location ||
 			!form.value.level
 		) {
-			toast.error("Please enter all filds.");
+			toast.error("Please enter all fields.");
 			return;
 		}
 		emit("activeCourseAdded", form.value);
 	};
 
-	// const AddCurrentCourse = async () => {
-	// 	if (
-	// 		!price.value ||
-	// 		!members.value ||
-	// 		!startAt.value ||
-	// 		!endAt.value ||
-	// 		!lessons.value ||
-	// 		!professor.value ||
-	// 		!location.value ||
-	// 		!level.value
-	// 	) {
-	// 		toast.error("Please enter all filds.");
-	// 		return;
-	// 	}
-
-	// 	try {
-	// 		const response = await axios.post("api/admin/add-current-course", {
-	// 			course_id: courseId,
-	// 			user_id: professor.value,
-	// 			price: price.value,
-	// 			start_at: startAt.value,
-	// 			end_at: endAt.value,
-	// 			max_members: members.value,
-	// 			level: level.value,
-	// 			location: location.value,
-	// 			lessons: lessons.value,
-	// 		});
-	// 		router
-	// 			.push(`/all-current-courses/${courseId}`)
-	// 			.then(() => toast.success(response.data.message));
-	// 	} catch (error) {
-	// 		toast.error(error.response.data.message || error.message);
-	// 	}
-	// };
-
 	const getProfessors = async () => {
 		try {
-			const response = await axios.get("api/admin//get-professors");
+			const response = await axios.get("api/admin/get-professors");
 			professors.value = response.data;
 		} catch (error) {
 			toast.error(error);

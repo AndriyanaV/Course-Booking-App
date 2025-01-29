@@ -13,8 +13,6 @@
 	const route = useRoute();
 	const router = useRouter();
 	const id = Number(route.query.courseId);
-	// console.log("id");
-	// console.log(id);
 
 	const addActiveCourse = async (form) => {
 		try {

@@ -1,7 +1,10 @@
 <template>
 	<div class="card w-[413px] pb-[20px]">
 		<div class="w-full h-[265px]">
-			<img :src="currentCourse.course_image_url" class="w-full h-full" />
+			<img
+				:src="currentCourse.course_image_url"
+				class="w-full h-full rounded-md"
+			/>
 		</div>
 		<div
 			class="w-full px-[19px] flex justify-between flex-row h-[65px] items-center"
@@ -15,7 +18,9 @@
 				<div class="level">
 					<p class="capitalize">{{ currentCourse.level }}</p>
 				</div>
-				<div class="level bg-red-500 text-[#ffff]"><p>level</p></div>
+				<div class="level bg-red-500 text-[#ffff]">
+					<p>{{ status }}</p>
+				</div>
 			</div>
 		</div>
 		<div class="w-full h-[50px] flex items-start gap-[10px] px-[19px]">
@@ -66,27 +71,37 @@
 
 <script setup>
 	import { formatDate } from "@/composables/formatDate.js";
-	import { ref } from "vue";
+	import { onMounted, ref } from "vue";
 	import axios from "axios";
 	import { toast } from "vue3-toastify";
 
 	const emit = defineEmits(["currentCourseRemoved"]);
 
+	const status = ref("");
+
 	const props = defineProps({
 		currentCourse: Object,
 	});
 
-	// const id = Number(props.currentCourse.id);
-	// console.log("id je");
-	// console.log(typeof id);
-
 	let startDate = ref("");
 	let endDate = ref("");
 
-	//const token = localStorage.getItem("access_token");
-
 	startDate.value = formatDate(props.currentCourse.start_at, false);
 	endDate.value = formatDate(props.currentCourse.end_at, false);
+
+	const chehckStatus = () => {
+		const dateNow = Date.now();
+		console.log(dateNow);
+		console.log(Date(startDate.time));
+		if (startDate.value < dateNow) {
+			status.value = "Closed";
+			return;
+		} else if (endDate.value < dateNow) {
+			status.value = "Finished";
+			return;
+		}
+		status.value = "Active";
+	};
 
 	const deleteCurrentCourse = async () => {
 		if (confirm("Are you sure?")) {
@@ -101,6 +116,10 @@
 			}
 		}
 	};
+
+	onMounted(() => {
+		chehckStatus();
+	});
 </script>
 
 <style>

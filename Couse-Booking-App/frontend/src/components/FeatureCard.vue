@@ -17,13 +17,4 @@
 </script>
 
 <style>
-	.feature-card-container {
-		width: 30%;
-		height: 100%;
-		background-color: #00015b;
-		color: white;
-		font-size: 30px;
-		z-index: 1;
-		padding-top: 20px;
-	}
 </style>
