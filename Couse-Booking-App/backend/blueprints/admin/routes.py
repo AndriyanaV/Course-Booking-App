@@ -412,7 +412,7 @@ def add_course():
 @role_required(["admin"])
 def delete_course(id):
     try:
-        print(id)
+        
 
         query = """
         DELETE FROM course WHERE id = %s;

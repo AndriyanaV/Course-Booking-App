@@ -14,7 +14,7 @@
 						>Homepage</RouterLink
 					>
 				</div>
-				<div>
+				<div v-if="userRole === 'admin'">
 					<RouterLink
 						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
 						to="all-courses"
@@ -22,7 +22,7 @@
 						>All Courses</RouterLink
 					>
 				</div>
-				<div>
+				<div v-if="userRole === 'admin'">
 					<RouterLink
 						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
 						to="all-users"
@@ -30,7 +30,7 @@
 						>All Users</RouterLink
 					>
 				</div>
-				<div>
+				<div v-if="userRole === 'user'">
 					<RouterLink
 						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
 						to="/user-courses"
@@ -38,10 +38,10 @@
 						>My Courses</RouterLink
 					>
 				</div>
-				<div>
+				<div v-if="userRole === 'professor'">
 					<RouterLink
 						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
-						to="/"
+						to="/professor-courses"
 						active-class="text-blue-600 font-bold"
 						>My Courses</RouterLink
 					>
@@ -50,6 +50,7 @@
 
 			<div class="flex h-full items-center gap-[15px]">
 				<button
+					@click="$router.push({ name: 'Login' })"
 					class="bg-[#090DE7] hover:bg-blue-800 text-white font-semibold py-2 px-4 border border-gray-400 rounded h-[47px] w-[130px]"
 				>
 					Sign In
@@ -60,7 +61,10 @@
 					Sign Out
 				</button>
 				<div>
-					<div class="w-[45px] h-[45px] rounded-full">
+					<div
+						@click="$router.push({ name: 'UserProfile' })"
+						class="w-[45px] h-[45px] rounded-full cursor-pointer"
+					>
 						<img
 							src="/images/user.png"
 							class="w-[98%] h-[98%] rounded-full border"

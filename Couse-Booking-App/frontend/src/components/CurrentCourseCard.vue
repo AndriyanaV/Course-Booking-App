@@ -18,7 +18,7 @@
 				<div class="level">
 					<p class="capitalize">{{ currentCourse.level }}</p>
 				</div>
-				<div class="level bg-red-500 text-[#ffff]">
+				<div :class="isActive ? 'active' : 'inactive'">
 					<p>{{ status }}</p>
 				</div>
 			</div>
@@ -86,21 +86,27 @@
 	let startDate = ref("");
 	let endDate = ref("");
 
+	const isActive = ref(null);
+
 	startDate.value = formatDate(props.currentCourse.start_at, false);
 	endDate.value = formatDate(props.currentCourse.end_at, false);
 
+	const dateNow = new Date(Date.now()).getTime();
+	const start = new Date(props.currentCourse.start_at).getTime();
+	const end = new Date(props.currentCourse.end_at).getTime();
+
 	const chehckStatus = () => {
-		const dateNow = Date.now();
-		console.log(dateNow);
-		console.log(Date(startDate.time));
-		if (startDate.value < dateNow) {
+		if (start < dateNow) {
 			status.value = "Closed";
+			isActive.value = false;
 			return;
-		} else if (endDate.value < dateNow) {
+		} else if (end < dateNow) {
 			status.value = "Finished";
+			isActive.value = false;
 			return;
 		}
 		status.value = "Active";
+		isActive.value = true;
 	};
 
 	const deleteCurrentCourse = async () => {

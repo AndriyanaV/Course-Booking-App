@@ -1,8 +1,12 @@
 <template>
-	<div class="container flex justify-center w-full font-gilroy">
+	<div class="font-gilroy">
 		<h1
-			:style="{ color: color, fontWeight: fontWeight }"
-			class="text-h1 font-medium"
+			:style="{
+				color: color,
+				fontWeight: fontWeight,
+				fontSize: (fontSize || 70) + 'px',
+			}"
+			class="font-medium"
 		>
 			{{ heading }}
 		</h1>
@@ -14,6 +18,7 @@
 		heading: String,
 		color: String,
 		fontWeight: String,
+		fontSize: Number, 
 	});
 </script>
 

@@ -10,7 +10,13 @@
 			>
 				<SelectLevel @levelSelected="setLevel" />
 			</div>
-			<div class="h-[60px] w-[200px]">
+			<Button
+				text="Add Active Course"
+				@buttonClicked="
+					$router.push({ name: 'AddCurrentCourse', query: { courseId: id } })
+				"
+			/>
+			<!-- <div class="h-[60px] w-[200px]">
 				<button
 					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[200px]"
 					@click="
@@ -19,7 +25,7 @@
 				>
 					Add Active Course
 				</button>
-			</div>
+			</div> -->
 		</section>
 		<section
 			class="w-full py-[100px] px-[60px] flex justify-center bg-white h-screen"
@@ -56,6 +62,7 @@
 	import CurrentCourseCard from "@/components/CurrentCourseCard.vue";
 	import SelectLevel from "@/components/SelectLevel.vue";
 	import Heading from "@/components/Heading.vue";
+	import Button from "@/components/Button.vue";
 
 	const route = useRoute();
 	const id = route.params.id;

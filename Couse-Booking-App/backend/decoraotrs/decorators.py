@@ -9,7 +9,7 @@ def role_required(roles):
         def decorator(*args, **kwargs):
             claims = get_jwt()  # Dobijanje podataka iz JWT tokena
             if claims.get("role") not in roles:
-                return jsonify({"message": "Nemate dozvolu za pristup ovoj ruti."}), 403
+                return jsonify({"message": "You do not have permission to access this route."}), 403
             return fn(*args, **kwargs)
         return decorator
     return wrapper

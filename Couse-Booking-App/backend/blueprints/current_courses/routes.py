@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 from database import get_db_connection
 from utils import check_course_availability
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from decoraotrs import role_required
 
 current_courses_bp = Blueprint('current_courses', __name__)
 
@@ -114,3 +116,43 @@ def get_language_options():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+
+
+@current_courses_bp.route("/get-memebers/<int:id>", methods=['GET'])
+@jwt_required()
+@role_required(["admin", "professor"])
+def get_members(id):
+    try:
+        con, cursor = get_db_connection()
+
+        query = """SELECT user.id, first_name, last_name,email, user_image_url FROM user JOIN user_course ON user.id=user_course.user_id  WHERE user_course.course_id=%s;"""
+
+        cursor.execute(query, (id,))
+        data = cursor.fetchall()
+        return jsonify(data)
+
+    except Exception as e:
+        print(f"An unexpected error occured: {e}")
+        return jsonify({"message": "Error"})
+
+
+@current_courses_bp.route("/cancel-reservation/<int:id>", methods=['DELETE'])
+@jwt_required()
+@role_required(["admin"])
+def cancel_reservation(id):
+    try:
+        con, cursor = get_db_connection()
+
+        query = """
+        DELETE FROM user_course WHERE user_id = %s;
+        """
+
+        cursor.execute(query, (id, ))
+
+        con.commit()
+
+        return jsonify({"message": "Reservation canceled sucessfully."}), 200
+
+    except Exception as e:
+        print(f"An unexpected error occured: {e}")
+        return jsonify({"message": "Error"})

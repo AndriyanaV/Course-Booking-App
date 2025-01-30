@@ -73,6 +73,7 @@ def show_user_courses():
 
 @users_bp.route("/book-course/<int:id>", methods=["POST"])
 @jwt_required()
+@role_required(["user"])
 def count_members(id):
     try:
         course_id = id

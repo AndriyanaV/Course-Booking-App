@@ -4,14 +4,19 @@
 			<Heading heading="All Users" color="#4E32BA" />
 		</section>
 		<section class="w-[1320px] py-12 pr-0 flex justify-end">
-			<div class="h-[60px] w-[200px]">
+			<Button
+				text="Add User"
+				@buttonClicked="$router.push({ name: 'AddUser' })"
+			/>
+
+			<!-- <div class="h-[60px] w-[200px]">
 				<button
 					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[200px]"
 					@click="$router.push({ name: 'AddUser' })"
 				>
 					Add User
 				</button>
-			</div>
+			</div> -->
 		</section>
 		<section class="w-full py-12 pr-0 flex justify-center">
 			<div class="w-[1320px] flex flex-wrap justify-between items-center">
@@ -29,6 +34,7 @@
 	import { toast } from "vue3-toastify";
 	import Heading from "@/components/Heading.vue";
 	import UserCard from "@/components/UserCard.vue";
+	import Button from "@/components/Button.vue";
 
 	const token = localStorage.getItem("access_token");
 	let allUsers = ref([]);
