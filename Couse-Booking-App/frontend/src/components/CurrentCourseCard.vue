@@ -96,12 +96,12 @@
 	const end = new Date(props.currentCourse.end_at).getTime();
 
 	const chehckStatus = () => {
-		if (start < dateNow) {
-			status.value = "Closed";
+		if (end < dateNow) {
+			status.value = "Finished";
 			isActive.value = false;
 			return;
-		} else if (end < dateNow) {
-			status.value = "Finished";
+		} else if (start < dateNow) {
+			status.value = "Closed";
 			isActive.value = false;
 			return;
 		}
@@ -110,17 +110,7 @@
 	};
 
 	const deleteCurrentCourse = async () => {
-		if (confirm("Are you sure?")) {
-			try {
-				const response = await axios.delete(
-					`/api/admin/delete-current-course/${props.currentCourse.id}`
-				);
-				toast.success(response.data.message);
-				emit("currentCourseRemoved", props.currentCourse);
-			} catch (error) {
-				toast.error(error.response.data.message || error.message);
-			}
-		}
+		emit("currentCourseRemoved", props.currentCourse);
 	};
 
 	onMounted(() => {

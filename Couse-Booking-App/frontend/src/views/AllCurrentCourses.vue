@@ -16,16 +16,6 @@
 					$router.push({ name: 'AddCurrentCourse', query: { courseId: id } })
 				"
 			/>
-			<!-- <div class="h-[60px] w-[200px]">
-				<button
-					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[200px]"
-					@click="
-						$router.push({ name: 'AddCurrentCourse', query: { courseId: id } })
-					"
-				>
-					Add Active Course
-				</button>
-			</div> -->
 		</section>
 		<section
 			class="w-full py-[100px] px-[60px] flex justify-center bg-white h-screen"
@@ -44,7 +34,7 @@
 				<div v-else v-for="course in currentCourses" :key="course.id">
 					<CurrentCourseCard
 						:currentCourse="course"
-						@currentCourseRemoved="filterCurrentCourse"
+						@currentCourseRemoved="deleteCurrentCourse"
 					/>
 				</div>
 			</div>
@@ -78,8 +68,6 @@
 		getAllCurrentCourses();
 	});
 
-	const token = localStorage.getItem("access_token");
-
 	const getAllCurrentCourses = async () => {
 		try {
 			const response = await axios.get(
@@ -87,10 +75,6 @@
 				{
 					params: {
 						level: selectedLevel.value,
-					},
-
-					headers: {
-						Authorization: `Bearer ${token}`, // Dodajemo token u header
 					},
 				}
 			);
@@ -101,10 +85,20 @@
 		}
 	};
 
-	const filterCurrentCourse = (deletedCourse) => {
-		currentCourses.value = currentCourses.value.filter(
-			(course) => course.id !== deletedCourse.id
-		);
+	const deleteCurrentCourse = async (deletedCourse) => {
+		if (confirm("Are you sure?")) {
+			try {
+				const response = await axios.delete(
+					`/api/admin/delete-current-course/${deletedCourse.id}`
+				);
+				currentCourses.value = currentCourses.value.filter(
+					(course) => course.id !== deletedCourse.id
+				);
+				toast.success(response.data.message);
+			} catch (error) {
+				toast.error(error.message);
+			}
+		}
 	};
 
 	onMounted(() => {

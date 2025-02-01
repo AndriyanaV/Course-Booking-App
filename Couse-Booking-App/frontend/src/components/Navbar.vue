@@ -56,11 +56,12 @@
 					Sign In
 				</button>
 				<button
+					@click="handleLogOut"
 					class="bg-gray-100 hover:bg-gray-300 text-black font-semibold py-2 px-4 border border-gray-400 rounded h-[47px] w-[130px]"
 				>
 					Sign Out
 				</button>
-				<div>
+				<div v-if="isLoggedIn">
 					<div
 						@click="$router.push({ name: 'UserProfile' })"
 						class="w-[45px] h-[45px] rounded-full cursor-pointer"
@@ -80,14 +81,43 @@
 	import { useUserRole } from "@/composables/useUserRole.js";
 	import { RouterLink, useRouter } from "vue-router";
 	import { toast } from "vue3-toastify";
-	import { onMounted } from "vue";
+	import { ref, onMounted, watchEffect, watch } from "vue";
+
+	const isLoggedIn = ref(false);
 
 	const router = useRouter();
 	const { userRole, checkUserRole } = useUserRole();
 	console.log(userRole.value);
 
+	const handleLogOut = () => {
+		if (confirm("Are you sure?")) {
+			try {
+				localStorage.removeItem("access_token");
+				localStorage.removeItem("user_id");
+				localStorage.removeItem("rola");
+				localStorage.removeItem("token_expiration");
+
+				isLoggedIn.value = false;
+
+				checkUserRole();
+
+				router
+					.push("/")
+					.then(() => toast.success("You have successfully logged out!"));
+			} catch (error) {
+				toast.error(error.message);
+			}
+		}
+	};
+
+	// watchEffect(() => {
+	// 	console.log("Ušao na rutu:");
+	// 	checkUserRole();
+	// });
+
 	onMounted(() => {
 		checkUserRole();
+		isLoggedIn.value = !!localStorage.getItem("access_token");
 	});
 </script>
 

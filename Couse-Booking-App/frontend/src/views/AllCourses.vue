@@ -27,7 +27,7 @@
 				class="w-[1320px] flex flex-row flex-wrap bg-white justify-start items-start m-0 flex-wrap gap-[40px] p-0"
 			>
 				<div v-for="course in courses" :key="course.id">
-					<CourseCard :course="course" @courseRemoved="filterCourses" />
+					<CourseCard :course="course" @courseRemoved="deleteCourse" />
 				</div>
 			</div>
 		</section>
@@ -70,14 +70,23 @@
 		}
 	};
 
-	const filterCourses = async (deletedCourse) => {
-		courses.value = courses.value.filter(
-			(course) => course.id !== deletedCourse.id
-		);
-		console.log("filtriram");
+	const deleteCourse = async (deletedCourse) => {
+		if (confirm("Are you sure?")) {
+			try {
+				const response = await axios.delete(
+					`api/admin/delete-course/${deletedCourse.id}`
+				);
+				courses.value = courses.value.filter(
+					(course) => course.id !== deletedCourse.id
+				);
+				toast.success(response.data.message);
+			} catch (error) {
+				toast.error(error.response?.data?.message || error.message);
+			}
+		}
 	};
 
-	const getLnaguageOptions = async () => {
+	const getLanguageOptions = async () => {
 		try {
 			const response = await axios.get(
 				"api/current-courses/get-language-options"
@@ -90,7 +99,7 @@
 
 	onMounted(() => {
 		getAllCourses();
-		getLnaguageOptions();
+		getLanguageOptions();
 	});
 </script>
 

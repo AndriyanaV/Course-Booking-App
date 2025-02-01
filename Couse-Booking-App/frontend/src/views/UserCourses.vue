@@ -27,7 +27,7 @@
 			const response = await axios.get("api/users/user-courses");
 			courses.value = response.data;
 		} catch (error) {
-			toast.error(error.message || error.repsonse.message.data);
+			toast.error(error.response.data.message || error.message);
 		}
 	};
 

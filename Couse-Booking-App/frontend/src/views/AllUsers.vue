@@ -8,20 +8,11 @@
 				text="Add User"
 				@buttonClicked="$router.push({ name: 'AddUser' })"
 			/>
-
-			<!-- <div class="h-[60px] w-[200px]">
-				<button
-					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[200px]"
-					@click="$router.push({ name: 'AddUser' })"
-				>
-					Add User
-				</button>
-			</div> -->
 		</section>
 		<section class="w-full py-12 pr-0 flex justify-center">
 			<div class="w-[1320px] flex flex-wrap justify-between items-center">
 				<div v-for="user in allUsers" :key="user.id">
-					<UserCard :user="user" @userDeleted="filterUsers" />
+					<UserCard :user="user" @userDeleted="deleteUser" />
 				</div>
 			</div>
 		</section>
@@ -36,7 +27,6 @@
 	import UserCard from "@/components/UserCard.vue";
 	import Button from "@/components/Button.vue";
 
-	const token = localStorage.getItem("access_token");
 	let allUsers = ref([]);
 
 	const getAllUsers = async () => {
@@ -48,8 +38,20 @@
 		}
 	};
 
-	const filterUsers = (deltedUser) => {
-		allUsers.value = allUsers.value.filter((user) => user.id != deltedUser.id);
+	const deleteUser = async (deletedUser) => {
+		if (confirm("Are you sure?")) {
+			try {
+				const response = await axios.delete(
+					`api/admin/delete-user/${deletedUser.id}`
+				);
+				allUsers.value = allUsers.value.filter(
+					(user) => user.id != deletedUser.id
+				);
+				toast.success(response.data.message);
+			} catch (error) {
+				toast.error(error.message);
+			}
+		}
 	};
 
 	onMounted(() => {

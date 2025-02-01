@@ -72,20 +72,7 @@
 	});
 
 	const deleteCourse = async () => {
-		if (confirm("Are you sure?")) {
-			try {
-				const response = await axios.delete(
-					`api/admin/delete-course/${props.course.id}`
-				);
-				toast.success(response.data.message);
-				emit("courseRemoved", props.course);
-			} catch (error) {
-				toast.error(
-					error.response?.data?.message ||
-						"An error occurred while deleting the course."
-				);
-			}
-		}
+		emit("courseRemoved", props.course);
 	};
 </script>
 

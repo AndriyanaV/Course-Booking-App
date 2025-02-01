@@ -76,17 +76,7 @@
 	console.log(props.user.name);
 
 	const deleteUser = async () => {
-		try {
-			if (confirm("Are you sure?")) {
-				const response = await axios.delete(
-					`api/admin/delete-user/${props.user.id}`
-				);
-				toast.success(response.data.message);
-				emit("userDeleted", props.user);
-			}
-		} catch (error) {
-			toast.error(error.message);
-		}
+		emit("userDeleted", props.user);
 	};
 </script>
 

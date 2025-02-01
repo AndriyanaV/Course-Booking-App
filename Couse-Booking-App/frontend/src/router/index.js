@@ -45,23 +45,27 @@ const router = createRouter({
       path: "/all-courses",
       name: "AllCourses",
       component: AllCourses,
+      meta: { requiresRole: ["admin"] },
     },
     {
       path: "/all-current-courses/:id",
       name: "AllCurrentCourses",
       component: AllCurrentCourses,
       props: true,
+      meta: { requiresRole: ["admin"] },
     },
     {
       path: "/all-users",
       name: "AllUsers",
-      component: AllUsers
+      component: AllUsers,
+      meta: { requiresRole: ["admin"] },
      
     },
     {
       path: "/add-course",
       name: "AddCourse",
-      component: AddCourse
+      component: AddCourse,
+      meta: { requiresRole: ["admin"] },
      
     },
     {
@@ -69,6 +73,7 @@ const router = createRouter({
       name: "UpdateCourse",
       component: UpdateCourse,
       props: true,
+      meta: { requiresRole: ["admin"] },
      
     },
     {
@@ -82,6 +87,7 @@ const router = createRouter({
       path: "/add-current-course",
       name: "AddCurrentCourse",
       component: AddCurrentCourse,
+      meta: { requiresRole: ["admin"] },
       
       
      
@@ -90,6 +96,7 @@ const router = createRouter({
       path: "/update-current-course",
       name: "UpdateCurrentCourse",
       component: UpdateCurrentCourse,
+      meta: { requiresRole: ["admin"] },
       
       
      
@@ -98,26 +105,31 @@ const router = createRouter({
       path: "/user-info",
       name: "UserInfo",
       component: UserInfo,
+      meta: { requiresRole: ["admin"] },
     },
     {
       path: "/add-user",
       name: "AddUser",
       component: AddUser,
+      meta: { requiresRole: ["admin"] },
     },
     {
       path: "/update-user",
       name: "UpdateUser",
       component: UpdateUser,
+      meta: { requiresRole: ["admin"] },
     },
     {
       path: "/user-courses",
       name: "UserCourses",
       component: UserCourses,
+      meta: { requiresRole: ["user"] },
     },
     {
       path: "/professor-courses",
       name: "ProfessorCourses",
       component: ProfessorCourses,
+      meta: { requiresRole: ["professor"] },
     },
     {
       path: "/user-profile",
@@ -138,5 +150,20 @@ const router = createRouter({
     
   
 })
+
+
+router.beforeEach((to, from, next) => {
+  const role = localStorage.getItem("rola");
+
+  if (role) {
+    if (to.meta.requiresRole && !to.meta.requiresRole.includes(role)) {
+      return next("/studenti");
+    }
+  } else if (to.meta.requiresRole) {
+    return next("/login");
+  }
+
+  next();
+});
 
 export default router;

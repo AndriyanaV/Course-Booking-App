@@ -13,7 +13,7 @@ export function formatDate(dateToFormat,needTime){
 
   else{
     let formattedDate=`${day}.${month}.${year}`
-    console.log(formatDate)
+    
 	  return formattedDate
   }
 

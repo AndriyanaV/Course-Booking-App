@@ -23,7 +23,7 @@
 			console.log(response.data);
 
 			// Čuvanje tokena i role u localStorage
-			const expirationTime = Date.now() + 3 * 24 * 60 * 60 * 1000; // 3 dana
+			const expirationTime = Date.now() + 3 * 24 * 60 * 60 * 1000; // 1 minu
 			localStorage.setItem("access_token", access_token);
 			localStorage.setItem("token_expiration", expirationTime.toString());
 			localStorage.setItem("rola", role);
