@@ -20,8 +20,6 @@
 
 	const user = ref({});
 
-	console.log(userId);
-
 	const getUserInfo = async () => {
 		await axios
 			.get(`api/admin/get-user//${userId}`)

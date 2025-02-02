@@ -12,15 +12,6 @@
 				text="Add Course"
 				@buttonClicked="$router.push({ name: 'AddCourse' })"
 			/>
-
-			<!-- <div class="h-[60px] w-[150px]">
-				<button
-					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[150px]"
-					@click="$router.push({ name: 'AddCourse' })"
-				>
-					Add Course
-				</button>
-			</div> -->
 		</section>
 		<section class="w-full py-[20px] flex justify-center bg-white h-screen">
 			<div

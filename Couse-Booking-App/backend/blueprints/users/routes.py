@@ -9,8 +9,6 @@ import pymysql
 
 users_bp = Blueprint('users', __name__)
 
-con, cursor = get_db_connection()
-
 
 @users_bp.route("/user-profile", methods=["GET"])
 @jwt_required()
@@ -41,6 +39,7 @@ def show_user_profile():
 @role_required(["user"])
 def show_user_courses():
     try:
+        con, cursor = get_db_connection()
 
         claims = get_jwt()
         user_id = claims.get('user_id')
@@ -76,6 +75,8 @@ def show_user_courses():
 @role_required(["user"])
 def count_members(id):
     try:
+        con, cursor = get_db_connection()
+
         course_id = id
 
         query = """
@@ -100,6 +101,8 @@ def count_members(id):
 
 def book_course(course_id):
     try:
+        con, cursor = get_db_connection()
+
         claims = get_jwt()
         user_id = claims.get('user_id')
 
@@ -131,6 +134,7 @@ def book_course(course_id):
 @role_required(["professor"])
 def show_professor_courses():
     try:
+        con, cursor = get_db_connection()
 
         claims = get_jwt()
         user_id = claims.get('user_id')

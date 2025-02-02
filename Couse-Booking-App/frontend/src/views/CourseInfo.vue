@@ -19,19 +19,13 @@
 				/>
 				<Button text="See Members" @buttonClicked="getMembers()" />
 			</div>
-			<!-- <div
-				v-if="members.length === 0"
-				class="isMembers? w-full flex justify-center :w-full flex justify-center display-none"
-			>
-				<p class="font-gilroy font-normal">There is no registered users yet.</p>
-			</div> -->
 
 			<div
 				v-for="member in members"
 				:key="member.id"
 				class="flex items-center w-full"
 			>
-				<CourseMember :member="member" @memberDeleted="filterMemebers" />
+				<CourseMember :member="member" @memberDeleted="cancelReservation" />
 			</div>
 		</div>
 	</section>
@@ -75,10 +69,20 @@
 		}
 	};
 
-	const filterMemebers = (deletedMember) => {
-		members.value = members.value.filter(
-			(member) => member.id != deletedMember.id
-		);
+	const cancelReservation = async (deletedMember) => {
+		if (confirm("Are you sure?")) {
+			try {
+				const response = await axios.delete(
+					`api/current-courses/cancel-reservation/${deletedMember.id}`
+				);
+				members.value = members.value.filter(
+					(member) => member.id != deletedMember.id
+				);
+				toast.success(response.data.message);
+			} catch (error) {
+				toast.error(error.message);
+			}
+		}
 	};
 
 	onMounted(() => {

@@ -24,7 +24,7 @@
 				class="w-[1320px] flex flex-row flex-wrap bg-white justify-start items-start m-0 flex-wrap gap-[40px] p-0"
 			>
 				<div
-					v-if="currentCourses == ''"
+					v-if="currentCourses.length == 0"
 					class="w-full h-[100px] text-black flex items-center justify-center"
 				>
 					<p class="font-gilroy text-black text-[18px]">
@@ -57,7 +57,7 @@
 	const route = useRoute();
 	const id = route.params.id;
 
-	let currentCourses = ref("");
+	let currentCourses = ref([]);
 	let selectedLevel = ref("");
 
 	const setLevel = (level) => {

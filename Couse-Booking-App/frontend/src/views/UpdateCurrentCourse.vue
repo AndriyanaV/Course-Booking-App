@@ -1,8 +1,9 @@
 <template>
-	<section class="w-full flex justify-center pt-[200px]">
-		<UpdateCurrentCourseForm
+	<section class="w-full flex justify-center py-[200px]">
+		<CurrentCourseForm
 			:course="course"
-			@activeCourseUpdated="updateActiveCourse"
+			text="Update"
+			@currentCourseChange="updateActiveCourse"
 		/>
 	</section>
 </template>
@@ -12,11 +13,11 @@
 	import { ref, onMounted } from "vue";
 	import axios from "axios";
 	import { toast } from "vue3-toastify";
-	import UpdateCurrentCourseForm from "@/components/UpdateCurrentCourseForm.vue";
+	import CurrentCourseForm from "@/components/CurrentCourseForm.vue";
 
 	const route = useRoute();
 	const router = useRouter();
-	const courseId = route.query.courseId;
+	const courseId = Number(route.query.courseId);
 	const course = ref({});
 
 	const getCourseInfo = async () => {
@@ -41,55 +42,19 @@
 					price: form.price,
 					start_at: form.startAt,
 					end_at: form.endAt,
-					level: form.level,
+					level: form.level.toLowerCase(),
 					location: form.location,
 					max_members: form.members,
 					lessons: form.lessons,
 				}
 			);
 			router
-				.push(`/all-courses`)
+				.push(`/all-current-courses/${course.value.course_id}`)
 				.then(() => toast.success(response.data.message));
 		} catch (error) {
 			toast.error(error);
 		}
 	};
-
-	// const updateActiveCourse = async () => {
-	// 	if (
-	// 		!price.value ||
-	// 		!members.value ||
-	// 		!startAt.value ||
-	// 		!endAt.value ||
-	// 		!lessons.value ||
-	// 		!professor.value ||
-	// 		!location.value ||
-	// 		!level.value
-	// 	) {
-	// 		toast.error("Please enter all filds.");
-	// 		return;
-	// 	}
-	// 	try {
-	// 		const response = await axios.put(
-	// 			`api/admin/update-current-course/${courseId}`,
-	// 			{
-	// 				professor: professor.value,
-	// 				price: price.value,
-	// 				start_at: startAt.value,
-	// 				end_at: endAt.value,
-	// 				level: level.value,
-	// 				location: location.value,
-	// 				max_members: members.value,
-	// 				lessons: lessons.value,
-	// 			}
-	// 		);
-	// 		router
-	// 			.push(`/all-current-courses/${courseId}`)
-	// 			.then(() => toast.success(response.data.message));
-	// 	} catch (error) {
-	// 		toast.error(error);
-	// 	}
-	// };
 
 	onMounted(() => {
 		getCourseInfo();

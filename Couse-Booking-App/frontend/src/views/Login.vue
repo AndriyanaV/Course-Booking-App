@@ -29,10 +29,8 @@
 			localStorage.setItem("rola", role);
 			localStorage.setItem("user_id", user_id);
 
-			// Navigacija i obaveštenje o uspehu
 			router.push("/").then(() => toast.success(message));
 		} catch (error) {
-			// Obrada greške
 			toast.error(error.response.data.message || error.message);
 		}
 	}

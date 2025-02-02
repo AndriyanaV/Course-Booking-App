@@ -37,18 +37,8 @@
 
 	const emit = defineEmits(["memberDeleted"]);
 
-	const cancelReservation = async () => {
-		if (confirm("Are you sure?")) {
-			try {
-				const response = await axios.delete(
-					`api/current-courses/cancel-reservation/${props.member.id}`
-				);
-				toast.success(response.data.message);
-				emit("memberDeleted", props.member);
-			} catch (error) {
-				toast.error(error.message);
-			}
-		}
+	const cancelReservation = () => {
+		emit("memberDeleted", props.member);
 	};
 
 	onMounted(() => {

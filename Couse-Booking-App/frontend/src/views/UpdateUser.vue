@@ -1,6 +1,11 @@
 <template>
-	<section class="w-full flex justify-center pt-[200px]">
-		<UpdateUserForm :user="user" @userUpdated="updateUser" />
+	<section class="w-full flex justify-center py-[200px]">
+		<UserForm
+			:user="user"
+			text="Update"
+			:isAddMode="isAddMode"
+			@userChange="updateUser"
+		/>
 	</section>
 </template>
 
@@ -9,7 +14,9 @@
 	import { ref, onMounted } from "vue";
 	import axios from "axios";
 	import { toast } from "vue3-toastify";
-	import UpdateUserForm from "@/components/UpdateUserForm.vue";
+	import UserForm from "@/components/UserForm.vue";
+
+	const isAddMode = ref(false);
 
 	const route = useRoute();
 	const router = useRouter();
@@ -41,7 +48,7 @@
 				`api/admin/update-user/${userId}`,
 				formData
 			);
-			toast.success(response.data.message);
+			router.push("/all-users").then(() => toast.success(response.data.message));
 		} catch (error) {
 			toast.error(error.message);
 		}

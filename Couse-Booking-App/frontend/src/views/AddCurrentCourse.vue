@@ -1,11 +1,11 @@
 <template>
-	<section class="w-full flex justify-center pt-[200px]">
-		<AddCurrentCourseForm @activeCourseAdded="addActiveCourse" />
+	<section class="w-full flex justify-center py-[200px]">
+		<CurrentCourseForm text="Add" @currentCourseChange="addActiveCourse" />
 	</section>
 </template>
 
 <script setup>
-	import AddCurrentCourseForm from "@/components/AddCurrentCourseForm.vue";
+	import CurrentCourseForm from "@/components/CurrentCourseForm.vue";
 	import { useRoute, useRouter } from "vue-router";
 	import axios from "axios";
 	import { toast } from "vue3-toastify";
@@ -23,7 +23,7 @@
 				start_at: form.startAt,
 				end_at: form.endAt,
 				max_members: form.members,
-				level: form.level,
+				level: form.level.toLowerCase(),
 				location: form.location,
 				lessons: form.lessons,
 			});

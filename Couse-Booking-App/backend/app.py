@@ -24,6 +24,11 @@ app.register_blueprint(current_courses_bp, url_prefix='/current-courses')
 app.register_blueprint(auth_bp, url_prefix='/')
 
 
+@jwt.unauthorized_loader
+def missing_token_callback(error):
+    return jsonify({"message": "You need to log in first!"}), 401
+
+
 @app.route("/uploads/course/<file_name>", methods=['GET'])
 def return_course_img(file_name):
     try:

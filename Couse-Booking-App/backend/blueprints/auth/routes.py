@@ -7,7 +7,6 @@ from functools import wraps
 
 auth_bp = Blueprint('auth', __name__)
 
-con, cursor = get_db_connection()
 
 img_base_url = 'http://127.0.0.1:5000/uploads/course/'
 
@@ -38,6 +37,8 @@ def role_required(roles):
 @auth_bp.route("/register", methods=['POST'])
 def register_user():
     try:
+        con, cursor = get_db_connection()
+
         data = request.json
 
         if not data or not data.get('email') or not data.get('password'):
@@ -45,7 +46,7 @@ def register_user():
 
         email = data['email']
         password = data['password']
-        rola = 'user'  # Dodeljujemo rolu korisniku, možeš kasnije menjati
+        rola = 'user'  # Dodeljujemo rolu korisniku, za pocetak user, kasnije moze da se menja
 
         # Proveri da li korisnik već postoji
         query = "SELECT * FROM user WHERE email=%s"
@@ -73,6 +74,8 @@ def register_user():
 @auth_bp.route("/login", methods=['POST'])
 def login_user():
     try:
+        con, cursor = get_db_connection()
+
         data = request.json
 
         if not data or not data.get('email') or not data.get('password'):

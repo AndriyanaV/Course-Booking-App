@@ -69,11 +69,10 @@
 <script setup>
 	import { toast } from "vue3-toastify";
 	import axios from "axios";
+
 	const props = defineProps({ user: Object });
 
 	const emit = defineEmits(["userDeleted"]);
-
-	console.log(props.user.name);
 
 	const deleteUser = async () => {
 		emit("userDeleted", props.user);
