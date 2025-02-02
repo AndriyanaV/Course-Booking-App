@@ -63,7 +63,6 @@ def get_courses():
             if (aviability):
 
                 aviable_courses.append(course)
-                print("i spot avilable course")
 
         query = "SELECT DATE(start_at) AS samo_datum FROM current_courses;"
 
