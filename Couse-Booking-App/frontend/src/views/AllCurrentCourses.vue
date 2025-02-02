@@ -27,7 +27,7 @@
 					v-if="currentCourses.length == 0"
 					class="w-full h-[100px] text-black flex items-center justify-center"
 				>
-					<p class="font-gilroy text-black text-[18px]">
+					<p class="font-gilroy text-[18px] text-[#4E32BA]">
 						There are no current courses added for the given language course!
 					</p>
 				</div>

@@ -10,7 +10,7 @@
 			/>
 		</section>
 		<section class="w-full py-12 pr-0 flex justify-center">
-			<div class="w-[1320px] flex flex-wrap justify-between items-center">
+			<div class="w-[1320px] flex flex-wrap gap-[30px] items-center">
 				<div v-for="user in allUsers" :key="user.id">
 					<UserCard :user="user" @userDeleted="deleteUser" />
 				</div>

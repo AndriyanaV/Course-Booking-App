@@ -29,7 +29,8 @@
 				<p>Phone Number</p>
 			</div>
 			<div class="description">
-				<p>{{ user.phone_number }}</p>
+				<p v-if="user.phone_number != 0">{{ user.phone_number }}</p>
+				<p v-else >Not given</p>
 			</div>
 		</div>
 

@@ -20,7 +20,12 @@
 				<Button text="See Members" @buttonClicked="getMembers()" />
 			</div>
 
+			<div v-if="isMembers" class="block w-full flex justify-center py-[50px]">
+				<p class="font-gilroy">No Registered Users yet!</p>
+			</div>
+
 			<div
+				v-else
 				v-for="member in members"
 				:key="member.id"
 				class="flex items-center w-full"
@@ -48,6 +53,8 @@
 	const route = useRoute();
 	const id = route.query.courseId;
 
+	const isMembers = ref(false);
+
 	const { userRole, checkUserRole } = useUserRole();
 
 	const getCourseInfo = async () => {
@@ -64,6 +71,10 @@
 		try {
 			const response = await axios.get(`api/current-courses/get-memebers/${id}`);
 			members.value = response.data;
+
+			if (members.value == "") {
+				isMembers.value = true;
+			}
 		} catch (error) {
 			toast.error(error.response.data.message || error.message);
 		}

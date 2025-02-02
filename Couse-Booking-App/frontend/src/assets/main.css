@@ -8,11 +8,11 @@
 }
 
 .title {
-  @apply w-[40%]  h-full bg-[#9989B4] text-white flex items-center justify-center font-medium text-[32px] font-gilroy capitalize;
+  @apply w-[40%]  h-full bg-[#9989B4] text-white flex items-center justify-center font-medium text-[26px] font-gilroy capitalize;
 }
 
 .description {
-  @apply w-[60%] h-full bg-white text-[#A49D9D] flex items-center justify-center font-medium text-[24px] font-gilroy font-normal capitalize;
+  @apply w-[60%] h-full bg-white text-[#A49D9D] flex items-center justify-center font-medium text-[22px] font-gilroy font-normal capitalize;
 }
 
 .card {

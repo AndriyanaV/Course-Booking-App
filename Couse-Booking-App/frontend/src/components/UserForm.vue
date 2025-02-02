@@ -8,7 +8,7 @@
 							for="name"
 							class="text-[#14003B] text-[18px] font-filroy font-medium"
 						>
-							First Name (*)
+							First Name <span class="text-red-500"> * </span>
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
@@ -25,7 +25,7 @@
 							for="last_name"
 							class="text-[#14003B] text-[18px] font-filroy font-medium"
 						>
-							Last Name (*)
+							Last Name <span class="text-red-500"> * </span>
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
@@ -41,7 +41,7 @@
 				<div class="form-row">
 					<div class="column">
 						<label v-if="isAddMode" for="password" class="label-form">
-							Password (*)</label
+							Password <span class="text-red-500"> * </span></label
 						>
 						<label v-else for="password" class="label-form"> Password </label>
 						<div class="input-container">
@@ -55,7 +55,9 @@
 						</div>
 					</div>
 					<div class="column">
-						<label for="email" class="label-form"> Email (*)</label>
+						<label for="email" class="label-form">
+							Email <span class="text-red-500"> * </span></label
+						>
 						<div class="input-container">
 							<input
 								v-model="form.email"
@@ -80,7 +82,9 @@
 						</div>
 					</div>
 					<div class="column">
-						<label for="email" class="label-form"> Rola (*) </label>
+						<label for="email" class="label-form">
+							Rola <span class="text-red-500"> * </span>
+						</label>
 						<div class="input-container">
 							<select
 								v-model="form.rola"
@@ -121,7 +125,7 @@
 						<div class="flex items-center justify-start w-full">
 							<label
 								for="dropzone-file"
-								class="flex flex-col items-center justify-center w-[40%] h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+								class="flex flex-col items-center justify-center w-[40%] h-64 border border-gray-200 border-solid rounded-lg cursor-pointer bg-white dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
 							>
 								<div
 									class="flex flex-col items-center justify-center pt-5 pb-6 realtive"
@@ -149,7 +153,9 @@
 											d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
 										/>
 									</svg>
-									<p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+									<p
+										class="mb-2 text-sm text-gray-500 dark:text-gray-400 pt-[20px]"
+									>
 										<span class="font-semibold">Click to upload</span> or drag
 										and drop
 									</p>

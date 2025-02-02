@@ -4,7 +4,9 @@
 			<form class="w-full" @submit.prevent="handleCurrentCourseChange()">
 				<div class="form-row">
 					<div class="column">
-						<label for="max_members" class="label-form"> Price ($) (*) </label>
+						<label for="max_members" class="label-form">
+							Price ($) <span class="text-red-500"> * </span>
+						</label>
 						<div class="input-container">
 							<input
 								v-model="form.price"
@@ -18,7 +20,7 @@
 					</div>
 					<div class="column">
 						<label for="max_members" class="label-form">
-							Max Members (*)
+							Max Members <span class="text-red-500"> * </span>
 						</label>
 						<div class="input-container">
 							<input
@@ -34,7 +36,9 @@
 				</div>
 				<div class="form-row">
 					<div class="column">
-						<label for="max_members" class="label-form"> Start Date (*) </label>
+						<label for="max_members" class="label-form">
+							Start Date <span class="text-red-500"> * </span>
+						</label>
 						<div class="input-container">
 							<input
 								v-model="form.startAt"
@@ -47,7 +51,9 @@
 						</div>
 					</div>
 					<div class="column">
-						<label for="max_members" class="label-form"> End Date (*)</label>
+						<label for="max_members" class="label-form">
+							End Date <span class="text-red-500"> * </span></label
+						>
 						<div class="input-container">
 							<input
 								v-model="form.endAt"
@@ -62,7 +68,9 @@
 				</div>
 				<div class="form-row">
 					<div class="column">
-						<label for="location" class="label-form"> Location (*) </label>
+						<label for="location" class="label-form">
+							Location <span class="text-red-500"> * </span>
+						</label>
 						<div class="input-container">
 							<input
 								v-model="form.location"
@@ -76,7 +84,7 @@
 					</div>
 					<div class="column">
 						<label for="max_members" class="label-form"
-							>Number of Lessons (*)
+							>Number of Lessons <span class="text-red-500"> * </span>
 						</label>
 						<div class="input-container">
 							<input
@@ -92,7 +100,9 @@
 				</div>
 				<div class="form-row">
 					<div class="column">
-						<label for="location" class="label-form"> Level (*)</label>
+						<label for="location" class="label-form">
+							Level <span class="text-red-500"> * </span></label
+						>
 						<div class="input-container">
 							<select
 								v-model="form.level"
@@ -107,7 +117,9 @@
 						</div>
 					</div>
 					<div class="column">
-						<label for="max_members" class="label-form"> Professor (*) </label>
+						<label for="max_members" class="label-form">
+							Professor <span class="text-red-500"> * </span>
+						</label>
 						<div class="input-container">
 							<select
 								v-model="form.professor"
