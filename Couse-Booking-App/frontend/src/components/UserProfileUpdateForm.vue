@@ -14,7 +14,7 @@
 					<div class="flex items-center justify-center w-full">
 						<label
 							for="dropzone-file"
-							class="flex flex-col items-center justify-center w-[40%] h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+							class="flex flex-col items-center justify-center w-[40%] h-64 border-2 border-gray-300 border-solid rounded-lg cursor-pointer bg-white dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
 						>
 							<div
 								class="flex flex-col items-center justify-center pt-5 pb-6 realtive"
@@ -62,7 +62,9 @@
 			</div>
 			<div class="w-full flex justify-center py-[5px]"></div>
 			<div class="f-full flex flex-col items-center gap-[10px]">
-				<label for="first_name" class="label-form"> First Name (*)</label>
+				<label for="first_name" class="label-form">
+					First Name <span class="text-red-500"> * </span></label
+				>
 				<div class="w-[80%] bg-white rounded">
 					<input
 						v-model="form.firstName"
@@ -72,7 +74,9 @@
 				</div>
 			</div>
 			<div class="f-full flex flex-col items-center gap-[10px]">
-				<label for="last_name" class="label-form"> Last Name (*) </label>
+				<label for="last_name" class="label-form">
+					Last Name <span class="text-red-500"> * </span>
+				</label>
 				<div class="w-[80%] bg-white rounded">
 					<input
 						v-model="form.lastName"
@@ -82,7 +86,9 @@
 				</div>
 			</div>
 			<div class="f-full flex flex-col items-center gap-[10px]">
-				<label for="email" class="label-form"> Email address (*) </label>
+				<label for="email" class="label-form">
+					Email address <span class="text-red-500"> * </span>
+				</label>
 				<div class="w-[80%] bg-white rounded">
 					<input
 						v-model="form.email"
@@ -101,7 +107,7 @@
 					/>
 				</div>
 			</div>
-			<div class="w-full h-[100px] flex items-center justify-center mt-[20px]">
+			<div class="w-full h-[100px] flex items-center justify-center">
 				<div class="h-[50px] w-[150px]">
 					<button
 						type="submit"

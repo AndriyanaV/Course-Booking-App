@@ -31,7 +31,7 @@ const isTokenExpired = () => {
 };
 
 
-const exemptRoutes = ["/api/login", "api/current-courses/get-courses"];
+const exemptRoutes = ["/api/login", "api/current-courses/get-courses","api/current-courses/course-info/","api/current-courses/get-language-options"];
 
 
 axios.interceptors.request.use(
@@ -39,12 +39,16 @@ axios.interceptors.request.use(
     // Proveri da li je ruta izuzeta
     const isExemptRoute = exemptRoutes.some((route) =>
       config.url.includes(route)
-    );
 
-    if (!isExemptRoute && isTokenExpired()) {
+    );
+    console.log({isExemptRoute})
+
+
+    if (!isExemptRoute   && isTokenExpired()) {
       // Obriši token i preusmeri na login
       localStorage.clear();
       router.push("/login"); // Preusmeravanje na login
+      
       throw new axios.Cancel("Token is expired. Redirecting to login.");
     }
 

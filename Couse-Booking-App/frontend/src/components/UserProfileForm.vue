@@ -6,7 +6,7 @@
 			@click="
 				$router.push({ name: 'UserProfileUpdate', query: { userId: user.id } })
 			"
-			class="w-[35px] h-[35px] cursor-pointer position-absolute right-[10px] top-[10px]"
+			class="w-[30px] h-[30px] cursor-pointer position-absolute right-[10px] top-[10px]"
 		>
 			<img src="/images/edit.png" class="w-full h-full" />
 		</div>

@@ -107,8 +107,14 @@
 		}
 	};
 
+	const token = localStorage.getItem("access_token");
+
 	const bookCourse = async (id) => {
 		try {
+			if (!token) {
+				toast.error("You need to sign in");
+				return;
+			}
 			if (confirm("Are you sure?")) {
 				const response = await axios.post(`api/users/book-course/${id}`);
 				toast.success(response.data.message);

@@ -17,7 +17,7 @@
 				<div v-if="userRole === 'admin'">
 					<RouterLink
 						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
-						to="all-courses"
+						to="/all-courses"
 						active-class="text-blue-600 font-bold"
 						>All Courses</RouterLink
 					>
@@ -25,7 +25,7 @@
 				<div v-if="userRole === 'admin'">
 					<RouterLink
 						class="block no-underline py-2 px-3 text-gray-900 rounded hover:bg-gray-100 font-gilroy"
-						to="all-users"
+						to="/all-users"
 						active-class="text-blue-600 font-bold"
 						>All Users</RouterLink
 					>
@@ -50,12 +50,14 @@
 
 			<div class="flex h-full items-center gap-[15px]">
 				<button
+					v-if="!isLoggedIn"
 					@click="$router.push({ name: 'Login' })"
 					class="bg-[#090DE7] hover:bg-blue-800 text-white font-semibold py-2 px-4 border border-gray-400 rounded h-[47px] w-[130px]"
 				>
 					Sign In
 				</button>
 				<button
+					v-if="isLoggedIn"
 					@click="handleLogOut"
 					class="bg-gray-100 hover:bg-gray-300 text-black font-semibold py-2 px-4 border border-gray-400 rounded h-[47px] w-[130px]"
 				>
@@ -109,11 +111,6 @@
 			}
 		}
 	};
-
-	// watchEffect(() => {
-	// 	console.log("Ušao na rutu:");
-	// 	checkUserRole();
-	// });
 
 	onMounted(() => {
 		checkUserRole();

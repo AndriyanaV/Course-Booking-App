@@ -157,10 +157,10 @@ router.beforeEach((to, from, next) => {
 
   if (role) {
     if (to.meta.requiresRole && !to.meta.requiresRole.includes(role)) {
-      return next("/studenti");
+      return next("/");
     }
   } else if (to.meta.requiresRole) {
-    return next("/login");
+    return next("/");
   }
 
   next();

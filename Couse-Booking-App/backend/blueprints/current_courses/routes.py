@@ -66,9 +66,9 @@ def get_courses():
 
         query = "SELECT DATE(start_at) AS samo_datum FROM current_courses;"
 
-        cursor.execute(query)
-        date = cursor.fetchall()
-        print(date)
+        # cursor.execute(query)
+        # date = cursor.fetchall()
+        # print(date)
 
         return jsonify(aviable_courses)
 

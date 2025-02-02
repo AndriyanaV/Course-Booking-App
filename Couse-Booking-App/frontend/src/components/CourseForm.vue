@@ -8,7 +8,7 @@
 							for="name"
 							class="text-[#14003B] text-[18px] font-filroy font-medium"
 						>
-							Name Of Course (*)
+							Name Of Course <span class="text-red-500"> * </span>
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
@@ -27,7 +27,7 @@
 							for="course_language"
 							class="text-[#14003B] text-[18px] font-filroy font-medium"
 						>
-							Language (*)
+							Language <span class="text-red-500"> * </span>
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
@@ -49,16 +49,16 @@
 					<label
 						for="image"
 						class="text-[#14003B] text-[18px] font-filroy font-medium"
-						>Image (*)</label
+						>Image <span class="text-red-500"> * </span></label
 					>
 					<div class="w-full h-[200px]">
 						<div class="flex items-center justify-start w-full">
 							<label
 								for="dropzone-file"
-								class="flex flex-col items-center justify-center w-[40%] h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+								class="flex flex-col items-center justify-center w-[40%] h-64 border border-gray-200 border-solid rounded-lg cursor-pointer bg-white dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
 							>
 								<div
-									class="flex flex-col items-center justify-center pt-5 pb-6 realtive"
+									class="flex flex-col items-center justify-around pt-5 pb-6 realtive"
 								>
 									<div v-if="form.imagePreview">
 										<img
@@ -83,9 +83,11 @@
 											d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
 										/>
 									</svg>
-									<p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-										<span class="font-semibold">Click to upload</span> or drag
-										and drop
+									<p
+										class="mb-2 text-sm text-gray-500 dark:text-gray-400 pt-[20px]"
+									>
+										<span class="font-semibold mt-[5px]">Click to upload</span>
+										or drag and drop
 									</p>
 								</div>
 								<input

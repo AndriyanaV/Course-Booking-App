@@ -2,7 +2,7 @@
 	<div
 		class="w-[420px] h-[175px] flex items-start rounded shadow bg-[#EFEFEF] mb-[30px]"
 	>
-		<div class="w-[50%] flex items-start justify-center pt-[10px] h-full">
+		<div class="w-[50%] flex items-start justify-center pt-[20px] h-full">
 			<div
 				class="w-[100px] h-[100px] rounded-full drop-shadow-[0_4px_5px_rgba(33,14,106,0.2)]"
 			>

@@ -31,7 +31,7 @@
 
 			router.push("/").then(() => toast.success(message));
 		} catch (error) {
-			toast.error(error.response.data.message || error.message);
+			toast.error(error.response?.data?.message || error.message);
 		}
 	}
 </script>

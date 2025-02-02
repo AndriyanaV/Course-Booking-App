@@ -61,7 +61,7 @@
 				class="w-[40%] flex items-center justify-start h-full flex-col rounded-sm"
 			>
 				<div
-					class="w-full h-[90px] bg-[#9989B4] text-[#FFFF] flex flex-col items-center justify-center font-medium text-[32px] font-gilroy rounded-sm"
+					class="w-full h-[90px] bg-[#9989B4] text-[#FFFF] flex flex-col items-center justify-center font-medium text-[26px] font-gilroy rounded-sm"
 				>
 					<p>Teacher</p>
 				</div>
@@ -76,7 +76,7 @@
 				class="w-[60%] h-[350px] flex flex-col rounded-bl-md rounded-br-md rounded-sm"
 			>
 				<div
-					class="w-full h-[90px] flex bg-white justify-center items-center text-[24px] font-gilroy font-normal text-[#A49D9D] rounded-l-lg-md rounded-sm"
+					class="w-full h-[90px] flex bg-white justify-center items-center text-[22px] font-gilroy font-normal text-[#A49D9D] rounded-l-lg-md rounded-sm"
 				>
 					<p>{{ course.first_name }} {{ course.last_name }}</p>
 				</div>

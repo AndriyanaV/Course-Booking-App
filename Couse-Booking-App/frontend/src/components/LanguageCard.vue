@@ -7,7 +7,7 @@
 			<img :src="course.course_image_url" class="h-full w-full rounded-md" />
 		</div>
 		<div
-			class="flex items-center justify-between gap-[40px] h-[64px] w-full py-[10px] pl-[20px]"
+			class="flex items-center justify-between gap-[40px] h-[50px] w-full py-[10px] pl-[20px]"
 		>
 			<div
 				class="w-[115px] h-[45px] text-center flex items-center justify-center text-[#252525] text-[16px] cursor-pointer bg-gray-200 gap-[20px]"
@@ -22,7 +22,7 @@
 		</div>
 
 		<div
-			class="w-full text-[#a2a2a2] text-[14px] flex justify-between px-[20px] h-[55px]"
+			class="w-full text-[#a2a2a2] text-[14px] flex justify-between px-[20px] h-[50px]"
 		>
 			<div
 				class="flex w-fit mh-[55px] gap-[6px] flex items-center justify-between mb-[5px]"
@@ -50,11 +50,9 @@
 			</div>
 		</div>
 
-		<div
-			class="px-[19px] flex w-full justify-between h-16 items-center"
-			@click="bookCourse()"
-		>
+		<div class="px-[19px] flex w-full justify-between h-16 items-center">
 			<button
+				@click="bookCourse()"
 				class="bg-blue-800 hover:bg-[#06088C] text-white font-medium py-2 px-4 border border-blue-800 rounded h-[42px]"
 			>
 				Book Now
