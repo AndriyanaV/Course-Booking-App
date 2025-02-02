@@ -1,11 +1,11 @@
 <template>
-	<section class="w-full pt-[200px] flex justify-center bg-[#EFEFEF] pb-[40px]">
-		<AddCourseForm @courseAdded="addCourse" />
+	<section class="w-full pt-[200px] flex justify-center bg-white pb-[40px]">
+		<CourseForm text="Add" @courseChange="addCourse" />
 	</section>
 </template>
 
 <script setup>
-	import AddCourseForm from "@/components/AddCourseForm.vue";
+	import CourseForm from "@/components/CourseForm.vue";
 	import { toast } from "vue3-toastify";
 	import { useRouter } from "vue-router";
 	import axios from "axios";
@@ -14,8 +14,8 @@
 
 	const addCourse = async (form) => {
 		const formData = new FormData();
-		formData.append("name", form.courseName);
-		formData.append("language", form.language);
+		formData.append("name", form.name);
+		formData.append("language", form.language.toLowerCase());
 		formData.append("file", form.image);
 
 		try {
@@ -24,7 +24,7 @@
 				.push("/all-courses")
 				.then(() => toast.success(response.data.message));
 		} catch (error) {
-			toast.error(error.message);
+			toast.error(error.response.data.message || error.message);
 		}
 	};
 </script>

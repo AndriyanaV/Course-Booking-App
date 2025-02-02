@@ -3,7 +3,7 @@
 		<section
 			class="main w-full flex flex-column items-center h-[1000px] m-0 p-0"
 		>
-			<section class="min-w-[100%]">
+			<section class="w-full mx-0">
 				<div class="container min-w-[100%] p-0">
 					<img src="/images/Hero-img.svg" class="min-w-[100%]" />
 				</div>

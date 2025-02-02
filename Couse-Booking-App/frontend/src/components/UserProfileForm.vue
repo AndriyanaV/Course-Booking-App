@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="w-[500px] bg-[rgba(239,239,239,0.45)] border-0 rounded-md gap-[20px] py-[20px] flex flex-col shadow-custom position-relative"
+		class="w-[500px] bg-[rgba(239,239,239,0.45)] border-0 rounded-md gap-[20px] py-[10px] flex flex-col shadow-custom position-relative"
 	>
 		<div
 			@click="
@@ -11,7 +11,7 @@
 			<img src="/images/edit.png" class="w-full h-full" />
 		</div>
 		<div class="w-full flex justify-center py-[5px]">
-			<div class="w-[100px] h-[100px] rounded-full bg-red-500">
+			<div class="w-[100px] h-[100px] rounded-full">
 				<img :src="userImage" class="w-full h-full rounded-full" />
 			</div>
 		</div>

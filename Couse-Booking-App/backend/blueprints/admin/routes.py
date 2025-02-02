@@ -16,7 +16,6 @@ def allowed_file(filename):
 
 admin_bp = Blueprint('admin', __name__)
 
-con, cursor = get_db_connection()
 
 # UPDATE
 
@@ -26,7 +25,21 @@ con, cursor = get_db_connection()
 @role_required(["admin"])
 def update_current_course(id):
     try:
+        con, cursor = get_db_connection()
+
         data = request.json
+
+        cursor.execute("SELECT * FROM current_courses WHERE id = %s", (id,))
+        current_course = cursor.fetchone()
+
+        professor = data.get('professor', current_course['user_id'])
+        price = data.get('price', current_course['price'])
+        start_at = data.get('start_at', current_course['start_at'])
+        end_at = data.get('end_at', current_course['end_at'])
+        level = data.get('level', current_course['level'])
+        location = data.get('location', current_course['location'])
+        max_members = data.get('max_members', current_course['max_members'])
+        lessons = data.get('lessons', current_course['lessons'])
 
         query = """
         UPDATE current_courses
@@ -34,9 +47,7 @@ def update_current_course(id):
         WHERE id = %s
         """
         values = (
-            data['professor'], data['price'], data['start_at'], data['end_at'],
-            data['level'], data['location'], data['max_members'], data['lessons'],
-            id
+            professor, price, start_at, end_at, level, location, max_members, lessons, id
         )
 
         cursor.execute(query, values)
@@ -57,6 +68,8 @@ UPLOAD_FOLDER_USER = 'uploads/user'
 @role_required(["admin", "user"])
 def update_user_info(id):
     try:
+        con, cursor = get_db_connection()
+
         query = "SELECT  * FROM user WHERE id=%s"
         cursor.execute(query, (id,))
         user = cursor.fetchone()
@@ -112,6 +125,7 @@ UPLOAD_FOLDER_COURSE = 'uploads/course'
 @role_required(["admin"])
 def update_course(id):
     try:
+        con, cursor = get_db_connection()
 
         query = "SELECT  * FROM course WHERE id=%s"
         cursor.execute(query, (id,))
@@ -183,6 +197,8 @@ def get_all_users():
 @role_required(["admin"])
 def get_user(id):
     try:
+        con, cursor = get_db_connection()
+
         query = """
         SELECT id,
             first_name,
@@ -207,6 +223,8 @@ def get_user(id):
 @role_required(["admin"])
 def get_all_current_courses(id):
     try:
+        con, cursor = get_db_connection()
+
         level = request.args.get('level', '%')
         if (level == ""):
             level = "%"
@@ -234,12 +252,12 @@ def get_all_current_courses(id):
 @role_required(["admin"])
 def get_all_courses():
     try:
-        language = request.args.get('language', '%')
+        con, cursor = get_db_connection()
+
+        language = request.args.get('language', "%")
 
         if (language == ""):
             language = '%'
-
-        print(language)
 
         query = """
         SELECT * FROM course WHERE language LIKE %s;
@@ -259,6 +277,7 @@ def get_all_courses():
 @role_required(["admin"])
 def get_course(id):
     try:
+        con, cursor = get_db_connection()
 
         query = """
         SELECT * FROM course WHERE id=%s;
@@ -278,6 +297,7 @@ def get_course(id):
 @role_required(["admin"])
 def get_professors():
     try:
+        con, cursor = get_db_connection()
 
         query = """
         SELECT id,first_name,last_name FROM user WHERE rola LIKE %s;
@@ -300,9 +320,14 @@ def get_professors():
 @role_required(["admin"])
 def add_user():
     try:
+
         con, cursor = get_db_connection()
+
         file = request.files.get('file')
         data = request.form.to_dict()
+
+        if not data.get("first_name") or not data.get("last_name") or not data.get("email") or not data.get("password") or not data.get("rola"):
+            return jsonify({"message": "All required fields must be filled!"}), 400
 
         password = generate_password_hash(data['password'])
         query = """
@@ -313,15 +338,10 @@ def add_user():
                   password, data['rola'], None)
 
         cursor.execute(query, values)
-        # con.commit()
 
         cursor.execute("SELECT LAST_INSERT_ID() ")
         last_id = cursor.fetchone()
         last_id = last_id.get('LAST_INSERT_ID()')
-        print(last_id)
-
-        # file = request.files['file']
-        print(file)
 
         if file:
             name_without_extension, file_extension = os.path.splitext(
@@ -341,7 +361,7 @@ def add_user():
         cursor.execute(query, values)
         con.commit()
 
-        return jsonify({"message": "You've added new user sucessfully!"}, 200)
+        return jsonify({"message": "You've added new user!"}), 200
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
@@ -353,6 +373,8 @@ def add_user():
 @role_required(["admin"])
 def add_current_course():
     try:
+        con, cursor = get_db_connection()
+
         # Dobijanje podataka iz zahteva
         data = request.json
 
@@ -377,6 +399,8 @@ def add_current_course():
 @role_required(["admin"])
 def add_course():
     try:
+        con, cursor = get_db_connection()
+
         file = request.files['file']
         file_url = str(img_base_url_course+file.filename)
 
@@ -400,7 +424,7 @@ def add_course():
 
         cursor.execute(query, values)
         con.commit()
-        return jsonify({"message": "You've added new course sucessfully!"})
+        return jsonify({"message": "You've added new course sucessfully!"}), 200
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
@@ -412,7 +436,8 @@ def add_course():
 @role_required(["admin"])
 def delete_course(id):
     try:
-        print(id)
+
+        con, cursor = get_db_connection()
 
         query = """
         DELETE FROM course WHERE id = %s;
@@ -435,6 +460,7 @@ def delete_course(id):
 @role_required(["admin"])
 def delete_current_course(id):
     try:
+        con, cursor = get_db_connection()
 
         query = """
         DELETE FROM current_courses WHERE id = %s;
@@ -457,6 +483,8 @@ def delete_current_course(id):
 @role_required(["admin"])
 def delete_user(id):
     try:
+
+        con, cursor = get_db_connection()
 
         query = """
         DELETE FROM user WHERE id = %s;

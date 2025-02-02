@@ -10,16 +10,12 @@
 			>
 				<SelectLevel @levelSelected="setLevel" />
 			</div>
-			<div class="h-[60px] w-[200px]">
-				<button
-					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[200px]"
-					@click="
-						$router.push({ name: 'AddCurrentCourse', query: { courseId: id } })
-					"
-				>
-					Add Active Course
-				</button>
-			</div>
+			<Button
+				text="Add Active Course"
+				@buttonClicked="
+					$router.push({ name: 'AddCurrentCourse', query: { courseId: id } })
+				"
+			/>
 		</section>
 		<section
 			class="w-full py-[100px] px-[60px] flex justify-center bg-white h-screen"
@@ -28,7 +24,7 @@
 				class="w-[1320px] flex flex-row flex-wrap bg-white justify-start items-start m-0 flex-wrap gap-[40px] p-0"
 			>
 				<div
-					v-if="currentCourses == ''"
+					v-if="currentCourses.length == 0"
 					class="w-full h-[100px] text-black flex items-center justify-center"
 				>
 					<p class="font-gilroy text-black text-[18px]">
@@ -38,7 +34,7 @@
 				<div v-else v-for="course in currentCourses" :key="course.id">
 					<CurrentCourseCard
 						:currentCourse="course"
-						@currentCourseRemoved="filterCurrentCourse"
+						@currentCourseRemoved="deleteCurrentCourse"
 					/>
 				</div>
 			</div>
@@ -56,11 +52,12 @@
 	import CurrentCourseCard from "@/components/CurrentCourseCard.vue";
 	import SelectLevel from "@/components/SelectLevel.vue";
 	import Heading from "@/components/Heading.vue";
+	import Button from "@/components/Button.vue";
 
 	const route = useRoute();
 	const id = route.params.id;
 
-	let currentCourses = ref("");
+	let currentCourses = ref([]);
 	let selectedLevel = ref("");
 
 	const setLevel = (level) => {
@@ -71,8 +68,6 @@
 		getAllCurrentCourses();
 	});
 
-	const token = localStorage.getItem("access_token");
-
 	const getAllCurrentCourses = async () => {
 		try {
 			const response = await axios.get(
@@ -80,10 +75,6 @@
 				{
 					params: {
 						level: selectedLevel.value,
-					},
-
-					headers: {
-						Authorization: `Bearer ${token}`, // Dodajemo token u header
 					},
 				}
 			);
@@ -94,10 +85,20 @@
 		}
 	};
 
-	const filterCurrentCourse = (deletedCourse) => {
-		currentCourses.value = currentCourses.value.filter(
-			(course) => course.id !== deletedCourse.id
-		);
+	const deleteCurrentCourse = async (deletedCourse) => {
+		if (confirm("Are you sure?")) {
+			try {
+				const response = await axios.delete(
+					`/api/admin/delete-current-course/${deletedCourse.id}`
+				);
+				currentCourses.value = currentCourses.value.filter(
+					(course) => course.id !== deletedCourse.id
+				);
+				toast.success(response.data.message);
+			} catch (error) {
+				toast.error(error.message);
+			}
+		}
 	};
 
 	onMounted(() => {

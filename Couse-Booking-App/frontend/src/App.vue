@@ -1,11 +1,13 @@
 <script setup>
-	import { RouterLink, RouterView } from "vue-router";
+	import { RouterLink, RouterView, useRoute } from "vue-router";
 	import Navbar from "@/components/Navbar.vue";
 	import router from "./router";
+
+	const route = useRoute();
 </script>
 
 <template>
-	<Navbar />
+	<Navbar v-if="route.name !== 'Login'" />
 	<RouterView />
 </template>
 

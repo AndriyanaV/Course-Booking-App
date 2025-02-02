@@ -1,11 +1,11 @@
 <template>
 	<section class="w-full pt-[200px] flex justify-center bg-[#EFEFEF] pb-[40px]">
-		<UpdateCourseForm :course="course" @courseUpdated="updateCourse" />
+		<CourseForm :course="course" text="Update" @courseChange="updateCourse" />
 	</section>
 </template>
 
 <script setup>
-	import UpdateCourseForm from "@/components/UpdateCourseForm.vue";
+	import CourseForm from "@/components/CourseForm.vue";
 	import { useRoute, useRouter } from "vue-router";
 	import { toast } from "vue3-toastify";
 	import axios from "axios";
@@ -28,7 +28,7 @@
 	const updateCourse = async (form) => {
 		const formData = new FormData();
 		formData.append("name", form.name);
-		formData.append("language", form.language);
+		formData.append("language", form.language.toLowerCase());
 		formData.append("file", form.image);
 
 		try {

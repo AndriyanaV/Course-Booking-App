@@ -1,13 +1,19 @@
 <template>
-	<section class="w-full flex justify-center pt-[200px]">
-		<AddUserForm @userAdded="addUser" />
+	<section class="w-full flex justify-center py-[200px]">
+		<UserForm text="Add" :isAddMode="isAddMode" @userChange="addUser" />
 	</section>
 </template>
 
 <script setup>
 	import axios from "axios";
 	import { toast } from "vue3-toastify";
-	import AddUserForm from "@/components/AddUserForm.vue";
+	import { useRouter } from "vue-router";
+	import { ref } from "vue";
+	import UserForm from "@/components/UserForm.vue";
+
+	const router = useRouter();
+
+	const isAddMode = ref(true);
 
 	const addUser = async (form) => {
 		const formData = new FormData();
@@ -22,7 +28,8 @@
 
 		try {
 			const response = await axios.post("api/admin/add-user", formData);
-			toast.success(response.data.message);
+
+			router.push("/all-users").then(() => toast.success(response.data.message));
 		} catch (error) {
 			toast.error(error.response.data.message);
 		}

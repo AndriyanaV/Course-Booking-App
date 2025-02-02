@@ -20,7 +20,15 @@
 }
 
 .level {
-  @apply w-[115px] h-[45px] text-center flex items-center justify-center text-[#252525] text-[16px] cursor-pointer bg-gray-200 gap-[20px];
+  @apply w-[140px] h-[45px] text-center flex items-center justify-center text-[#252525] text-[16px] cursor-pointer bg-gray-200 gap-[20px];
+}
+
+.active {
+  @apply w-[115px] h-[45px] text-center flex items-center justify-center text-white text-[16px] cursor-pointer bg-green-500 gap-[20px];
+}
+
+.inactive {
+  @apply w-[115px] h-[45px] text-center flex items-center justify-center text-white text-[16px] cursor-pointer bg-red-500 gap-[20px];
 }
 
 .edit {
