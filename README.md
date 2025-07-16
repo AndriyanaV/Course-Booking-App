@@ -84,5 +84,7 @@ The database schema includes all necessary relations between users, courses, and
 
 Constraints such as foreign key, unique, and not null ensure data integrity
 
-
+###  Design
+I personally created the UI/UX design for this project using Figma. You can explore the design prototypes and layouts here:
+- https://www.figma.com/design/lj9NpxwlBdyBu8ZFl2oA3m/Untitled?node-id=0-1&p=f&t=AOxtfI94z72n4Gzc-0
 
