@@ -48,7 +48,7 @@ Applied utility classes like grid, flex, gap, space-x, space-y for layout contro
 
 Quick UI development using shadow, rounded, hover, transition classes
 
-Clean and responsive UI built without writing custom CSS files
+Clean  UI built 
 
 Used @apply directive to compose styles within component <style> blocks
 
