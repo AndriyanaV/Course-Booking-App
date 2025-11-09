@@ -15,6 +15,7 @@
 
 
 ### Running Backend (Flask):
+- pip install -r requirements.txt
 - python app.py
 
 ### Running  Vue.js app (Frontend):
