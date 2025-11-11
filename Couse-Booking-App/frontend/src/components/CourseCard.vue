@@ -1,16 +1,16 @@
 <template>
 	<div
-		class="w-[413px] h-fit flex flex-col items-center justify-start gap-[15px] bg-[rgba(239,239,239,0.45)] rounded-md shadow-custom pb-[15px]"
+		class="w-[380px] h-fit flex flex-col items-center justify-start gap-[15px] bg-[rgba(239,239,239,0.45)] rounded-md shadow-custom pb-[15px]"
 	>
-		<div class="w-full h-[265px] rounded-md">
-			<img :src="course.course_image_url" class="w-full h-full rounded-md" />
+		<div class="w-full h-[265px] rounded-md flex justify-center pt-[20px]">
+			<img :src="course.course_image_url" class="w-[90%] h-[90%] rounded-md" />
 		</div>
 
 		<div class="w-full h-[64px] flex justify-center items-center">
 			<div class="w-[100%] h-full flex items-center justify-between">
 				<div class="w-[70%] h-full flex justify-center items-center">
 					<h2
-						class="text-[#10012C] text-[25px] font-gilroy font-bold capitalize"
+						class="text-[#3252E4] text-[25px] font-bold capitalize"
 					>
 						{{ course.name }}
 					</h2>
@@ -19,7 +19,7 @@
 					class="flex gap-[6px] h-full w-[30%] items-start justify-end pr-[15px] pt-[3px]"
 				>
 					<div
-						class="w-[20px] h-[20px] cursor-pointer"
+						class="w-[20px] h-[20px] cursor-pointer hover:scale-105"
 						@click="
 							$router.push({
 								name: 'UpdateCourse',
@@ -31,7 +31,7 @@
 					</div>
 
 					<div
-						class="w-[20px] h-[20px] cursor-pointer"
+						class="w-[20px] h-[20px] cursor-pointer hover:scale-105"
 						@click="
 							$router.push({
 								name: 'CourseCardInfo',
@@ -42,7 +42,7 @@
 						<img src="/images/eye.png" class="w-full h-full" />
 					</div>
 
-					<div class="w-[20px] h-[20px] cursor-pointer" @click="deleteCourse()">
+					<div class="w-[20px] h-[20px] cursor-pointer hover:scale-105" @click="deleteCourse()">
 						<img src="/images/delete.png" class="w-full h-full" />
 					</div>
 				</div>
@@ -50,7 +50,7 @@
 		</div>
 		<div class="h-[64px] flex w-full justify-center h-16 items-center">
 			<button
-				class="bg-[#293580] hover:bg-[#2237BA] text-white font-medium py-2 px-4 border border-blue-800 rounded h-[42px] h-[50px] w-[80%]"
+				class="bg-second-blue hover:bg-[#2237BA] text-white font-medium py-2 px-4 border border-none rounded h-[42px]  w-[80%]"
 				@click="
 					$router.push({ name: 'AllCurrentCourses', params: { id: course.id } })
 				"

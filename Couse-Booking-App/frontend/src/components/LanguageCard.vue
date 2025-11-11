@@ -1,97 +1,93 @@
 <template>
-	<div
-		class="card-container flex flex-column justify-center items-start rounded-lg bg-[rgba(239,239,239,0.45)] border-0 rounded-md gap-[20px] pb-[20px] shadow-custom w-[413px]"
-		style="background-color: rgba(239, 239, 239, 0.45)"
-	>
-		<div class="w-full h-[270px] m-0">
-			<img :src="course.course_image_url" class="h-full w-full rounded-md" />
-		</div>
-		<div
-			class="flex items-center justify-between gap-[40px] h-[50px] w-full py-[10px] pl-[20px]"
-		>
-			<div
-				class="w-[115px] h-[45px] text-center flex items-center justify-center text-[#252525] text-[16px] cursor-pointer bg-gray-200 gap-[20px]"
-			>
-				<p class="first-letter-uppercase">{{ course.level }}</p>
-			</div>
-			<div class="w-[55%] flex justify-start h-full items-center">
-				<h4 class="text-black text-[20px] font-gilroy font-semibold capitalize">
-					{{ course.name }}
-				</h4>
+	<div class="relative overflow-hidden card-container cursor-pointer flex flex-col justify-center items-start  bg-[rgba(239,239,239,0.45)] border-0 rounded-md shadow-custom min-w-[350px] mt-[20px] h-auto"
+		style="background-color: rgba(239, 239, 239, 0.45)">
+		<div class="w-full h-[220px] m-0 mt-[10px] flex justify-center relative">
+			<img :src="course.course_image_url" class="h-[95%] w-[90%]  cover" />
+			<div class="absolute bottom-[20px] left-[-5px] bg-blue-500
+         w-fit h-[40px] flex items-center justify-center 
+         text-[#252525] text-[16px] cursor-pointer text-center p-[10px] rounded-[6px]">
+				<p class="capitalize text-[16px] text-white font-medium">{{ course.level }}</p>
 			</div>
 		</div>
+		<div class="flex flex-col items-start  justify-start w-full pb-[10px] h-fit gap-[16px]">
+			<div class="flex items-center justify-start gap-[40px] h-auto w-full px-[20px]">
 
-		<div
-			class="w-full text-[#a2a2a2] text-[14px] flex justify-between px-[20px] h-[50px]"
-		>
-			<div
-				class="flex w-fit mh-[55px] gap-[6px] flex items-center justify-between mb-[5px]"
-			>
-				<div class="w-[32px] h-[32px]">
-					<img src="/images/clock.svg" class="w-full h-full" />
+				<div class=" flex justify-start h-auto items-center">
+					<h4 class="text-[#3252E4] text-[20px] font-bold capitalize h-auto">
+						{{ course.name }}
+					</h4>
 				</div>
-				<p class="text-[16px]">{{ course.weeks_duration }} Weeks</p>
 			</div>
-			<div
-				class="flex w-fit mh-[55px] gap-[8px] flex items-center justify-center"
-			>
-				<div class="w-[32px] h-[32px]">
-					<img src="/images/lessons.svg" class="w-full h-full" />
-				</div>
-				<p class="text-[16px]">{{ course.lessons }} Lessons</p>
-			</div>
-			<div
-				class="flex w-fit mh-[55px] gap-[8px] flex items-center justify-center"
-			>
-				<div class="w-[32px] h-[32px]">
-					<img src="/images/start.svg" class="w-full h-full" />
-				</div>
-				<p class="text-[16px]">{{ startDate }}</p>
-			</div>
-		</div>
 
-		<div class="px-[19px] flex w-full justify-between h-16 items-center">
-			<button
-				@click="bookCourse()"
-				class="bg-blue-800 hover:bg-[#06088C] text-white font-medium py-2 px-4 border border-blue-800 rounded h-[42px]"
-			>
-				Book Now
-			</button>
-			<button
-				class="bg-[#FFFF] hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded h-[42px]"
-				@click="
-					$router.push({ name: 'CourseInfo', query: { courseId: course.id } })
-				"
-			>
-				Learn More
-			</button>
 			<div
-				class="text-[16px] font-gilroy font-bold w-[75px] text-[#00000e] text-[16px] flex items-center justify-center border border-[#c5c5c5] h-[42px]"
-			>
-				<span class="font-bold"> {{ course.price + "$" }} </span>
+				class="w-[80%] text-[#878686] text-[14px] flex flex-col justify-start items-start px-[20px] h-auto gap-[8px] ">
+				<div class="flex w-fit h-auto gap-[8px]  items-center justify-between ">
+					<div class="min-w-[28px] min-h-[28px]">
+						<img src="/images/lessons.svg" class="max-w-[28px] h-max-[28px] object-contain" />
+					</div>
+					<p class="text-[16px]"><b>{{ course.lessons }}</b> Lessons</p>
+				</div>
+				<div class="flex w-fit h-auto gap-[8px] items-center">
+					<div class="min-w-[28px] min-h-[28px]">
+						<img src="/images/weeks.svg" class="max-w-[28px] h-max-[28px] object-contain" />
+					</div>
+					<p class="text-[16px]"><b>{{ course.weeks_duration }}</b> Weeks</p>
+				</div>
+
+				<div class="flex w-fit h-auto gap-[8px]  items-center justify-between">
+					<div class="min-w-[28px] min-h-[28px]">
+						<img src="/images/start.svg" class="max-w-[28px] h-max-[28px] object-contain" />
+					</div>
+					<span class="text-[16px] font-normal">Start at: {{ startDate }}</span>
+				</div>
+			</div>
+
+			<div class="w-full flex flex-col gap-[10px] h-fit">
+				<div class=" flex justify-end h-auto items-center w-full px-[20px]">
+					<div
+						class="text-[16px]  font-bold  text-[#3E9C52]  flex items-center justify-center h-auto w-[160px]">
+						<span class="font-bold"> {{ course.price + "$" }} </span>
+					</div>
+				</div>
+				<div class="flex gap-[20px]  h-fit w-full justify-center items-center">
+					<button
+						class="flex flex-row-reverse gap-[4px] hover:scale-105 hover:text-gray-600 border-none text-gray-600 font-semibold items-center border  rounded h-fit text-[16px]"
+						@click="
+							$router.push({ name: 'CourseInfo', query: { courseId: course.id } })
+							">
+						Learn More
+						<img src="/images/arrow-more.png"
+							class="max-w-[28px] h-max-[28px] object-contain rotate-[30deg]" />
+					</button>
+					<button @click="bookCourse()"
+						class="bg-[#4A6CF7] hover:bg-[#2367d4] text-white font-normal py-2 px-4 border w-[160px] rounded h-[42px]">
+						Reverse a spot
+					</button>
+				</div>
+
+
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
-	import { ref, computed } from "vue";
-	import { formatDate } from "@/composables/formatDate.js";
+import { ref, computed } from "vue";
+import { formatDate } from "@/composables/formatDate.js";
 
-	const props = defineProps({
-		course: Object,
-	});
+const props = defineProps({
+	course: Object,
+});
 
-	const emit = defineEmits(["courseBooking"]);
+const emit = defineEmits(["courseBooking"]);
 
-	const startDate = ref("");
+const startDate = ref("");
 
-	startDate.value = formatDate(props.course.start_at, false);
+startDate.value = formatDate(props.course.start_at, false);
 
-	const bookCourse = () => {
-		emit("courseBooking", props.course.id);
-	};
+const bookCourse = () => {
+	emit("courseBooking", props.course.id);
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

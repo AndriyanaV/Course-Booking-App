@@ -1,23 +1,26 @@
 <template>
-	<div class="card w-[413px] pb-[20px]">
-		<div class="w-full h-[265px]">
+	<div class="card w-[400px] pb-[20px]">
+		<div class=" relative w-full h-[240px] flex justify-center pt-[20px] overflow-hidden">
 			<img
 				:src="currentCourse.course_image_url"
-				class="w-full h-full rounded-md"
+				class="w-[80%] h-[90%] rounded-md"
 			/>
+					<div class="absolute bottom-[30px] left-[-5px] bg-blue-500
+         w-fit h-[40px] flex items-center justify-center 
+         text-[#252525] text-[16px] cursor-pointer text-center p-[10px] rounded-[6px]">
+				<p class="capitalize text-[16px] text-white font-medium">{{ currentCourse.level }}</p>
+			</div>
 		</div>
 		<div
-			class="w-full px-[19px] flex justify-between flex-row h-[65px] items-center"
+			class="w-full px-[20px] flex justify-between flex-row h-auto items-center"
 		>
 			<div class="w-[50%] h-full flex items-center">
-				<h3 class="text-[#10012C] text-[18px] font-gilroy font-bold capitalize">
+				<h3 class="text-[#3252E4] text-[18px]  font-bold capitalize">
 					{{ currentCourse.name }}
 				</h3>
 			</div>
-			<div class="flex gap-[15px] w-[50%] h-full flex items-center">
-				<div class="level">
-					<p class="capitalize">{{ currentCourse.level }}</p>
-				</div>
+			<div class="flex gap-[15px] w-fit h-full rounded-lg items-center">
+		
 				<div :class="isActive ? 'active' : 'inactive'">
 					<p>{{ status }}</p>
 				</div>
@@ -25,9 +28,9 @@
 		</div>
 		<div class="w-full h-[50px] flex items-start gap-[10px] px-[19px]">
 			<div class="w-[30px] h-[30px]">
-				<img src="/images/calendar.svg" class="w-full h-full" />
+				<img src="/images/weeks.svg" class="w-full h-full" />
 			</div>
-			<div class="h-[30px] flex items-center">
+			<div class="h-[30px] flex items-center text-gray-600">
 				<p>{{ startDate }}god. - {{ endDate }}god.</p>
 			</div>
 		</div>
@@ -36,7 +39,7 @@
 			class="flex gap-[10px] h-[30px] w-[30%] items-start justify-start pr-[15px] pt-[3px] w-full pl-[20px]"
 		>
 			<div
-				class="w-[23px] h-[23px] cursor-pointer"
+				class="w-[23px] h-[23px] cursor-pointer hover:scale-105"
 				@click="
 					$router.push({
 						name: 'UpdateCurrentCourse',
@@ -48,7 +51,7 @@
 			</div>
 
 			<div
-				class="w-[23px] h-[23px] cursor-pointer"
+				class="w-[23px] h-[23px] cursor-pointer hover:scale-105"
 				@click="
 					$router.push({
 						name: 'CourseInfo',
@@ -60,7 +63,7 @@
 			</div>
 
 			<div
-				class="w-[23px] h-[23px] cursor-pointer"
+				class="w-[23px] h-[23px] cursor-pointer hover:scale-105"
 				@click="deleteCurrentCourse"
 			>
 				<img src="/images/delete.png" class="w-full h-full" />

@@ -2,29 +2,32 @@
 export default {
   content: [
     "./index.html", // Ako imate index.html
-    "./src/**/*.{vue,js,ts,jsx,tsx}" // Putanje do Vue i JS fajlova
+    "./src/**/*.{vue,js,ts,jsx,tsx}", // Putanje do Vue i JS fajlova
   ],
   safelist: [
     {
       pattern: /text-(blue|green|indigo|pink|orange|rose)-(600|400)/,
-      variants: ['hover'],
-    }
+      variants: ["hover"],
+    },
   ],
-  
+
   theme: {
     extend: {
       fontFamily: {
-        gilroy: ['Gilroy', 'sans-serif'],
+        poppins: ["Poppins", "sans-serif"],
       },
       fontSize: {
-        'h1': '70px', 
+        h1: "70px",
       },
       boxShadow: {
-        custom: '0 0px 3px rgba(0, 0, 0, 0.25)', // Prilagođena senka
+        custom: "0 0px 3px rgba(0, 0, 0, 0.25)", // Prilagođena senka
       },
-      
+      colors: {
+        "main-blue": "#2D3CFF", 
+        "second-blue": "#3b82f6",
+        "light-purple":"#886df6"
+      },
     },
   },
   plugins: [],
-}
-
+};

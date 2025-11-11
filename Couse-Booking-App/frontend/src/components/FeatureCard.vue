@@ -1,12 +1,13 @@
 <template>
 	<div
-		class="flex flex-column items-center justify-center gap-[20px] w-[400px] bg-[#06088C] h-fill text-white text-[30px] font-gilroy rounded rounded-md"
+		class="backdrop-blur-md flex flex-col items-center justify-center gap-[20px] w-1/4 bg-main-blue h-fill text-white text-[26px]   rounded-md"
 	>
-		<div class="img-feature-container">
-			<img :src="imgSrc" />
+		<div class="img-feature-container w-[50px] i h-[50px]">
+			<img :src="imgSrc" class="w-full h-full object-cover"/>
 		</div>
 		<p font-weight-normal>{{ title }}</p>
 	</div>
+
 </template>
 
 <script setup>

@@ -88,7 +88,7 @@
 						<div class="input-container">
 							<select
 								v-model="form.rola"
-								class="h-[64px] bg-white border border-gray-300 text-black text-sm font-gilroy rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+								class="h-[64px] bg-white border border-gray-300 text-black text-sm  rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 								required
 							>
 								<option selected disabled>Choose a Role</option>

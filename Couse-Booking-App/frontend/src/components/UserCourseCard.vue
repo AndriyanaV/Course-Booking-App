@@ -10,7 +10,7 @@
 			class="w-full px-[19px] flex justify-between flex-row h-[60px] items-center"
 		>
 			<div class="w-[50%] h-full flex items-center">
-				<h3 class="text-[#10012C] text-[18px] font-gilroy font-bold capitalize">
+				<h3 class="text-[#10012C] text-[18px]  font-bold capitalize">
 					{{ course.name }}
 				</h3>
 			</div>
@@ -41,7 +41,7 @@
 				More Details
 			</button>
 			<div
-				class="text-[16px] font-gilroy font-bold w-[75px] text-[#00000e] text-[16px] flex items-center justify-center border border-[#c5c5c5] h-[42px]"
+				class="text-[16px]  font-bold w-[75px] text-[#00000e] text-[16px] flex items-center justify-center border border-[#c5c5c5] h-[42px]"
 			>
 				<span class="font-bold"> {{ course.price }}$</span>
 			</div>

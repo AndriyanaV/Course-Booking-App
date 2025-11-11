@@ -1,15 +1,22 @@
 <template>
-	<div class="flex w-[1100px] flex-col justify-start items-center gap-[10px]">
+	<div class="flex w-[1100px] flex-col justify-start items-center gap-[10px] cursor-pointer">
 		<div class="title-desc">
-			<div class="title">
+			<div class="title relative">
+				<div class="card-icon">
+					<img src="/images/level.png" class="w-[45px] h-[45px] object-cover" />
+				</div>
 				<p>Level</p>
 			</div>
 			<div class="description">
+				
 				<p>{{ course.level }}</p>
 			</div>
 		</div>
 		<div class="title-desc">
 			<div class="title">
+				<div class="card-icon">
+					<img src="/images/timeout.png" class="max-w-[30px] max-h-[30px] object-cover" />
+				</div>
 				<p>Duration</p>
 			</div>
 			<div class="description">
@@ -18,6 +25,9 @@
 		</div>
 		<div class="title-desc">
 			<div class="title">
+				<div class="card-icon">
+					<img src="/images/money.png" class="w-[43px] h-[43px] object-cover" />
+				</div>
 				<p>Price</p>
 			</div>
 			<div class="description">
@@ -26,6 +36,9 @@
 		</div>
 		<div class="title-desc">
 			<div class="title">
+				<div class="card-icon">
+					<img src="/images/lessons-2.png" class="w-[40px] h-[40px] object-cover" />
+				</div>
 				<p>Number Of Lessons</p>
 			</div>
 			<div class="description">
@@ -34,6 +47,9 @@
 		</div>
 		<div class="title-desc">
 			<div class="title">
+				<div class="card-icon">
+					<img src="/images/level.png" class="w-[40px] h-[40px] object-cover" />
+				</div>
 				<p>Start Date</p>
 			</div>
 			<div class="description">
@@ -42,6 +58,9 @@
 		</div>
 		<div class="title-desc">
 			<div class="title">
+				<div class="card-icon">
+					<img src="/images/finish.png" class="w-[40px] h-[40px] object-cover" />
+				</div>
 				<p>End Date</p>
 			</div>
 			<div class="description">
@@ -50,6 +69,9 @@
 		</div>
 		<div class="title-desc">
 			<div class="title">
+				<div class="card-icon">
+					<img src="/images/level.png" class="w-[40px] h-[40px] object-cover" />
+				</div>
 				<p>Max Members</p>
 			</div>
 			<div class="description">
@@ -61,7 +83,7 @@
 				class="w-[40%] flex items-center justify-start h-full flex-col rounded-sm"
 			>
 				<div
-					class="w-full h-[90px] bg-[#9989B4] text-[#FFFF] flex flex-col items-center justify-center font-medium text-[26px] font-gilroy rounded-sm"
+					class="min-w-[100%] title"
 				>
 					<p>Teacher</p>
 				</div>
@@ -76,12 +98,12 @@
 				class="w-[60%] h-[350px] flex flex-col rounded-bl-md rounded-br-md rounded-sm"
 			>
 				<div
-					class="w-full h-[90px] flex bg-white justify-center items-center text-[22px] font-gilroy font-normal text-[#A49D9D] rounded-l-lg-md rounded-sm"
+					class="w-full h-[90px] flex bg-white justify-center items-center text-[22px]  font-normal text-[#A49D9D] rounded-l-lg-md rounded-sm"
 				>
 					<p>{{ course.first_name }} {{ course.last_name }}</p>
 				</div>
 				<div
-					class="w-full h-[250px] bg-white text-[18px] font-gilroy font-normal text-[#A49D9D] px-[40px] rounded-sm"
+					class="w-full h-[250px] bg-white text-[18px]  font-normal text-[#A49D9D] px-[40px] rounded-sm"
 				>
 					<p>
 						{{ course.biography }}

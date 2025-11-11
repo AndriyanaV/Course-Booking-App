@@ -1,12 +1,11 @@
 <template>
-	<div class="font-gilroy">
+	<div>
 		<h1
 			:style="{
 				color: color,
-				fontWeight: fontWeight,
 				fontSize: (fontSize || 70) + 'px',
 			}"
-			class="font-medium"
+			:class="fontWeight ? '' : 'font-semibold'"
 		>
 			{{ heading }}
 		</h1>

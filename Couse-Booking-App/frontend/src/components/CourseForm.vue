@@ -17,7 +17,7 @@
 								placeholder="Enter course name"
 								id="courseName"
 								name="courseName"
-								class="w-full rounded-xl h-full border pl-[10px]"
+								class="input-el"
 								required
 							/>
 						</div>
@@ -36,7 +36,7 @@
 								placeholder="Enter language"
 								id="language"
 								name="language"
-								class="w-full rounded-xl h-full border pr-[5px] pl-[10px]"
+								class="input-el"
 								required
 							/>
 						</div>
