@@ -1,7 +1,7 @@
 <template>
-	<div class="h-[60px] min-w-[150px]">
+	<div class="lg:h-[60px] lg:min-w-[150px] h-[48px] min-w-[100px]">
 		<button
-			class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full min-w-[200px]"
+			class="bg-[#46A5BA] hover:bg-[#4096a9] text-white font-bold py-2 px-4 rounded h-full min-w-[100px]  mt-[10px]"
 			@click="handleClick()"
 		>
 			{{ text }}

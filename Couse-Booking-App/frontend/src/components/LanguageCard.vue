@@ -1,9 +1,9 @@
 <template>
-	<div class="relative overflow-hidden card-container cursor-pointer flex flex-col justify-center items-start  bg-[rgba(239,239,239,0.45)] border-0 rounded-md shadow-custom min-w-[350px] mt-[20px] h-auto"
+	<div class="relative overflow-hidden card-container cursor-pointer flex flex-col justify-center items-start   border-0 rounded-md shadow-custom min-w-[33%] mt-[20px] h-auto"
 		style="background-color: rgba(239, 239, 239, 0.45)">
 		<div class="w-full h-[220px] m-0 mt-[10px] flex justify-center relative">
-			<img :src="course.course_image_url" class="h-[95%] w-[90%]  cover" />
-			<div class="absolute bottom-[20px] left-[-5px] bg-blue-500
+			<img :src="course.course_image_url" class="h-[95%] lg:w-[90%] w-full lg:px-[0px] px-[20px] cover" />
+			<div class="absolute lg:bottom-[20px] bottom-[40px] left-[-5px] bg-[#28C7D4]
          w-fit h-[40px] flex items-center justify-center 
          text-[#252525] text-[16px] cursor-pointer text-center p-[10px] rounded-[6px]">
 				<p class="capitalize text-[16px] text-white font-medium">{{ course.level }}</p>
@@ -13,7 +13,7 @@
 			<div class="flex items-center justify-start gap-[40px] h-auto w-full px-[20px]">
 
 				<div class=" flex justify-start h-auto items-center">
-					<h4 class="text-[#3252E4] text-[20px] font-bold capitalize h-auto">
+					<h4 class="text-[#46A5BA] text-[20px] font-bold capitalize h-auto">
 						{{ course.name }}
 					</h4>
 				</div>
@@ -45,11 +45,11 @@
 			<div class="w-full flex flex-col gap-[10px] h-fit">
 				<div class=" flex justify-end h-auto items-center w-full px-[20px]">
 					<div
-						class="text-[16px]  font-bold  text-[#3E9C52]  flex items-center justify-center h-auto w-[160px]">
+						class="text-[16px]  font-bold  text-[#4ab561]  flex items-center justify-center h-auto w-[160px]">
 						<span class="font-bold"> {{ course.price + "$" }} </span>
 					</div>
 				</div>
-				<div class="flex gap-[20px]  h-fit w-full justify-center items-center">
+				<div class="flex gap-[20px]  h-fit w-full justify-center items-center lg:px-[0px] px-[20px]">
 					<button
 						class="flex flex-row-reverse gap-[4px] hover:scale-105 hover:text-gray-600 border-none text-gray-600 font-semibold items-center border  rounded h-fit text-[16px]"
 						@click="
@@ -60,7 +60,7 @@
 							class="max-w-[28px] h-max-[28px] object-contain rotate-[30deg]" />
 					</button>
 					<button @click="bookCourse()"
-						class="bg-[#4A6CF7] hover:bg-[#2367d4] text-white font-normal py-2 px-4 border w-[160px] rounded h-[42px]">
+						class="bg-[#28C7D4] hover:bg-[#25b9c6] text-white font-normal py-2 px-4 border w-[160px] rounded h-[42px]">
 						Reverse a spot
 					</button>
 				</div>

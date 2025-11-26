@@ -1,8 +1,8 @@
 <template>
 	<section class="w-full py-12 pr-0 flex justify-center pt-[150px]">
-		<Heading heading="My Courses" color="#4E32BA" />
+		<Heading heading="My Courses" color="var(--main-blue)" />
 	</section>
-	<section class="w-full py-12 py-[40px] flex justify-center">
+	<section class="w-full p-[40px] flex justify-center">
 		<div
 			class="container max-w-[1320px] flex justify-start items-start m-0 flex-wrap gap-[40px] p-0"
 		>

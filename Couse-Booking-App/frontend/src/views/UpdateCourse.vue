@@ -1,11 +1,13 @@
 <template>
-	<section class="w-full pt-[200px] flex justify-center bg-[#EFEFEF] pb-[40px]">
+	<section class="w-full py-[150px] flex flex-col items-center justify-center bg-[#EFEFEF] h-full gap-[60px]">
+		<Heading heading="Update Course Info" color="#2D3CFF" class="w-full font-bold  text-center" fontSize="46" fontWeight="700"/>
 		<CourseForm :course="course" text="Update" @courseChange="updateCourse" />
 	</section>
 </template>
 
 <script setup>
 	import CourseForm from "@/components/CourseForm.vue";
+	import Heading from "@/components/Heading.vue";
 	import { useRoute, useRouter } from "vue-router";
 	import { toast } from "vue3-toastify";
 	import axios from "axios";

@@ -4,11 +4,11 @@
 @tailwind utilities;
 
 body {
-  font-family: 'Poppins', sans-serif !important;
+  font-family: "Poppins", sans-serif !important;
 }
 
 .title-desc {
-  @apply w-[1100px] h-[90px] flex flex-row  gap-[2px] rounded-sm ;
+  @apply w-[1100px] h-[90px] flex flex-row  gap-[2px] rounded-sm;
 }
 
 .title {
@@ -19,8 +19,8 @@ body {
   @apply w-[60%] h-full bg-white text-[#A49D9D] flex items-center justify-center font-medium text-[22px] font-normal capitalize;
 }
 
-.card-icon{
-  @apply border-[#9173f7] z-[1] border-[1px] absolute left-[-35px] min-w-[20%] h-[100%] bg-[#f5f5f4] rounded-full flex items-center justify-center
+.card-icon {
+  @apply border-[#9173f7] z-[1] border-[1px] absolute left-[-35px] min-w-[20%] h-[100%] bg-[#f5f5f4] rounded-full flex items-center justify-center;
 }
 
 .card {
@@ -60,7 +60,7 @@ body {
 }
 
 .label-form {
-  @apply text-[#14003B] text-[18px]  font-medium;
+  @apply text-gray-700 text-[16px]  font-medium;
 }
 
 .input-container {
@@ -68,11 +68,37 @@ body {
 }
 
 .input-el {
-  @apply w-full rounded-xl h-full border pl-[10px] text-gray-600;
+  @apply border border-[#dcdcdc]
+    rounded-[10px]
+    px-[18px] py-[14px]
+    text-[15px]
+    transition
+    focus:shadow-[0_0_0_3px_rgba(59,87,255,0.15)] focus:outline-none w-full
+    text-gray-600
 }
 
 .first-letter-uppercase::first-letter {
   text-transform: uppercase;
+}
+
+.user-form-container {
+  @apply bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-8 w-full max-w-md gap-[20px] py-[30px] flex flex-col relative;
+}
+
+.user-input-container {
+  @apply w-full flex flex-col items-start gap-[10px];
+}
+
+.user-input {
+  @apply w-full rounded-lg border border-none transition text-gray-500 text-[14px] focus:outline-none bg-transparent;
+}
+
+.user-input-update-container {
+  @apply w-[80%] bg-white rounded;
+}
+
+.user-input-update {
+  @apply w-full rounded-lg border border-none transition text-gray-500 text-[14px] focus:outline-none bg-transparent p-[15px];
 }
 
 html {

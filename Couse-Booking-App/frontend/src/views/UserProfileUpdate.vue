@@ -1,5 +1,5 @@
 <template>
-	<section class="w-full justify-center flex pt-[150px] pb-[30px]">
+	<section class="w-full flex justify-center items-start bg-gradient-to-b from-[#2d3cff]/20 to-white min-h-screen py-[150px]">
 		<UserProfileUpdateForm :user="user" @userProfileUpdated="updateUserInfo" />
 	</section>
 </template>

@@ -15,8 +15,8 @@
 					<Button text="See Members" @buttonClicked="getMembers()" />
 				</div>
 
-				<div v-if="isMembers" class=" w-full flex justify-center py-[50px]">
-					<p class="">No Registered Users yet!</p>
+				<div v-if="isMembers" class=" w-full flex justify-center py-[50px] text-gray-600">
+					<p class="">No Registered users yet!</p>
 				</div>
 
 				<div v-else v-for="member in members" :key="member.id" class="flex items-center w-full">

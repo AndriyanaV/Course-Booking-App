@@ -1,5 +1,6 @@
 <template>
-	<section class="w-full flex justify-center py-[200px]">
+	<section class="w-full flex flex-col items-center justify-center py-[150px] gap-[60px] h-full">
+		<Heading heading="Update User Info" color="#2D3CFF" class="w-full font-bold  text-center" fontSize="46" fontWeight="600"/>
 		<UserForm
 			:user="user"
 			text="Update"
@@ -15,6 +16,7 @@
 	import axios from "axios";
 	import { toast } from "vue3-toastify";
 	import UserForm from "@/components/UserForm.vue";
+	import Heading from "@/components/Heading.vue";
 
 	const isAddMode = ref(false);
 

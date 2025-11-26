@@ -15,7 +15,7 @@
 								v-model="form.firstName"
 								type="text"
 								placeholder="Enter your first name"
-								class="w-full rounded-xl h-full border pl-[10px]"
+								class="input-el"
 								required
 							/>
 						</div>
@@ -32,7 +32,7 @@
 								v-model="form.lastName"
 								type="text"
 								placeholder="Enter your last name"
-								class="w-full rounded-xl h-full border pr-[5px] pl-[10px]"
+								class="input-el"
 								required
 							/>
 						</div>
@@ -83,7 +83,7 @@
 					</div>
 					<div class="column">
 						<label for="email" class="label-form">
-							Rola <span class="text-red-500"> * </span>
+							Role <span class="text-red-500"> * </span>
 						</label>
 						<div class="input-container">
 							<select
@@ -108,7 +108,7 @@
 						id="message"
 						v-model="form.biography"
 						rows="4"
-						class="block p-2.5 w-full text-sm text-black bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						class="block p-2.5 w-full text-sm text-black bg-white rounded-lg border border-gray-300 focus:shadow-[0_0_0_3px_rgba(59,87,255,0.15)] focus:outline-none"
 						placeholder="Write your biography here..."
 					></textarea>
 				</div>
@@ -125,7 +125,7 @@
 						<div class="flex items-center justify-start w-full">
 							<label
 								for="dropzone-file"
-								class="flex flex-col items-center justify-center w-[40%] h-64 border border-gray-200 border-solid rounded-lg cursor-pointer bg-white dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+								class="flex flex-col items-center justify-center w-[40%] h-64 border border-gray-200 border-solid rounded-lg cursor-pointer hover:bg-gray-100"
 							>
 								<div
 									class="flex flex-col items-center justify-center pt-5 pb-6 realtive"
