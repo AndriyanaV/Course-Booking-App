@@ -24,7 +24,6 @@
 <style scoped>
 	.inactive {
 		color: #15074d;
-		font-family: "Gilroy";
 		font-size: 40px;
 		background-color: #d2d0e8;
 		border-radius: 5px;
@@ -41,7 +40,6 @@
 	.active {
 		color: white;
 		background-color: #586ce3;
-		font-family: "Gilroy";
 		font-size: 40px;
 		border-radius: 5px;
 		width: 360px;

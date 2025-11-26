@@ -1,9 +1,14 @@
 <template>
 	<section class="w-full flex items-center flex-col">
-		<section class="w-full py-12 pr-0 flex justify-center pt-[150px]">
-			<Heading heading="All  Courses" color="#4E32BA" />
+		<section class="container max-w-[1320px] mx-auto w-full py-12 pr-0 flex justify-center pt-[150px] px-[40px] bg-second-blue">
+			<div class="w-1/2 flex items-center text-center">
+				<Heading heading="Manage All Courses" color="white"  />
+			</div>
+			<div class="w-1/2 h-auto flex items-center justify-center">
+				<img src="/images/manage-courses.png" class="w-[400px] h-[400px]" />
+			</div>
 		</section>
-		<section class="w-[1320px] py-12 flex justify-between items-center">
+		<section class="container max-w-[1320px] mx-auto px-[40px] py-12 flex justify-between items-center">
 			<SelectLanguage
 				@languageSelected="setLanguage"
 				:languageOptions="languageOptions"
@@ -13,11 +18,11 @@
 				@buttonClicked="$router.push({ name: 'AddCourse' })"
 			/>
 		</section>
-		<section class="w-full py-[20px] flex justify-center bg-white h-screen">
+		<section class="container max-w-[1320px] mx-auto px-[40px] flex justify-center h-auto pb-[40px]" >
 			<div
-				class="w-[1320px] flex flex-row flex-wrap bg-white justify-start items-start m-0 flex-wrap gap-[40px] p-0"
+				class="w-[1320px] flex flex-row flex-wrap justify-start items-start m-0 gap-[40px] p-0"
 			>
-				<div v-for="course in courses" :key="course.id">
+				<div v-for="course in courses" :key="course.id" class="mt-[30px]">
 					<CourseCard :course="course" @courseRemoved="deleteCourse" />
 				</div>
 			</div>

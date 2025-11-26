@@ -13,7 +13,7 @@
 						>
 							<div class="p-6 space-y-4 md:space-y-6 sm:p-8">
 								<h1
-									class="text-xl font-bold leading-tight tracking-tight text-[#4E32BA] md:text-2xl font-gilroy font-bold"
+									class="text-xl font-bold leading-tight tracking-tight text-[#4E32BA] md:text-2xl  font-bold"
 								>
 									Sign in to your account
 								</h1>
@@ -25,7 +25,7 @@
 									<div>
 										<label
 											for="email"
-											class="block mb-2 text-base font-medium text-[#4E32BA] font-gilroy"
+											class="block mb-2 text-base font-medium text-[#4E32BA] "
 											>Your Email</label
 										>
 										<input
@@ -41,7 +41,7 @@
 									<div>
 										<label
 											for="password"
-											class="block mb-2 text-base font-medium text-[#4E32BA] font-gilroy"
+											class="block mb-2 text-base font-medium text-[#4E32BA] "
 											>Password</label
 										>
 										<input
@@ -57,7 +57,7 @@
 
 									<button
 										type="submit"
-										class="w-full mb-4 text-white bg-[#4E32BA] hover:[#2E158E] focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center font-gilroy capitalize"
+										class="w-full mb-4 text-white bg-[#4E32BA] hover:[#2E158E] focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center  capitalize"
 									>
 										Sign in
 									</button>

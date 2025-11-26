@@ -47,7 +47,7 @@
 				class="w-[40%] flex items-center justify-start h-full flex-col rounded-sm"
 			>
 				<div
-					class="w-full h-[90px] bg-[#9989B4] text-[#FFFF] flex flex-col items-center justify-center font-medium text-[32px] font-gilroy rounded-sm"
+					class="w-full h-[90px] bg-[#9989B4] text-[#FFFF] flex flex-col items-center justify-center font-medium text-[32px] rounded-sm"
 				>
 					<p>Photo</p>
 				</div>
@@ -59,12 +59,12 @@
 				class="w-[60%] h-[350px] flex flex-col rounded-bl-md rounded-br-md rounded-sm"
 			>
 				<div
-					class="w-full h-[90px] flex bg-white justify-center items-center text-[24px] font-gilroy font-normal text-[#A49D9D] rounded-l-lg-md rounded-sm"
+					class="w-full h-[90px] flex bg-white justify-center items-center text-[24px]  font-normal text-[#A49D9D] rounded-l-lg-md rounded-sm"
 				>
 					<p v-if="user.rola == 'professor'">Biography</p>
 				</div>
 				<div
-					class="w-full h-[250px] bg-white text-[18px] font-gilroy font-normal text-[#A49D9D] px-[40px] rounded-sm"
+					class="w-full h-[250px] bg-white text-[18px]  font-normal text-[#A49D9D] px-[40px] rounded-sm"
 				>
 					<p>{{ user.biography }}</p>
 				</div>

@@ -1,5 +1,5 @@
 <template>
-	<div class="w-[1200px] bg-white py-[20px] px-[40px] rounded shadow">
+	<div class="w-[1200px] bg-white py-[20px] px-[40px] rounded-[14px] ">
 		<div class="form wraper w-full flex flex-col gap-[40px]">
 			<form class="w-full" @submit.prevent="handleCourseChange()">
 				<div class="form-row w-full flex gap-[20px] h-[140px]">
@@ -17,7 +17,7 @@
 								placeholder="Enter course name"
 								id="courseName"
 								name="courseName"
-								class="w-full rounded-xl h-full border pl-[10px]"
+								class="input-el"
 								required
 							/>
 						</div>
@@ -36,7 +36,7 @@
 								placeholder="Enter language"
 								id="language"
 								name="language"
-								class="w-full rounded-xl h-full border pr-[5px] pl-[10px]"
+								class="input-el"
 								required
 							/>
 						</div>
@@ -52,10 +52,10 @@
 						>Image <span class="text-red-500"> * </span></label
 					>
 					<div class="w-full h-[200px]">
-						<div class="flex items-center justify-start w-full">
+						<div class="flex items-center justify-start w-full ">
 							<label
 								for="dropzone-file"
-								class="flex flex-col items-center justify-center w-[40%] h-64 border border-gray-200 border-solid rounded-lg cursor-pointer bg-white dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+								class="flex flex-col items-center justify-center w-[40%] h-64 border border-gray-200 border-solid rounded-lg cursor-pointer hover:bg-gray-100"
 							>
 								<div
 									class="flex flex-col items-center justify-around pt-5 pb-6 realtive"

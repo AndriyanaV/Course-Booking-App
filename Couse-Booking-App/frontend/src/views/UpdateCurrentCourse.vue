@@ -1,5 +1,6 @@
 <template>
-	<section class="w-full flex justify-center py-[200px]">
+	<section class="w-full flex flex-col justify-center items-center py-[150px] gap-[60px] h-full">
+		<Heading heading="Update Course Info" color="#2D3CFF" class="w-full font-bold  text-center" fontSize="46" fontWeight="700"/>
 		<CurrentCourseForm
 			:course="course"
 			text="Update"
@@ -14,6 +15,7 @@
 	import axios from "axios";
 	import { toast } from "vue3-toastify";
 	import CurrentCourseForm from "@/components/CurrentCourseForm.vue";
+	import Heading from "@/components/Heading.vue";
 
 	const route = useRoute();
 	const router = useRouter();

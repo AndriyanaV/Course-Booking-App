@@ -1,8 +1,8 @@
 <template>
 	<div
-		class="w-[1100px] flex items-center justify-between border-top pt-[20px]"
+		class="w-full px-[40px] flex items-center justify-between border-top pt-[20px]"
 	>
-		<div class="w-[60%] flex items-center gap-[12px]">
+		<div class="w-[60%] flex items-center gap-[12px] text-gray-600">
 			<div class="w-[40px] h-[40px] rounded-full">
 				<img :src="member.user_image_url" class="w-full h-full rounded-full" />
 			</div>
@@ -11,11 +11,11 @@
 		</div>
 		<div
 			v-if="userRole === 'admin'"
-			class="w-[140px] h-[44px]"
+			class="w-[160px] h-[44px]  text-white"
 			@click="cancelReservation()"
 		>
 			<button
-				class="w-full h-full rounded bg-gray-200 hover:bg-red-500 hover:text-white"
+				class="w-full h-full rounded bg-green-500 hover:bg-red-500 hover:text-white"
 			>
 				Cancel resevation
 			</button>
