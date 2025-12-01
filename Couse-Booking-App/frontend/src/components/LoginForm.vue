@@ -1,28 +1,28 @@
 <template>
 	<div
-		class="w-[100%] flex items-center h-[688px] rounded-xl bg-white justify-center"
+		class="w-[100%] flex items-center h-full rounded-xl  justify-center"
 	>
-		<div class="w-[50%] h-full flex items-center justify-center">
-			<div class="flex felx-col h-[100%] w-[95%] bg-black">
-				<section class="bg-white w-full">
+		<div class=" w-[100%] h-full flex items-center justify-center">
+			<div class="flex felx-col h-[100%] w-[95%] ">
+				<section class=" w-full">
 					<div
 						class="flex flex-col items-center justify-center h-[100%] px-6 py-8 mx-auto lg:py-0"
 					>
 						<div
 							class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0"
 						>
-							<div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+							<div class="p-6 space-y-4 md:space-y-6 sm:p-8 flex flex-col lg:gap-[20px] gap-[16px]">
 								<h1
-									class="text-xl font-bold leading-tight tracking-tight text-[#4E32BA] md:text-2xl  font-bold"
+									class="text-xl  leading-tight tracking-tight text-[#4E32BA] md:text-2xl  font-bold"
 								>
 									Sign in to your account
 								</h1>
 								<form
-									class="space-y-4 md:space-y-6"
+									class="space-y-6 md:space-y-6 flex flex-col lg:gap-[20px] gap-[16px]"
 									action="#"
 									@submit.prevent="handleSubmit()"
 								>
-									<div>
+									<div class="flex flex-col gap-[12px]">
 										<label
 											for="email"
 											class="block mb-2 text-base font-medium text-[#4E32BA] "
@@ -38,7 +38,7 @@
 											required=""
 										/>
 									</div>
-									<div>
+									<div class="flex flex-col gap-[12px]">
 										<label
 											for="password"
 											class="block mb-2 text-base font-medium text-[#4E32BA] "

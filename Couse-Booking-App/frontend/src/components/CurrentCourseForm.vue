@@ -1,7 +1,7 @@
 <template>
-	<div class="w-[1200px] bg-white py-[20px] px-[40px] rounded shadow">
-		<div class="form wraper w-full flex flex-col gap-[40px]">
-			<form class="w-full" @submit.prevent="handleCurrentCourseChange()">
+	<div class="lg:w-[1200px] bg-white lg:py-[40px] py-[20px] lg:px-[40px] px-[20px] rounded shadow">
+		<div class="w-full">
+			<form class="w-full flex flex-col lg:gap-[20px] gap-[40px] lg:py-[40px] py-[40px]" @submit.prevent="handleCurrentCourseChange()">
 				<div class="form-row">
 					<div class="column">
 						<label for="max_members" class="label-form">
@@ -46,7 +46,7 @@
 								placeholder="Enter start date of course"
 								id="start_at"
 								name="start_at"
-								class="input-el"
+								class="input-el  bg-white"
 							/>
 						</div>
 					</div>
@@ -61,7 +61,7 @@
 								placeholder="Enter end date of course"
 								id="end_at"
 								name="end_at"
-								class="input-el"
+								class="input-el bg-white"
 							/>
 						</div>
 					</div>
@@ -138,15 +138,8 @@
 					</div>
 				</div>
 
-				<div class="w-full h-[100px] flex items-center justify-start mt-[20px]">
-					<div class="h-[50px] w-[150px]">
-						<button
-							type="submit"
-							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[150px]"
-						>
-							{{ text }}
-						</button>
-					</div>
+				<div class="w-full flex items-center justify-start mt-[20px]">
+					<Button :text="buttonText" @click="handleCurrentCourseChange" />
 				</div>
 			</form>
 		</div>
@@ -158,10 +151,11 @@
 	import axios from "axios";
 	import { useRoute, useRouter } from "vue-router";
 	import { toast } from "vue3-toastify";
+	import Button from "./Button.vue";
 
 	const props = defineProps({
 		course: Object,
-		text: String,
+		buttonText: String,
 	});
 
 	const emit = defineEmits(["currentCourseChange"]);

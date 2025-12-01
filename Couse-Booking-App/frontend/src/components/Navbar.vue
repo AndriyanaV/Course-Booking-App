@@ -98,7 +98,7 @@ const route = useRoute()
 const { userRole, checkUserRole } = useUserRole();
 
 //To handle good desing 
-const blackNavTextPages = ['/', '/professor-courses', '/user-courses', '/course-info', '/add-course', '/add-current-course', '/update-course', '/course-card-info/:id', '/update-current-course', '/add-user', '/user-profile-update', '/user-profile']
+const blackNavTextPages = ['/', '/professor-courses', '/user-courses', '/course-info', '/add-course', '/add-current-course', '/update-course', '/course-card-info/:id', '/update-current-course', '/add-user', '/user-profile-update', '/user-profile', '/all-courses', '/all-users']
 
 
 //Text color in navbar 
@@ -106,7 +106,8 @@ const linkColor = computed(() => {
 	if (
 		isScrolled.value ||
 		blackNavTextPages.includes(route.path) ||
-		route.path.startsWith('/course-card-info')
+		route.path.startsWith('/course-card-info')||
+		route.path.startsWith('/all-current-courses')  
 	) {
 		return 'text-black'
 	}
@@ -121,7 +122,8 @@ const profileImg = computed(() => {
 	if (
 		isScrolled.value ||
 		blackNavTextPages.includes(route.path) ||
-		route.path.startsWith('/course-card-info')
+		route.path.startsWith('/course-card-info')||
+		route.path.startsWith('/all-current-courses')
 	) {
 		return '/images/social-scrolled.png'
 	}

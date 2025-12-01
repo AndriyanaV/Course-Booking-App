@@ -1,29 +1,30 @@
 <template>
-	<section class="w-full  flex justify-start py-[20px] pt-[150px] flex-col items-center m-0 px-[40px]">
-		<div class="max-w-[1320px] mx-0 container flex justify-center flex-col">
+	<section class="w-full py-[150px] flex flex-col justify-center items-center  lg:px-[40px] px-[20px]  h-ful">
+		<div
+			class="container max-w-[1320px] mx-auto flex flex-col justify-center items-center text-center lg:gap-[60px] gap-[40px]">
 			<div class="w-full py-[20px] flex justify-center">
 				<Heading heading="Course Info" color="#5a32d1" />
 			</div>
-			<div class="w-full py-[20px] flex justify-center">
+			<div class="w-full flex justify-center">
 				<CourseInfo :course="course" />
 			</div>
-			<div class="container max-w-[1320px] mx-0 px-[40px] mt-[20px]">
-			<div v-if="userRole === 'admin' || userRole === 'professor'"
-				class="w-[1100px] flex flex-col justify-between items-center gap-[20px]">
-				<div class="w-full justify-between flex items-center">
-					<Heading heading="Members" color="#14003B" fontWeight="medium" fontSize="40" />
-					<Button text="See Members" @buttonClicked="getMembers()" />
-				</div>
+			<div class="container max-w-[1320px] mx-0 lg:px-[40px] px-[20px] lg:mt-[20px]">
+				<div v-if="userRole === 'admin' || userRole === 'professor'"
+					class="lg:w-[1100px] flex flex-col justify-between items-center gap-[20px]">
+					<div class="w-full justify-between flex lg:flex-row flex-col lg:items-center  gap-[20px]">
+						<Heading heading="Members" color="#14003B" fontWeight="medium" fontSize="40" />
+						<Button text="See Members" @buttonClicked="getMembers()" />
+					</div>
 
-				<div v-if="isMembers" class=" w-full flex justify-center py-[50px] text-gray-600">
-					<p class="">No Registered users yet!</p>
-				</div>
+					<div v-if="isMembers" class=" w-full flex justify-center py-[50px] text-gray-600">
+						<p class="">No Registered users yet!</p>
+					</div>
 
-				<div v-else v-for="member in members" :key="member.id" class="flex items-center w-full">
-					<CourseMember :member="member" @memberDeleted="cancelReservation" />
+					<div v-else v-for="member in members" :key="member.id" class="flex items-center w-full">
+						<CourseMember :member="member" @memberDeleted="cancelReservation" />
+					</div>
 				</div>
 			</div>
-		</div>
 		</div>
 	</section>
 </template>

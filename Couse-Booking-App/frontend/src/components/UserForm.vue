@@ -1,14 +1,14 @@
 <template>
-	<div class="w-[1200px] bg-white py-[20px] px-[40px] rounded shadow">
+	<div class="lg:w-[1200px] bg-white py-[20px] px-[40px] rounded shadow">
 		<div class="form wraper w-full flex flex-col gap-[40px]">
-			<form class="w-full" @submit.prevent="handleUserChange()">
-				<div class="form-row w-full flex gap-[20px] h-[140px]">
-					<div class="column w-[49%] flex flex-col gap-[20px] h-full">
+			<form class="w-full flex flex-col lg:gap-[40px] py-[40px] gap-[40px]" @submit.prevent="handleUserChange()">
+				<div class="form-row w-full flex gap-[20px]">
+					<div class="column lg:w-[50%] w-[100%]  flex flex-col gap-[20px] h-full">
 						<label
 							for="name"
-							class="text-[#14003B] text-[18px] font-filroy font-medium"
+							class="text-gray-900 text-[18px] font-filroy font-medium"
 						>
-							First Name <span class="text-red-500"> * </span>
+							First Name <span class="text-red-400"> * </span>
 						</label>
 						<div class="w-[80%] bg-white h-[60px]">
 							<input
@@ -20,10 +20,10 @@
 							/>
 						</div>
 					</div>
-					<div class="column w-[49%] flex flex-col gap-[20px] h-full">
+					<div class="column w-[49%]  flex flex-col gap-[20px] h-full">
 						<label
 							for="last_name"
-							class="text-[#14003B] text-[18px] font-filroy font-medium"
+							class="text-gray-900 text-[18px] font-filroy font-medium"
 						>
 							Last Name <span class="text-red-500"> * </span>
 						</label>
@@ -109,7 +109,7 @@
 						v-model="form.biography"
 						rows="4"
 						class="block p-2.5 w-full text-sm text-black bg-white rounded-lg border border-gray-300 focus:shadow-[0_0_0_3px_rgba(59,87,255,0.15)] focus:outline-none"
-						placeholder="Write your biography here..."
+						placeholder="Write biography here..."
 					></textarea>
 				</div>
 
@@ -125,7 +125,7 @@
 						<div class="flex items-center justify-start w-full">
 							<label
 								for="dropzone-file"
-								class="flex flex-col items-center justify-center w-[40%] h-64 border border-gray-200 border-solid rounded-lg cursor-pointer hover:bg-gray-100"
+								class="flex flex-col items-center justify-center lg:w-[40%] w-[100%] h-64 border border-gray-200 border-solid rounded-lg cursor-pointer hover:bg-gray-100"
 							>
 								<div
 									class="flex flex-col items-center justify-center pt-5 pb-6 realtive"
@@ -171,15 +171,8 @@
 					</div>
 				</div>
 
-				<div class="w-full h-[100px] flex items-center justify-start mt-[20px]">
-					<div class="h-[50px] w-[150px]">
-						<button
-							type="submit"
-							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[150px]"
-						>
-							{{ text }}
-						</button>
-					</div>
+				<div class="w-full flex items-center justify-start mt-[20px]">
+					<Button :text="buttonText" @click="handleUserChange" />
 				</div>
 			</form>
 		</div>
@@ -189,12 +182,13 @@
 <script setup>
 	import { ref, watch } from "vue";
 	import { toast } from "vue3-toastify";
+	import Button from "./Button.vue";
 
 	const emit = defineEmits(["userChange"]);
 
 	const props = defineProps({
 		user: Object,
-		text: String,
+		buttonText: String,
 		isAddMode: Boolean,
 	});
 

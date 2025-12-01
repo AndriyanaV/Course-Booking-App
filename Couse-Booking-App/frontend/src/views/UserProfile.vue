@@ -1,6 +1,6 @@
 <template>
-	<section class="w-full flex justify-center items-start bg-gradient-to-b from-[#2d3cff]/20 to-white min-h-screen">
-		<div class="container max-w-[1320px] mx-auto flex flex-col justify-center items-center gap-[40px] py-[150px] text-center">
+	<section class="w-full flex justify-center items-start bg-gradient-to-b from-[#2d3cff]/20 to-white min-h-screen lg:px-[40px] px-[20px]">
+		<div class="container max-w-[1320px] mx-auto flex flex-col justify-center items-center  py-[150px] text-center">
 			<UserProfileForm :user="user" />
 		</div>
 	</section>

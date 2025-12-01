@@ -1,40 +1,47 @@
 <template>
-	<section class="w-full flex items-center flex-col ">
-		<section
-			class="container max-w-[1320px] mx-auto w-full py-12 pr-0 flex justify-center pt-[150px] px-[40px] bg-second-blue">
-			<div class="w-1/2 flex items-center text-center">
-				<Heading heading="All Courses of laguage" color="white" />
-			</div>
-			<div class="w-1/2 h-auto flex items-center justify-center">
-				<img src="/images/manage-current-courses.png" class="w-[430px] h-[400px]" />
+	<main class="w-full flex items-center flex-col ">
+		<section class="w-full lg:flex flex-col items-center lg:px-[40px] px-[20px]">
+			<div
+				class="container max-w-[1320px] mx-auto flex lg:flex-row flex-col bg-soft-blue h-auto mt-[100px]  rounded-[10px] gap-[20px]">
+				<div
+					class="sm:w-[60%] w-full flex justify-start flex-col items-start lg:gap-[30px] gap-[20px] sm:pl-[50px] pl-[20px] sm:pr-[0px] pr-[20px] pt-[50px] pb-[50px]">
+
+					<div class="flex flex-col lg:gap-[20px] gap-[14px]">
+						<Heading heading="Manage Courses for the Selected Language" color="#363232" class="w-full font-bold" fontSize="64" />
+						<p class="text-[#4F4A4A] lg:w-[75%] w-[95%]">Manage all courses for selected language: create, update, delete, and adjust course information.</p>
+					</div>
+
+				</div>
+				<div class="lg:w-[40%] flex justify-center flex-col items-center">
+					<img src="/images/current-courses-hero.png" class="max-w-[100%] h-max-[90%] object-contain " />
+				</div>
+
 			</div>
 		</section>
 
-		<section class="w-full py-12 flex items-center justify-center px-[40px]">
-			<div class="container max-w-[1320px] mx-auto flex justify-between items-center m-0">
+		<section class="w-full  flex items-center justify-center lg:px-[40px] px-[20px] lg:py-[80px] py-[40px]">
+			<div class="container max-w-[1320px] mx-auto  flex lg:flex-row flex-col lg:justify-between gap-[20px] lg:items-center">
 				<div>
 					<SelectLevel @levelSelected="setLevel" />
 				</div>
 				<Button text="Add Active Course" @buttonClicked="
 					$router.push({ name: 'AddCurrentCourse', query: { courseId: id } })
-					" />
+					"/>
 			</div>
 		</section>
-		<section class="w-full py-[100px] px-[60px] flex justify-center pb-[40px]">
+		<section class="w-full lg:px-[40px] px-[20px] flex justify-center pb-[40px]">
 			<div
 				class="container max-w-[1320px] mx-auto flex flex-row  justify-start items-start m-0 flex-wrap gap-[40px]">
 				<div v-if="currentCourses.length == 0"
 					class="w-full h-[100px] text-black flex items-center justify-center">
-					<p class="text-[18px] text-[#4E32BA]">
+					<p class="text-[18px] text-gray-600">
 						There are no current courses added for the given language course!
 					</p>
 				</div>
-				<div v-else v-for="course in currentCourses" :key="course.id">
-					<CurrentCourseCard :currentCourse="course" @currentCourseRemoved="deleteCurrentCourse" />
-				</div>
+				<CurrentCourseCard v-for="course in currentCourses" :key="course.id" :currentCourse="course" @currentCourseRemoved="deleteCurrentCourse" />
 			</div>
 		</section>
-	</section>
+	</main>
 </template>
 
 
