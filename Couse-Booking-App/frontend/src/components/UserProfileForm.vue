@@ -1,12 +1,12 @@
 <template>
-	<div class="w-[450px] flex flex-col items-start justify-start text-center gap-[40px]">
+	<div class="lg:w-[450px] flex flex-col items-start justify-start text-center gap-[40px]">
 		<!-- <Heading heading="My Profile" color="#2E42BE" class="w-full font-bold" fontSize="32" /> -->
 		<div
 			class="user-form-container">
 			<div @click="
 				$router.push({ name: 'UserProfileUpdate', query: { userId: user.id } })
-				" class="w-[29px] h-[29px] cursor-pointer absolute right-[10px] top-[10px]">
-				<img src="/images/edit.png" class="w-full h-full" />
+				" class="lg:w-[25px] lg:h-[25px] w-[24px] h-[24px] cursor-pointer absolute right-[10px] top-[10px]">
+				<img src="/images/pencil.svg" class="w-full h-full" />
 			</div>
 			<div class="w-full flex justify-start py-[5px]">
 				<div class="w-[100px] h-[100px] rounded-full">
@@ -50,7 +50,7 @@ const pnumber = ref("");
 const userImage = ref("");
 
 watch(
-	() => props.user, // Pretpostavljam da se `user` prosleđuje kao prop
+	() => props.user, 
 	(newUser) => {
 		if (newUser) {
 			firstName.value = newUser.first_name || "";

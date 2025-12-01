@@ -8,19 +8,19 @@ body {
 }
 
 .title-desc {
-  @apply w-[1100px] h-[90px] flex flex-row  gap-[2px] rounded-sm;
+  @apply lg:w-[1100px] w-full h-[90px] flex lg:flex-row  flex-col gap-[2px] rounded-sm text-[16px];
 }
 
 .title {
-  @apply relative w-[40%] rounded h-full bg-gradient-to-r from-[#8b6cf6] to-[#a78bfa] text-white flex items-center justify-center font-medium text-[26px] capitalize  hover:from-[#7558e6] hover:to-[#9473ea] transition-colors duration-300;
+  @apply  text-[18px] relative lg:w-[40%] w-[100%] rounded h-full bg-gradient-to-r from-[#8b6cf6] to-[#a78bfa] text-white flex items-center justify-center font-medium lg:text-[26px] capitalize  hover:from-[#7558e6] hover:to-[#9473ea] transition-colors duration-300;
 }
 
 .description {
-  @apply w-[60%] h-full bg-white text-[#A49D9D] flex items-center justify-center font-medium text-[22px] font-normal capitalize;
+  @apply lg:w-[60%] w-[100%] h-full bg-white text-[#A49D9D] flex items-center justify-center  lg:text-[22px] font-normal capitalize;
 }
 
 .card-icon {
-  @apply border-[#9173f7] z-[1] border-[1px] absolute left-[-35px] min-w-[20%] h-[100%] bg-[#f5f5f4] rounded-full flex items-center justify-center;
+  @apply border-[#9173f7] z-[1] border-[1px] absolute lg:left-[-35px] left-[-10px] top-[-10px] lg:min-w-[20%] h-[100%] bg-[#f5f5f4] rounded-full flex items-center justify-center;
 }
 
 .card {
@@ -36,7 +36,11 @@ body {
 }
 
 .inactive {
-  @apply w-[115px] h-[45px] text-center flex items-center justify-center text-white text-[16px] cursor-pointer bg-red-500 gap-[20px];
+  @apply w-[115px] h-[45px] text-center flex items-center justify-center text-white text-[16px] cursor-pointer bg-red-400 gap-[20px];
+}
+
+.closed {
+  @apply w-[115px] h-[45px] text-center flex items-center justify-center text-white text-[16px] cursor-pointer bg-orange-400 gap-[20px];
 }
 
 .edit {
@@ -52,11 +56,11 @@ body {
 }
 
 .form-row {
-  @apply w-full flex gap-[20px] h-[140px];
+  @apply w-full flex lg:flex-row flex-col lg:gap-[20px] gap-[40px] h-fit;
 }
 
 .column {
-  @apply w-[49%] flex flex-col gap-[20px] h-full;
+  @apply lg:w-[50%] w-[100%] flex flex-col gap-[20px] h-full items-start;
 }
 
 .label-form {
@@ -64,7 +68,7 @@ body {
 }
 
 .input-container {
-  @apply w-[80%] bg-white h-[60px];
+  @apply lg:w-[80%] bg-white lg:h-[60px] w-[100%];
 }
 
 .input-el {
@@ -75,6 +79,7 @@ body {
     transition
     focus:shadow-[0_0_0_3px_rgba(59,87,255,0.15)] focus:outline-none w-full
     text-gray-600
+    
 }
 
 .first-letter-uppercase::first-letter {
@@ -94,7 +99,7 @@ body {
 }
 
 .user-input-update-container {
-  @apply w-[80%] bg-white rounded;
+  @apply lg:w-[80%] bg-white rounded;
 }
 
 .user-input-update {
@@ -132,7 +137,7 @@ p {
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  /* color: hsla(160, 100%, 37%, 1); */
   transition: 0.4s;
   padding: 3px;
 }

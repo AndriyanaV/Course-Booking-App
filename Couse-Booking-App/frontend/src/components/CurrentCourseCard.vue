@@ -1,27 +1,25 @@
 <template>
-	<div class="card w-[400px] pb-[20px]">
-		<div class=" relative w-full h-[240px] flex justify-center pt-[20px] overflow-hidden">
-			<img
-				:src="currentCourse.course_image_url"
-				class="w-[80%] h-[90%] rounded-md"
-			/>
-					<div class="absolute bottom-[30px] left-[-5px] bg-blue-500
+	<div class="card lg:w-[30%] w-[100%] pb-[20px]">
+		<div class=" relative w-full h-[240px] flex justify-center px-[20px] pt-[20px] overflow-hidden">
+			<img :src="currentCourse.course_image_url" class="w-[100%] h-[90%] rounded-md" />
+			<div class="absolute lg:bottom-[30px] left-[-5px] bottom-[60px] bg-[#28C7D4]
          w-fit h-[40px] flex items-center justify-center 
          text-[#252525] text-[16px] cursor-pointer text-center p-[10px] rounded-[6px]">
 				<p class="capitalize text-[16px] text-white font-medium">{{ currentCourse.level }}</p>
 			</div>
 		</div>
-		<div
-			class="w-full px-[20px] flex justify-between flex-row h-auto items-center"
-		>
+		<div class="w-full px-[20px] flex justify-between flex-row h-auto items-center">
 			<div class="w-[50%] h-full flex items-center">
-				<h3 class="text-[#3252E4] text-[18px]  font-bold capitalize">
+				<h3 class="text-language-heading text-[18px]  font-bold capitalize">
 					{{ currentCourse.name }}
 				</h3>
 			</div>
-			<div class="flex gap-[15px] w-fit h-full rounded-lg items-center">
-		
-				<div :class="isActive ? 'active' : 'inactive'">
+			<div class="flex gap-[15px] w-fit h-full rounded-[16px] items-center">
+
+				<div :class="[
+					isActive ? 'active' : 'inactive',
+					'rounded-[5px]'
+				]">
 					<p>{{ status }}</p>
 				</div>
 			</div>
@@ -35,91 +33,79 @@
 			</div>
 		</div>
 
-		<div
-			class="flex gap-[10px] h-[30px] w-[30%] items-start justify-start pr-[15px] pt-[3px] w-full pl-[20px]"
-		>
-			<div
-				class="w-[23px] h-[23px] cursor-pointer hover:scale-105"
-				@click="
-					$router.push({
-						name: 'UpdateCurrentCourse',
-						query: { courseId: currentCourse.id },
-					})
-				"
-			>
-				<img src="/images/edit.png" class="w-full h-full" />
+		<div class="flex gap-[10px] h-[30px] w-[30%] items-start justify-start pr-[15px] pt-[3px] w-full pl-[20px]">
+			<div class="w-[18px] h-[19px] cursor-pointer hover:scale-105" @click="
+				$router.push({
+					name: 'UpdateCurrentCourse',
+					query: { courseId: currentCourse.id },
+				})
+				">
+				<img src="/images/pencil.svg" class="w-full h-full" />
 			</div>
 
-			<div
-				class="w-[23px] h-[23px] cursor-pointer hover:scale-105"
-				@click="
-					$router.push({
-						name: 'CourseInfo',
-						query: { courseId: currentCourse.id },
-					})
-				"
-			>
-				<img src="/images/eye.png" class="w-full h-full" />
+			<div class="w-[20px] h-[20px] cursor-pointer hover:scale-105" @click="
+				$router.push({
+					name: 'CourseInfo',
+					query: { courseId: currentCourse.id },
+				})
+				">
+				<img src="/images/eye2.svg" class="w-full h-full" />
 			</div>
 
-			<div
-				class="w-[23px] h-[23px] cursor-pointer hover:scale-105"
-				@click="deleteCurrentCourse"
-			>
-				<img src="/images/delete.png" class="w-full h-full" />
+			<div class="w-[20px] h-[20px] cursor-pointer hover:scale-105" @click="deleteCurrentCourse">
+				<img src="/images/delete-x.svg" class="w-full h-full" />
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
-	import { formatDate } from "@/composables/formatDate.js";
-	import { onMounted, ref } from "vue";
-	import axios from "axios";
-	import { toast } from "vue3-toastify";
+import { formatDate } from "@/composables/formatDate.js";
+import { onMounted, ref } from "vue";
+import axios from "axios";
+import { toast } from "vue3-toastify";
 
-	const emit = defineEmits(["currentCourseRemoved"]);
+const emit = defineEmits(["currentCourseRemoved"]);
 
-	const status = ref("");
+const status = ref("");
 
-	const props = defineProps({
-		currentCourse: Object,
-	});
+const props = defineProps({
+	currentCourse: Object,
+});
 
-	let startDate = ref("");
-	let endDate = ref("");
+let startDate = ref("");
+let endDate = ref("");
 
-	const isActive = ref(null);
+const isActive = ref(null);
 
-	startDate.value = formatDate(props.currentCourse.start_at, false);
-	endDate.value = formatDate(props.currentCourse.end_at, false);
+startDate.value = formatDate(props.currentCourse.start_at, false);
+endDate.value = formatDate(props.currentCourse.end_at, false);
 
-	const dateNow = new Date(Date.now()).getTime();
-	const start = new Date(props.currentCourse.start_at).getTime();
-	const end = new Date(props.currentCourse.end_at).getTime();
+const dateNow = new Date(Date.now()).getTime();
+const start = new Date(props.currentCourse.start_at).getTime();
+const end = new Date(props.currentCourse.end_at).getTime();
 
-	const chehckStatus = () => {
-		if (end < dateNow) {
-			status.value = "Finished";
-			isActive.value = false;
-			return;
-		} else if (start < dateNow) {
-			status.value = "Closed";
-			isActive.value = false;
-			return;
-		}
-		status.value = "Active";
-		isActive.value = true;
-	};
+const chehckStatus = () => {
+	if (end < dateNow) {
+		status.value = "Finished";
+		isActive.value = false;
+		return;
+	} else if (start < dateNow) {
+		status.value = "Closed";
+		isActive.value = false;
+		return;
+	}
+	status.value = "Active";
+	isActive.value = true;
+};
 
-	const deleteCurrentCourse = async () => {
-		emit("currentCourseRemoved", props.currentCourse);
-	};
+const deleteCurrentCourse = async () => {
+	emit("currentCourseRemoved", props.currentCourse);
+};
 
-	onMounted(() => {
-		chehckStatus();
-	});
+onMounted(() => {
+	chehckStatus();
+});
 </script>
 
-<style>
-</style>
+<style></style>

@@ -13,7 +13,7 @@
 			<div class="flex items-center justify-start gap-[40px] h-auto w-full px-[20px]">
 
 				<div class=" flex justify-start h-auto items-center">
-					<h4 class="text-[#46A5BA] text-[20px] font-bold capitalize h-auto">
+					<h4 class="text-language-heading text-[20px] font-bold capitalize h-auto">
 						{{ course.name }}
 					</h4>
 				</div>

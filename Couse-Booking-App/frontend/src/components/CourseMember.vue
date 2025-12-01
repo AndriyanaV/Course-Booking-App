@@ -1,8 +1,8 @@
 <template>
 	<div
-		class="w-full px-[40px] flex items-center justify-between border-top pt-[20px]"
+		class="w-full px-[40px] flex lg:flex-row flex-col gap-[20px] items-center justify-between border-top pt-[20px]"
 	>
-		<div class="w-[60%] flex items-center gap-[12px] text-gray-600">
+		<div class="w-[60%] flex lg:flex-row flex-col items-center gap-[12px] text-gray-600">
 			<div class="w-[40px] h-[40px] rounded-full">
 				<img :src="member.user_image_url" class="w-full h-full rounded-full" />
 			</div>

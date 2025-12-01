@@ -1,5 +1,5 @@
 <template>
-	<div class="w-[500px] flex flex-col items-start justify-start text-center gap-[40px]">
+	<div class="lg:w-[500px] flex flex-col items-start justify-start text-center gap-[40px]">
 		<!-- <Heading heading="Update Profile Info" color="#2E42BE" class="w-full font-bold" fontSize="32" /> -->
 		<div class="user-form-container min-w-[100%]">
 			<form @submit.prevent="updateUserProfile()" class="w-full h-full gap-[20px]  flex flex-col">
@@ -8,7 +8,7 @@
 					<div class="w-full h-[200px]">
 						<div class="flex items-start justify-center w-full">
 							<label for="dropzone-file"
-								class="flex flex-col items-center justify-center w-[40%] h-[200px] border-2 border-gray-100 border-solid rounded-lg cursor-pointer bg-white   hover:bg-gray-100  absolute left-0">
+								class="flex flex-col items-center justify-center lg:w-[40%] h-[200px] border-2 border-gray-100 border-solid rounded-lg cursor-pointer bg-white   hover:bg-gray-100  absolute left-0">
 								<div class="flex flex-col items-center justify-center pt-5 pb-6 realtive">
 									<div v-if="form.imagePreview">
 										<img :src="form.imagePreview" alt="Image preview" style="max-width: 100px"
@@ -65,12 +65,7 @@
 					</div>
 				</div>
 				<div class="user-input-container ">
-					<div class="h-[50px] w-[150px]">
-						<button type="submit"
-							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded h-full w-[150px]">
-							Update
-						</button>
-					</div>
+					<Button text="Update" @button-clicked="handleFileChange"></Button>
 				</div>
 			</form>
 		</div>
@@ -81,6 +76,7 @@
 import { ref, watch } from "vue";
 import { toast } from "vue3-toastify";
 import Heading from "./Heading.vue";
+import Button from "./Button.vue";
 const props = defineProps({
 	user: Object,
 });

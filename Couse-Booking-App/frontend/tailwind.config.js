@@ -25,7 +25,10 @@ export default {
       colors: {
         "main-blue": "#2D3CFF", 
         "second-blue": "#3b82f6",
-        "light-purple":"#886df6"
+        "light-purple":"#886df6",
+        "soft-blue":"#E6EDFE",
+        "language-heading":"#46A5BA",
+        "button-main-color":"#46A5BA"
       },
     },
   },

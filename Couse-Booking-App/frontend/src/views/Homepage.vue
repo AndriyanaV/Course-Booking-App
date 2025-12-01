@@ -19,7 +19,7 @@
 						step
 						you take brings you closer to fluency.</p>
 				</div>
-				<Button text="Start your journey" class="mt-[10px]"></Button>
+				<Button text="Start your journey" class="mt-[10px]" @buttonClicked="goToCourses"></Button>
 			</div>
 			<div class="lg:w-[45%] flex justify-center flex-col items-center">
 				<img src="/images/hero-img.png" class="max-w-[80%] h-max-[80%] object-contain lg:mt-[60px]" />
@@ -44,11 +44,11 @@
 
 		<!-- Course Cards -->
 
-		<section class="w-full flex flex-col items-center justify-center lg:py-[80px] py-[40px] lg:px-[40px] px-[20px]">
+		<section ref="courseSection" class="w-full flex flex-col items-center justify-center lg:py-[80px] py-[40px] lg:px-[40px] px-[20px]">
 			<div class="container max-w-[1320px] mx-auto flex flex-col lg:gap-[80px] gap-[80px] ">
 				<!-- Heading and Filters -->
 				<div class=" w-full h-auto flex flex-col gap-[40px]">
-					<div class="w-full flex flex-col justify-center text-center">
+					<div class="w-full flex flex-col justify-center text-center gap-[10px]">
 						<Heading heading="Our Courses" color="#7786EB" class="w-full font-bold" fontSize="56" />
 						<p class="text-gray-500 lg:text-lg">Discover your next course – it’s waiting</p>
 					</div>
@@ -126,6 +126,13 @@ const languageOptions = ref([]);
 const selectedLanguage = ref("");
 const selectedLevel = ref("");
 
+const courseSection = ref(null)
+
+//Smooth Scroll 
+function goToCourses() {
+  courseSection.value?.scrollIntoView({ behavior: "smooth" });
+}
+
 //Feature cards 
 const activeIndex = ref(0)
 let intervalId = null
@@ -155,7 +162,7 @@ const getCourses = async () => {
 		courses.value = response.data;
 		
 	} catch (error) {
-		toast.error(error.message || error.response.data.message);
+		toast.error(error.response?.data?.message || error.message);
 	}
 };
 
