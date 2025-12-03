@@ -88,7 +88,6 @@ const getAllCurrentCourses = async () => {
 };
 
 const deleteCurrentCourse = async (deletedCourse) => {
-	if (confirm("Are you sure?")) {
 		try {
 			const response = await axios.delete(
 				`/api/admin/delete-current-course/${deletedCourse.id}`
@@ -98,10 +97,10 @@ const deleteCurrentCourse = async (deletedCourse) => {
 			);
 			toast.success(response.data.message);
 		} catch (error) {
-			toast.error(error.message);
+			toast.error(error.response?.data?.message || error.message);
 		}
 	}
-};
+
 
 onMounted(() => {
 	getAllCurrentCourses();

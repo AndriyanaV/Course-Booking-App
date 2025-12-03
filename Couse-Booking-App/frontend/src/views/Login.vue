@@ -1,8 +1,8 @@
 <template>
-	<section class="w-full flex justify-center items-center m-0 h-screen ">
+	<section class="w-full flex justify-center items-center m-0 min-h-screen py-[20px]">
 		<div class="container max-w-[1320px] mx-0 flex justify-center items-center h-full">
-			 <LoginForm
-			@login="handleEvent" />
+			 <LoginForm :serverMessage="serverMessage" 
+			@login="handleLogin" />
 		</div>
 	</section>
 </template>
@@ -11,29 +11,30 @@
 import LoginForm from "@/components/LoginForm.vue";
 import { toast } from "vue3-toastify";
 import axios from "axios";
+import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
 
 const router = useRouter();
 
-async function handleEvent(payload) {
-	try {
-		const { email, password } = payload;
-		const response = await axios.post("/api/login", { email, password });
+const serverMessage = ref(null)
 
-		const { access_token, message, role, user_id } = response.data;
-		console.log(response.data);
+const userStore = useUserStore();
 
-		// Čuvanje tokena i role u localStorage
-		const expirationTime = Date.now() + 3 * 24 * 60 * 60 * 1000; // 3 dana
-		localStorage.setItem("access_token", access_token);
-		localStorage.setItem("token_expiration", expirationTime.toString());
-		localStorage.setItem("rola", role);
-		localStorage.setItem("user_id", user_id);
+async function handleLogin(payload) {
+  try {
+    const { email, password } = payload;
+    const response = await axios.post("/api/login", { email, password });
 
-		router.push("/").then(() => toast.success(message));
-	} catch (error) {
-		toast.error(error.response?.data?.message || error.message);
-	}
+    const { access_token, message, role, user_id } = response.data;
+
+    //Set user data using a store 
+    userStore.setUser({ role, user_id, token: access_token });
+
+    router.push("/").then(() => toast.success(message));
+  } catch (error) {
+    serverMessage.value = error.response?.data?.message || error.message;
+  }
 }
 </script>
 

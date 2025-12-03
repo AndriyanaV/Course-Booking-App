@@ -7,6 +7,10 @@ body {
   font-family: "Poppins", sans-serif !important;
 }
 
+.error-message{
+  @apply w-full text-[12px] text-red-400
+}
+
 .title-desc {
   @apply lg:w-[1100px] w-full h-[90px] flex lg:flex-row  flex-col gap-[2px] rounded-sm text-[16px];
 }
@@ -143,9 +147,9 @@ a,
 }
 
 @media (hover: hover) {
-  a:hover {
+  /* a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
-  }
+  } */
 }
 
 @media (min-width: 1024px) {

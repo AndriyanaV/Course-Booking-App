@@ -6,10 +6,7 @@ export function useUserRole(){
   const checkUserRole = () => {
     const role = localStorage.getItem("rola");
     userRole.value = role;
-    // console.log(userRole.value)
-    
 };
-
 
 
 return {

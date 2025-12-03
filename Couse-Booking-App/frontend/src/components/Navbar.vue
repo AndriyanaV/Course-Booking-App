@@ -16,25 +16,25 @@
 						linkColor
 					]" active-class=" font-bold" to="/">Homepage</RouterLink>
 				</div>
-				<div v-if="userRole === 'admin'">
+				<div v-if="userStore.userRole === 'admin'">
 					<RouterLink :class="[
 						'block no-underline py-2 px-3 rounded hover:bg-gray-100  transition-colors duration-300 hover:scale-105 hover:bg-transparent ',
 						linkColor
 					]" to="/all-courses" active-class="text-blue-600 font-bold">Courses</RouterLink>
 				</div>
-				<div v-if="userRole === 'admin'">
+				<div v-if="userStore.userRole === 'admin'">
 					<RouterLink :class="[
 						'block no-underline py-2 px-3 rounded hover:bg-gray-100  transition-colors duration-300 hover:scale-105 hover:bg-transparent ',
 						linkColor
 					]" to="/all-users" active-class="text-blue-600 font-bold">Users</RouterLink>
 				</div>
-				<div v-if="userRole === 'user'">
+				<div v-if="userStore.userRole === 'user'">
 					<RouterLink :class="[
 						'block no-underline py-2 px-3 rounded hover:bg-gray-100  transition-colors duration-300 hover:scale-105 hover:bg-transparent ',
 						linkColor
 					]" to="/user-courses" active-class="text-blue-600 font-bold">My Courses</RouterLink>
 				</div>
-				<div v-if="userRole === 'professor'">
+				<div v-if="userStore.userRole === 'professor'">
 					<RouterLink :class="[
 						'block no-underline py-2 px-3 rounded hover:bg-gray-100  transition-colors duration-300 hover:scale-105 hover:bg-transparent ',
 						linkColor
@@ -43,15 +43,15 @@
 			</div>
 
 			<div class="flex h-full items-center gap-[15px] lg:w-fit w-full lg:justify-start justify-end">
-				<button v-if="!isLoggedIn" @click="$router.push({ name: 'Login' })"
+				<button v-if="!userStore.isLoggedIn" @click="$router.push({ name: 'Login' })"
 					class="bg-main-blue  text-white font-semibold py-2 px-4 rounded-[16px] border-0 h-[47px] w-[130px] hover:scale-105">
 					Sign In
 				</button>
-				<button v-if="isLoggedIn" @click="handleLogOut"
+				<button v-if="userStore.isLoggedIn" @click="userStore.toggleLogoutPopUp"
 					class="bg-main-blue  text-white sm:font-semibold font-normal py-2 px-4 rounded-[16px] border-0 sm:h-[47px] sm:w-[130px] h-[44px] w-fit hover:scale-105">
 					Sign Out
 				</button>
-				<div v-if="isLoggedIn">
+				<div v-if="userStore.isLoggedIn">
 					<div @click="$router.push({ name: 'UserProfile' })"
 						class="sm:w-[43px] sm:h-[43px] w-[24px] h-[24px] cursor-pointer  hover:scale-105 bg-transparent flex items-center">
 						<img :src=profileImg class="w-[90%] h-[90%]  object-cover transition-all" />
@@ -65,12 +65,17 @@
 </template>
 
 <script setup>
-import { useUserRole } from "@/composables/useUserRole.js";
 import { RouterLink, useRouter, useRoute } from "vue-router";
-import { toast } from "vue3-toastify";
-import { ref, onMounted, watchEffect, watch, computed, onUnmounted } from "vue";
+import { ref, onMounted,  computed, onUnmounted} from "vue";
+import { useUserStore } from "@/stores/user";
+import { useLogout } from "@/composables/useLogout";
 
-const isLoggedIn = ref(false);
+
+//Data from user store 
+const userStore = useUserStore();
+const { logout } = useLogout();
+
+//Mobile vs Destop control
 const isScrolled = ref(false)
 const mobileControl = ref(true)
 const mobileMenuImg = ref('/images/menu.svg')
@@ -95,9 +100,8 @@ const handleMobileMenu = () => {
 
 const router = useRouter();
 const route = useRoute()
-const { userRole, checkUserRole } = useUserRole();
 
-//To handle good desing 
+//To handle good desing - Need to Fix due to change of design
 const blackNavTextPages = ['/', '/professor-courses', '/user-courses', '/course-info', '/add-course', '/add-current-course', '/update-course', '/course-card-info/:id', '/update-current-course', '/add-user', '/user-profile-update', '/user-profile', '/all-courses', '/all-users']
 
 
@@ -143,26 +147,7 @@ const navStyle = computed(() => {
 
 })
 
-const handleLogOut = () => {
-	if (confirm("Are you sure?")) {
-		try {
-			localStorage.removeItem("access_token");
-			localStorage.removeItem("user_id");
-			localStorage.removeItem("rola");
-			localStorage.removeItem("token_expiration");
 
-			isLoggedIn.value = false;
-
-			checkUserRole();
-
-			router
-				.push("/")
-				.then(() => toast.success("You have successfully logged out!"));
-		} catch (error) {
-			toast.error(error.message);
-		}
-	}
-};
 
 const handleScroll = () => {
 
@@ -177,8 +162,6 @@ const handleScroll = () => {
 
 onMounted(() => {
 	checkScreen()
-	checkUserRole();
-	isLoggedIn.value = !!localStorage.getItem("access_token");
 	window.addEventListener("scroll", handleScroll);
 });
 
