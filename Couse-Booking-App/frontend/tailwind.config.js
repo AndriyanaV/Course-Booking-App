@@ -28,7 +28,9 @@ export default {
         "light-purple":"#886df6",
         "soft-blue":"#E6EDFE",
         "language-heading":"#46A5BA",
-        "button-main-color":"#46A5BA"
+        "button-main-color":"#46A5BA",
+        "medium-purple": "#7786EB",
+        "dark-purple":"#474E84"
       },
     },
   },

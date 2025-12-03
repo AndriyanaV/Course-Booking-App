@@ -22,16 +22,16 @@
 						<img src="/images/pencil.svg" class="w-full h-full" />
 					</div>
 
-					<div class="w-[20px] h-[20px] cursor-pointer hover:scale-105" @click="
+					<!-- <div class="w-[20px] h-[20px] cursor-pointer hover:scale-105" @click="
 						$router.push({
 							name: 'CourseCardInfo',
 							params: { id: course.id },
 						})
 						">
 						<img src="/images/eye2.svg" class="w-full h-full" />
-					</div>
+					</div> -->
 
-					<div class="w-[20px] h-[20px] cursor-pointer hover:scale-105" @click="showConfirmCard">
+					<div class="w-[20px] h-[20px] cursor-pointer hover:scale-105" @click="toggleConfirmCard">
 						<img src="/images/delete-x.svg" class="w-full h-full" />
 					</div>
 				</div>
@@ -47,20 +47,8 @@
 			</div>
 		</div>
 
-		<!-- Delete Card  -->
-		<div v-if="confirmCard"
-			class="bg-white rounded-md cursor-pointer p-6 shadow-[0_10px_30px_rgba(2,6,23,0.08)] text-center w-full h-full absolute top-0 flex flex-col items-center justify-center">
-			<div class="w-fil h-fit flex flex-col gap-[6px]  text-red-300">
-				<h3 clas="text-[16px]">Are you sure?</h3>
-				<p>This action cannot be undone.</p>
-				<div class="w-full flex gap-[40px] justify-center mt-[14px]">
-					<button class="w-1/2 bg-green-400 h-[44px] rounded-[16px] text-white font-bold hover:scale-[1.05]"
-						@click="deleteCourse">OK</button>
-					<button class="w-1/2 bg-red-400 h-[44px] rounded-[16px] text-white font-bold hover:scale-[1.05]"
-						@click="cancelDelete">Cancel</button>
-				</div>
-			</div>
-		</div>
+		<!-- Confirm Card Component -->
+		<ConfirmCard :confirmCard="confirmCard" @onDelete="deleteCourse" @onCancelDelete="toggleConfirmCard" />
 	</div>
 </template>
 
@@ -68,26 +56,22 @@
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import { ref } from "vue";
+import ConfirmCard from "./ConfirmCard.vue";
+import { useConfirmCard } from '@/composables/useConfirmCard.js'; 
 
 const emit = defineEmits(["courseRemoved"]);
-
-const confirmCard = ref(false)
 
 const props = defineProps({
 	course: Object,
 });
 
-const cancelDelete = () => {
-	confirmCard.value = false
-}
-
-const showConfirmCard = () => {
-	confirmCard.value = true
-}
+const { confirmCard, toggleConfirmCard } = useConfirmCard();
 
 const deleteCourse = async () => {
 	emit("courseRemoved", props.course);
+	confirmCard.value = false;
 };
+
 </script>
 
 <style></style>

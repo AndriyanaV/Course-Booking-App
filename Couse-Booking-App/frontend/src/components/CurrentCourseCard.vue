@@ -1,5 +1,5 @@
 <template>
-	<div class="card lg:w-[30%] w-[100%] pb-[20px]">
+	<div class="card lg:w-[30%] w-[100%] pb-[20px] relative">
 		<div class=" relative w-full h-[240px] flex justify-center px-[20px] pt-[20px] overflow-hidden">
 			<img :src="currentCourse.course_image_url" class="w-[100%] h-[90%] rounded-md" />
 			<div class="absolute lg:bottom-[30px] left-[-5px] bottom-[60px] bg-[#28C7D4]
@@ -33,7 +33,7 @@
 			</div>
 		</div>
 
-		<div class="flex gap-[10px] h-[30px] w-[30%] items-start justify-start pr-[15px] pt-[3px] w-full pl-[20px]">
+		<div class="flex gap-[10px] h-[30px] items-start justify-start pr-[15px] pt-[3px] w-full pl-[20px]">
 			<div class="w-[18px] h-[19px] cursor-pointer hover:scale-105" @click="
 				$router.push({
 					name: 'UpdateCurrentCourse',
@@ -52,10 +52,12 @@
 				<img src="/images/eye2.svg" class="w-full h-full" />
 			</div>
 
-			<div class="w-[20px] h-[20px] cursor-pointer hover:scale-105" @click="deleteCurrentCourse">
+			<div class="w-[20px] h-[20px] cursor-pointer hover:scale-105" @click="toggleConfirmCard">
 				<img src="/images/delete-x.svg" class="w-full h-full" />
 			</div>
 		</div>
+		<!-- Confirm Card Component -->
+		<ConfirmCard :confirmCard="confirmCard" @onDelete="deleteCurrentCourse" @onCancelDelete="toggleConfirmCard" />
 	</div>
 </template>
 
@@ -64,15 +66,19 @@ import { formatDate } from "@/composables/formatDate.js";
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
-
-const emit = defineEmits(["currentCourseRemoved"]);
-
-const status = ref("");
+import ConfirmCard from "./ConfirmCard.vue";
+import { useConfirmCard } from '@/composables/useConfirmCard.js'; 
 
 const props = defineProps({
 	currentCourse: Object,
 });
 
+const emit = defineEmits(["currentCourseRemoved"]);
+
+// Confirm Card Options
+const { confirmCard, toggleConfirmCard } = useConfirmCard();
+
+const status = ref("");
 let startDate = ref("");
 let endDate = ref("");
 
@@ -101,7 +107,17 @@ const chehckStatus = () => {
 
 const deleteCurrentCourse = async () => {
 	emit("currentCourseRemoved", props.currentCourse);
+	confirmCard.value = false
 };
+
+const cancelDelete = () => {
+	confirmCard.value = false
+}
+
+const showConfirmCard = () => {
+	confirmCard.value = true
+	
+}
 
 onMounted(() => {
 	chehckStatus();

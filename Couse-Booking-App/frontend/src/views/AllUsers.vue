@@ -47,12 +47,11 @@ const getAllUsers = async () => {
 		const response = await axios.get("/api/admin/get-users");
 		allUsers.value = response.data;
 	} catch (error) {
-		toast.error(error.message);
+		toast.error(error.response?.data?.message || error.message);
 	}
 };
 
 const deleteUser = async (deletedUser) => {
-	if (confirm("Are you sure?")) {
 		try {
 			const response = await axios.delete(
 				`api/admin/delete-user/${deletedUser.id}`
@@ -62,10 +61,9 @@ const deleteUser = async (deletedUser) => {
 			);
 			toast.success(response.data.message);
 		} catch (error) {
-			toast.error(error.message);
+			toast.error(error.response?.data?.message || error.message);
 		}
 	}
-};
 
 onMounted(() => {
 	getAllUsers();

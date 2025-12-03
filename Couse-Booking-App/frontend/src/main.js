@@ -4,10 +4,10 @@ import App from './App.vue'
 import Vue3Toastify from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import router from './router'
-//import 'bootstrap/dist/css/bootstrap.css'
 import axios from 'axios'
+import { createPinia } from "pinia";
 
-
+const pinia = createPinia();
 
 
 
@@ -69,5 +69,5 @@ app.use(Vue3Toastify, {
 })
 
 app.use(router)
-
+app.use(pinia);
 app.mount('#app')
