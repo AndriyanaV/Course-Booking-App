@@ -30,7 +30,7 @@ const getUserInfo = async () => {
 		const response = await axios.get(`api/admin/get-user/${userId}`);
 		user.value = response.data;
 	} catch (error) {
-		toast(error.message || error.response.data.message);
+		toast.error(error.response?.data?.message || error.message);
 	}
 };
 
@@ -43,7 +43,7 @@ const updateUser = async (form) => {
 	formData.append("phone_number", form.phoneNumber);
 	formData.append("biography", form.biography);
 	formData.append("password", form.password);
-	formData.append("rola", form.rola);
+	formData.append("rola", form.role);
 
 	try {
 		const response = await axios.put(
@@ -52,7 +52,7 @@ const updateUser = async (form) => {
 		);
 		router.push("/all-users").then(() => toast.success(response.data.message));
 	} catch (error) {
-		toast.error(error.message);
+		toast.error(error.response?.data?.message || error.message);
 	}
 };
 

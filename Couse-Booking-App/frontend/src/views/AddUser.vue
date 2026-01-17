@@ -31,14 +31,14 @@ const addUser = async (form) => {
 	formData.append("phone_number", form.phoneNumber);
 	formData.append("biography", form.biography);
 	formData.append("password", form.password);
-	formData.append("rola", form.rola);
+	formData.append("rola", form.role);
 
 	try {
 		const response = await axios.post("api/admin/add-user", formData);
 
 		router.push("/all-users").then(() => toast.success(response.data.message));
 	} catch (error) {
-		toast.error(error.response.data.message);
+		toast.error(error.response?.data?.message || error.message);
 	}
 };
 </script>

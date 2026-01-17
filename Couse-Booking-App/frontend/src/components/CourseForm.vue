@@ -5,7 +5,7 @@
       <Form :validation-schema="schema" @submit="handleCourseChange" class="w-full flex flex-col gap-[40px] py-[40px]">
         <!-- Course name and language -->
         <div class="form-row">
-          <div class="column lg:min-w-[50%] w-full flex flex-col gap-[20px]">
+          <div class="column">
             <label for="name" class="label-form">
               Name Of Course <span class="span-required">*</span>
             </label>
@@ -14,7 +14,7 @@
             <ErrorMessage name="name" class="error-form-message " />
           </div>
 
-          <div class="column lg:min-w-[50%] w-full flex flex-col gap-[20px]">
+          <div class="column">
             <label for="language" class="label-form">
               Language <span class="span-required">*</span>
             </label>
