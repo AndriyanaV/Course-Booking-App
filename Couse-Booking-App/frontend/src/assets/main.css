@@ -107,7 +107,7 @@ body {
 }
 
 .user-input-update {
-  @apply w-full rounded-lg border border-none transition text-gray-500 text-[14px] focus:outline-none bg-transparent p-[15px];
+  @apply w-full rounded-lg border  transition text-gray-500 text-[14px] focus:outline-none bg-transparent p-[15px];
 }
 
 .custom-button-container {

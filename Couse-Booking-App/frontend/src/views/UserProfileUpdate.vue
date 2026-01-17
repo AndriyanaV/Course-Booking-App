@@ -34,9 +34,9 @@ const updateUserInfo = async (form) => {
 	formData.append("first_name", form.firstName);
 	formData.append("last_name", form.lastName);
 	formData.append("email", form.email);
-	formData.append("phone_number", form.pnumber);
+	formData.append("phone_number", form.phoneNumber);
 	formData.append("file", form.image);
-
+	
 	try {
 		const response = await axios.put(
 			`api/admin/update-user/${userId}`,
