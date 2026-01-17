@@ -1,247 +1,214 @@
 <template>
 	<div class="lg:w-[1200px] bg-white lg:py-[40px] py-[20px] lg:px-[40px] px-[20px] rounded shadow">
 		<div class="w-full">
-			<form class="w-full flex flex-col lg:gap-[20px] gap-[40px] lg:py-[40px] py-[40px]" @submit.prevent="handleCurrentCourseChange()">
+			<Form :validation-schema="schema" @submit="handleCurrentCourseChange"
+				class="w-full flex flex-col gap-[40px] py-[40px]">
 				<div class="form-row">
 					<div class="column">
-						<label for="max_members" class="label-form">
-							Price ($) <span class="text-red-500"> * </span>
+						<label for="price" class="label-form">
+							Price ($)<span class="span-required">*</span>
 						</label>
-						<div class="input-container">
-							<input
-								v-model="form.price"
-								type="text"
-								placeholder="Enter price of course"
-								id="price"
-								name="price"
-								class="input-el"
-							/>
-						</div>
+						<!-- We need name to connect it with schema and v-model for edit mode initial value -->
+						<Field name="price" v-model="form.price" type="text" class="input-el" id="price"
+							placeholder="Enter a price" />
+						<ErrorMessage name="price" class="error-form-message " />
 					</div>
 					<div class="column">
-						<label for="max_members" class="label-form">
-							Max Members <span class="text-red-500"> * </span>
+						<label for="maxMembers" class="label-form">
+							Max Members <span class="span-required"> * </span>
 						</label>
-						<div class="input-container">
-							<input
-								v-model="form.members"
-								type="text"
-								placeholder="Enter max members of course"
-								id="max_members"
-								name="max_members"
-								class="input-el"
-							/>
-						</div>
+						<Field name="maxMembers" v-model="form.members" type="number" class="input-el"
+							id="maxMembers" placeholder="Enter max memebrs"/>
+						<ErrorMessage name="maxMembers" class="error-form-message " />
 					</div>
 				</div>
 				<div class="form-row">
 					<div class="column">
-						<label for="max_members" class="label-form">
-							Start Date <span class="text-red-500"> * </span>
+						<label for="startAt" class="label-form">
+							Start Date <span class="span-required"> * </span>
 						</label>
-						<div class="input-container">
-							<input
-								v-model="form.startAt"
-								type="datetime-local"
-								placeholder="Enter start date of course"
-								id="start_at"
-								name="start_at"
-								class="input-el  bg-white"
-							/>
-						</div>
+						<Field name="startAt" v-model="form.startAt" type="datetime-local" class="input-el bg-white"
+							id="startAt" />
+						<ErrorMessage name="startAt" class="error-form-message " />
 					</div>
 					<div class="column">
-						<label for="max_members" class="label-form">
-							End Date <span class="text-red-500"> * </span></label
-						>
-						<div class="input-container">
-							<input
-								v-model="form.endAt"
-								type="date"
-								placeholder="Enter end date of course"
-								id="end_at"
-								name="end_at"
-								class="input-el bg-white"
-							/>
-						</div>
+						<label for="end_at" class="label-form">
+							End Date <span class="span-required"> * </span>
+						</label>
+						<Field name="endAt" v-model="form.endAt" type="date" class="input-el bg-white"
+							id="endAt" />
+						<ErrorMessage name="endAt" class="error-form-message " />
 					</div>
 				</div>
 				<div class="form-row">
 					<div class="column">
 						<label for="location" class="label-form">
-							Location <span class="text-red-500"> * </span>
+							Location <span class="span-required"> * </span>
 						</label>
-						<div class="input-container">
-							<input
-								v-model="form.location"
-								type="text"
-								placeholder="Enter location of course"
-								id="location"
-								name="location"
-								class="input-el"
-							/>
-						</div>
+						<Field name="location" v-model="form.location" type="text" class="input-el bg-white"
+							id="location" placeholder="Enter a location" />
+						<ErrorMessage name="location" class="error-form-message " />
 					</div>
 					<div class="column">
-						<label for="max_members" class="label-form"
-							>Number of Lessons <span class="text-red-500"> * </span>
+						<label for="lessons" class="label-form">
+							Number of lessons <span class="span-required"> * </span>
 						</label>
-						<div class="input-container">
-							<input
-								v-model="form.lessons"
-								type="number"
-								placeholder="Enter number of lessons of course"
-								id="lessons"
-								name="lessons "
-								class="input-el"
-							/>
-						</div>
+						<Field name="lessons" v-model="form.lessons" type="number" class="input-el bg-white"
+							id="lessons" placeholder="Enter a number of lessons" />
+						<ErrorMessage name="lessons" class="error-form-message " />
 					</div>
 				</div>
 				<div class="form-row">
 					<div class="column">
-						<label for="location" class="label-form">
-							Level <span class="text-red-500"> * </span></label
-						>
-						<div class="input-container">
-							<select
-								v-model="form.level"
-								id="countries"
-								class="h-[64px] bg-white border border-gray-300 text-black text-sm  rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							>
-								<option selected disabled>Choose a Level</option>
-								<option value="beginner">Beginner</option>
-								<option value="intermediate">Intermediate</option>
-								<option value="advanced">Advanced</option>
-							</select>
-						</div>
+						<label for="level" class="label-form">
+							Level <span class="span-required"> * </span></label>
+						<Field name="level" as="select" v-model="form.level" class="input-el" id="level">
+							<option disabled value="">Choose a Level</option>
+							<option value="beginner">Beginner</option>
+							<option value="intermediate">Intermediate</option>
+							<option value="advanced">Advanced</option>
+						</Field>
+						<ErrorMessage name="level" class="error-form-message" />
 					</div>
 					<div class="column">
-						<label for="max_members" class="label-form">
+						<label for="professor" class="label-form">
 							Professor <span class="text-red-500"> * </span>
 						</label>
-						<div class="input-container">
-							<select
-								v-model="form.professor"
-								id="countries"
-								class="h-[64px] bg-white border border-gray-300 text-black text-sm  rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							>
-								<option
-									v-for="professor in professors"
-									:key="professor.id"
-									:value="professor.id"
-								>
-									{{ professor.first_name }} {{ professor.last_name }}
-								</option>
-							</select>
-						</div>
+						<Field name="professor" as="select" v-model="form.professor" class="input-el" id="professor">
+							<option disabled value="">Choose a Professor</option>
+							<option v-for="professor in professors" :key="professor.id" :value="professor.id">
+								{{ professor.first_name }} {{ professor.last_name }}
+							</option>
+						</Field>
+						<ErrorMessage name="professor" class="error-form-message" />
 					</div>
 				</div>
 
 				<div class="w-full flex items-center justify-start mt-[20px]">
-					<Button :text="buttonText" @click="handleCurrentCourseChange" />
+					<Button :text="buttonText" />
 				</div>
-			</form>
+			</Form>
 		</div>
 	</div>
 </template>
 
 <script setup>
-	import { ref, onMounted, watch } from "vue";
-	import axios from "axios";
-	import { useRoute, useRouter } from "vue-router";
-	import { toast } from "vue3-toastify";
-	import Button from "./Button.vue";
+import { ref, onMounted, watch } from "vue";
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
+import axios from "axios";
+import { useRoute, useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
+import Button from "./Button.vue";
+import { convertToDateFormat } from "@/utils/convertToDateFormat";
+import { convertToDateTimeFormat } from "@/utils/convertToDateTimeFormat";
 
-	const props = defineProps({
-		course: Object,
-		buttonText: String,
-	});
+const props = defineProps({
+	course: Object,
+	buttonText: String,
+});
 
-	const emit = defineEmits(["currentCourseChange"]);
+const emit = defineEmits(["currentCourseChange"]);
 
-	const router = useRouter();
+const router = useRouter();
 
-	const professors = ref("");
+const professors = ref("");
 
-	const form = ref({
-		price: "",
-		members: "",
-		startAt: "",
-		endAt: "",
-		lessons: "",
-		professor: "",
-		location: "",
-		level: "",
-	});
+const schema = yup.object({
+  price: yup
+    .number()
+    .typeError("Price must be a number")
+    .positive("Price must be positive")
+    .required("Price is required"),
 
-	function convertToDateFormat(dateString) {
-		const date = new Date(dateString);
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, "0");
-		const day = String(date.getDate()).padStart(2, "0");
+  maxMembers: yup
+    .number()
+    .typeError("Max members must be a number")
+    .integer("Max members must be an integer")
+    .positive("Max members must be positive")
+    .required("Max members is required"),
 
-		return `${year}-${month}-${day}`;
-	}
+  startAt: yup
+    .date()
+    .typeError("Start date is required")
+    .required("Start date is required"),
 
-	function convertToDateTimeFormat(dateTimeString) {
-		const date = new Date(dateTimeString);
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, "0"); // Dodaj nulu ako je mesec jednocifren
-		const day = String(date.getDate()).padStart(2, "0"); // Dodaj nulu ako je dan jednocifren
-		const hours = String(date.getHours()).padStart(2, "0"); // Dodaj nulu ako je sat jednocifren
-		const minutes = String(date.getMinutes()).padStart(2, "0"); // Dodaj nulu ako su minuti jednocifreni
+  endAt: yup
+    .date()
+    .typeError("End date is required")
+    .min(
+      yup.ref("startAt"),
+      "End date cannot be before start date"
+    )
+    .required("End date is required"),
 
-		return `${year}-${month}-${day}T${hours}:${minutes}`;
-	}
+  location: yup
+    .string()
+    .required("Location is required"),
 
-	watch(
-		() => props.course,
-		(newCourse) => {
-			if (newCourse) {
-				form.value.price = newCourse.price || "";
-				form.value.members = newCourse.max_members || "";
-				form.value.startAt = convertToDateTimeFormat(newCourse.start_at) || "";
-				form.value.endAt = convertToDateFormat(newCourse.end_at) || "";
-				form.value.lessons = newCourse.lessons || "";
-				form.value.professor = newCourse.user_id || "";
-				form.value.location = newCourse.location || "";
-				form.value.level = newCourse.level || "";
-			}
-		},
-		{ immediate: true }
-	);
+  lessons: yup
+    .number()
+    .typeError("Number of lessons must be a number")
+    .integer("Number of lessons must be an integer")
+    .positive("Number of lessons must be positive")
+    .required("Number of lessons is required"),
 
-	const handleCurrentCourseChange = () => {
-		if (
-			!form.value.price ||
-			!form.value.members ||
-			!form.value.startAt ||
-			!form.value.endAt ||
-			!form.value.lessons ||
-			!form.value.professor ||
-			!form.value.location ||
-			!form.value.level
-		) {
-			toast.error("Please enter all fields.");
-			return;
+  level: yup
+    .string()
+    .oneOf(["beginner", "intermediate", "advanced"], "Please choose a valid level")
+    .required("Level is required"),
+
+  professor: yup
+    .string()
+    .required("Professor is required"),
+});
+
+// Important for edit mode
+const form = ref({
+	price: "",
+	members: "",
+	startAt: "",
+	endAt: "",
+	lessons: "",
+	professor: "",
+	location: "",
+	level: "",
+});
+
+
+watch(
+	() => props.course,
+	(newCourse) => {
+		if (newCourse) {
+			form.value.price = newCourse.price || "";
+			form.value.members = newCourse.max_members || "";
+			form.value.startAt = convertToDateTimeFormat(newCourse.start_at) || "";
+			form.value.endAt = convertToDateFormat(newCourse.end_at) || "";
+			form.value.lessons = newCourse.lessons || "";
+			form.value.professor = newCourse.user_id || "";
+			form.value.location = newCourse.location || "";
+			form.value.level = newCourse.level || "";
 		}
-		emit("currentCourseChange", form.value);
-	};
+	},
+	{ immediate: true }
+);
 
-	const getProfessors = async () => {
-		try {
-			const response = await axios.get("api/admin/get-professors");
-			professors.value = response.data;
-		} catch (error) {
-			toast.error(error);
-		}
-	};
+const handleCurrentCourseChange = (values) => {
+	emit("currentCourseChange", values);
+};
 
-	onMounted(() => {
-		getProfessors();
-	});
+const getProfessors = async () => {
+	try {
+		const response = await axios.get("api/admin/get-professors");
+		professors.value = response.data;
+	} catch (error) {
+		toast.error(error);
+	}
+};
+
+onMounted(() => {
+	getProfessors();
+});
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

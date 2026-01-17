@@ -392,6 +392,7 @@ def add_current_course():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+        return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
 
 
 @admin_bp.route("/add-course", methods=["POST"])

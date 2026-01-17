@@ -24,17 +24,18 @@ const courseId = Number(route.query.courseId);
 const course = ref({});
 
 const getCourseInfo = async () => {
-	await axios
-		.get(`api/current-courses/course-info/${courseId}`)
+  try {
+    const response = await axios.get(
+      `api/current-courses/course-info/${courseId}`
+    )
 
-		.then((response) => {
-			course.value = response.data;
-			console.log(response.data);
-		})
-		.catch(function (error) {
-			console.log(error);
-		});
-};
+    course.value = response.data
+    console.log(response.data)
+  } catch (error) {
+	toast.error(error.response?.data?.message || error.message);
+    console.log(error)
+  }
+}
 
 const updateActiveCourse = async (form) => {
 	try {
@@ -47,7 +48,7 @@ const updateActiveCourse = async (form) => {
 				end_at: form.endAt,
 				level: form.level.toLowerCase(),
 				location: form.location,
-				max_members: form.members,
+				max_members: form.maxMembers,
 				lessons: form.lessons,
 			}
 		);
@@ -55,7 +56,8 @@ const updateActiveCourse = async (form) => {
 			.push(`/all-current-courses/${course.value.course_id}`)
 			.then(() => toast.success(response.data.message));
 	} catch (error) {
-		toast.error(error);
+		toast.error(error.response?.data?.message || error.message);
+		console.log(error)
 	}
 };
 

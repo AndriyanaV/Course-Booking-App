@@ -27,7 +27,7 @@ const getCourseInfo = async () => {
 		const response = await axios.get(`api/admin/get-course/${id}`);
 		course.value = response.data;
 	} catch (error) {
-		toast.error(error);
+		toast.error(error.response?.data?.message || error.message);
 	}
 };
 
@@ -43,7 +43,7 @@ const updateCourse = async (form) => {
 			.push("/all-courses")
 			.then(() => toast.success(response.data.message));
 	} catch (error) {
-		toast.error(error.message);
+		toast.error(error.response?.data?.message || error.message);
 	}
 };
 

@@ -28,7 +28,7 @@ const addActiveCourse = async (form) => {
 			price: form.price,
 			start_at: form.startAt,
 			end_at: form.endAt,
-			max_members: form.members,
+			max_members: form.maxMembers,
 			level: form.level.toLowerCase(),
 			location: form.location,
 			lessons: form.lessons,
@@ -37,7 +37,8 @@ const addActiveCourse = async (form) => {
 			.push(`/all-current-courses/${id}`)
 			.then(() => toast.success(response.data.message));
 	} catch (error) {
-		toast.error(error.message);
+		toast.error(error.response?.data?.message || error.message);
+		console.log(error)
 	}
 };
 </script>
