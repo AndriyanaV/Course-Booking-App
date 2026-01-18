@@ -62,7 +62,7 @@
           </Field>
         </div>
 
-        <!-- FIRST NAME -->
+        <!-- First name -->
         <div class="user-input-container">
           <label class="label-form">
             First Name <span class="span-required">*</span>
@@ -75,7 +75,7 @@
           <ErrorMessage name="firstName" class="error-form-message" />
         </div>
 
-        <!-- LAST NAME -->
+        <!-- Last name -->
         <div class="user-input-container">
           <label class="label-form">
             Last Name <span class="span-required">*</span>
@@ -88,7 +88,7 @@
           <ErrorMessage name="lastName" class="error-form-message" />
         </div>
 
-        <!-- EMAIL -->
+        <!-- Email -->
         <div class="user-input-container">
           <label class="label-form">
             Email <span class="span-required">*</span>
@@ -102,7 +102,7 @@
           <ErrorMessage name="email" class="error-form-message" />
         </div>
 
-        <!-- PHONE -->
+        <!-- Phone number -->
         <div class="user-input-container">
           <label class="label-form">Phone Number</label>
           <Field
