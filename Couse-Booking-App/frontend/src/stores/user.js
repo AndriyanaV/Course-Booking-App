@@ -16,7 +16,7 @@ export const useUserStore = defineStore("user", () => {
     isLoggedIn.value = true;
 
     // Local set
-    const expirationTime = Date.now() + 3 * 24 * 60 * 60 * 1000; // 3 dana
+    const expirationTime = Date.now() + 3 * 24 * 60 * 60 * 1000; // 3 days
     localStorage.setItem("access_token", token);
     localStorage.setItem("token_expiration", expirationTime.toString());
     localStorage.setItem("rola", role);

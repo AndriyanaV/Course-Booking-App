@@ -4,7 +4,7 @@
 			class="container max-w-[1320px] mx-auto flex flex-col justify-center items-center text-center lg:gap-[60px] gap-[40px]">
 			<Heading heading="Update Course Info" color="#46A5BA" class="w-full font-bold  text-center" fontSize="46"
 				fontWeight="700" />
-			<CurrentCourseForm :course="course" buttonText="Update Course Info"
+			<CurrentCourseForm :course="course" buttonText="Update Course Info" :loading="loading"
 				@currentCourseChange="updateActiveCourse" />
 		</div>
 	</section>
@@ -22,9 +22,11 @@ const route = useRoute();
 const router = useRouter();
 const courseId = Number(route.query.courseId);
 const course = ref({});
+const loading = ref(true)
 
 const getCourseInfo = async () => {
   try {
+	loading.value = true
     const response = await axios.get(
       `api/current-courses/course-info/${courseId}`
     )
@@ -34,6 +36,8 @@ const getCourseInfo = async () => {
   } catch (error) {
 	toast.error(error.response?.data?.message || error.message);
     console.log(error)
+  }finally{
+	loading.value = false
   }
 }
 

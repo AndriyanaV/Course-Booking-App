@@ -24,8 +24,8 @@
 				<Button text="Add User" @buttonClicked="$router.push({ name: 'AddUser' })"/>
 			</div>
 		</section>
-		<section class="w-full flex justify-center lg:px-[40px] px-[20px] ">
-			<div class="container max-w-[1320px] mx-auto h-fit flex lg:flex-row flex-col lg:justify-between gap-[20px] flex-wrap lg:items-center">
+		<section class="w-full flex justify-start lg:px-[40px] px-[20px] ">
+			<div class="container max-w-[1320px] mx-auto h-fit flex lg:flex-row flex-col lg:justify-start gap-[20px] flex-wrap lg:items-center">
 				<UserCard v-for="user in allUsers" :key="user.id" :user="user" @userDeleted="deleteUser" />	
 			</div>
 		</section>
