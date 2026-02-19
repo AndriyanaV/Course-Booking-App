@@ -1,3 +1,6 @@
+from flask import jsonify
+from flask_jwt_extended import get_jwt
+import pymysql
 from database import get_db_connection
 from datetime import datetime
 
@@ -33,3 +36,33 @@ def check_course_availability(course):
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+
+
+def book_course(course_id):
+    try:
+        con, cursor = get_db_connection()
+
+        claims = get_jwt()
+        user_id = claims.get('user_id')
+
+        # data = request.json
+
+        query = """
+        INSERT INTO user_course (user_id,course_id)
+        VALUES (%s, %s)
+        """
+        values = (user_id, course_id)
+
+        cursor.execute(query, values)
+        con.commit()
+        return jsonify({"message": "You've registered course sucessfully!"})
+
+    except pymysql.IntegrityError as e:
+        if e.args[0] == 1062:
+            return jsonify({"message": "You have already booked this course!"}), 400
+        else:
+            return jsonify({"message": "Database error occurred!"}), 500
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return jsonify({"message": "You need to register or login to book a course!"})

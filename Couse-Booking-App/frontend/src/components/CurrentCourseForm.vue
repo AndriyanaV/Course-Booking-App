@@ -1,9 +1,11 @@
 <template>
   <!-- Loader -->
-  <div v-if="loading" class="w-full flex justify-center items-center h-full">
-		<Loader />
-	</div>
-  <div v-else class="lg:w-[1200px] bg-white lg:py-[40px] py-[20px] lg:px-[40px] px-[20px] rounded shadow">
+ <div v-show="loading" class="w-full flex justify-center items-center h-full">
+    <Loader />
+  </div>
+
+  <!-- Form -->
+  <div  v-show="!loading" class="lg:w-[1200px] bg-white lg:py-[40px] py-[20px] lg:px-[40px] px-[20px] rounded shadow">
     <div class="w-full">
       <Form
         ref="courseForm"
@@ -107,6 +109,7 @@ const props = defineProps({
 		default: false
 	}
 });
+
 const emit = defineEmits(["currentCourseChange"]);
 
 const courseForm = ref(null);

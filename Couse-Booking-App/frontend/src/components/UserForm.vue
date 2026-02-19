@@ -1,9 +1,11 @@
 <template>
 	<!-- Loader -->
-	<div v-if="loading && !isAddMode" class="w-full flex justify-center items-center h-full">
-		<Loader />
-	</div>
-	<div v-else class="lg:w-[1200px] h-auto bg-white py-[20px] lg:px-[40px] px-[20px] rounded-[14px]">
+	<div v-show="loading" class="w-full flex justify-center items-center h-full">
+    <Loader />
+  </div>
+
+  <!-- Form -->
+	<div v-show="!loading" class="lg:w-[1200px] h-auto bg-white py-[20px] lg:px-[40px] px-[20px] rounded-[14px]">
 		<div class="form wraper w-full flex flex-col gap-[40px]">
 
 			<Form ref="userForm" :validation-schema="schema" :initial-values="initialValues" @submit="handleUserChange"

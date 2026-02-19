@@ -1,25 +1,23 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, app, current_app, jsonify, request
 from database import get_db_connection
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decoraotrs import role_required
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 import os
+from marshmallow import ValidationError
 import uuid
-
-UPLOAD_FOLDER = 'uploads/course'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'svg'}
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+from schemas.course.add_course_schema import AddCourseSchema
+from schemas.course.add_current_course_schema import AddCurrentCourseSchema
+from schemas.user.add_user_schema import AddUserSchema
+from utils.file_utils import allowed_file, allowed_file_size
+from utils.save_uploaded_file import save_uploaded_file
 
 
 admin_bp = Blueprint('admin', __name__)
 
 
 # UPDATE
-
-
 @admin_bp.route("/update-current-course/<int:id>", methods=['PUT'])
 @jwt_required()
 @role_required(["admin"])
@@ -65,7 +63,7 @@ UPLOAD_FOLDER_USER = 'uploads/user'
 
 @admin_bp.route("/update-user/<int:id>", methods=['PUT'])
 @jwt_required()
-@role_required(["admin", "user"])
+@role_required(["admin"])
 def update_user_info(id):
     try:
         con, cursor = get_db_connection()
@@ -114,10 +112,6 @@ def update_user_info(id):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"error": "Internal server error"}), 500
-
-
-img_base_url_course = 'http://127.0.0.1:5000/uploads/course/'
-UPLOAD_FOLDER_COURSE = 'uploads/course'
 
 
 @admin_bp.route("/update-course/<int:id>", methods=['PUT'])
@@ -190,6 +184,12 @@ def get_all_users():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @admin_bp.route("/get-user/<int:id>", methods=["GET"])
@@ -212,10 +212,20 @@ def get_user(id):
         """
         cursor.execute(query, (id,))
         data = cursor.fetchone()
+
+        if not data:
+            return jsonify({"message": "User not found"}), 404
+        
         return jsonify(data)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @admin_bp.route("/get-all-current-courses/<int:id>", methods=["GET"])
@@ -224,27 +234,39 @@ def get_user(id):
 def get_all_current_courses(id):
     try:
         con, cursor = get_db_connection()
+        print('RUtaa')
 
-        level = request.args.get('level', '%')
-        if (level == ""):
-            level = "%"
-
-        # print("level je"+level)
+        # level = request.args.get('level', '%')
+        # if (level == ""):
+        #     level = "%"
+        level = request.args.get('level') or '%'
 
         query = """
-        SELECT course.id AS course_id,course.name,course.course_image_url,course.language,
-            current_courses.*
+        SELECT course.id AS course_id,
+        course.name,
+        course.course_image_url,
+        course.language,
+        current_courses.*
         FROM course
         JOIN current_courses ON course.id = current_courses.course_id
-        WHERE course.id=%s AND level LIKE %s;
+        WHERE course.id = %s
+        AND current_courses.level LIKE %s;
         """
         values = (id, level)
         cursor.execute(query, values)
         data = cursor.fetchall()
+        print(data)
         return jsonify(data)
+    
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @admin_bp.route("/get-all-courses", methods=["GET"])
@@ -254,10 +276,11 @@ def get_all_courses():
     try:
         con, cursor = get_db_connection()
 
-        language = request.args.get('language', "%")
+        # language = request.args.get('language', "%")
 
-        if (language == ""):
-            language = '%'
+        # if (language == ""):
+        #     language = '%'
+        language = request.args.get('language') or '%'
 
         query = """
         SELECT * FROM course WHERE language LIKE %s;
@@ -270,6 +293,12 @@ def get_all_courses():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while fetching courses."}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @admin_bp.route("/get-course/<int:id>", methods=["GET"])
@@ -285,11 +314,22 @@ def get_course(id):
 
         cursor.execute(query, (id,))
         data = cursor.fetchone()
+
+        # if no course
+        if not data:
+            return jsonify({"message": "Course not found"}), 404
+        
         return jsonify(data)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while fetching courses."}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @admin_bp.route("/get-professors", methods=["GET"])
@@ -300,7 +340,7 @@ def get_professors():
         con, cursor = get_db_connection()
 
         query = """
-        SELECT id,first_name,last_name FROM user WHERE rola LIKE %s;
+        SELECT id, first_name, last_name FROM user WHERE rola = %s;
         """
         rola = 'professor'
 
@@ -311,9 +351,16 @@ def get_professors():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while fetching courses."}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 # CREATE
+# User Schema for Validation
+add_user_schema = AddUserSchema()
 
 @admin_bp.route("/add-user", methods=["POST"])
 @jwt_required()
@@ -323,50 +370,83 @@ def add_user():
 
         con, cursor = get_db_connection()
 
+        upload_folder_user = current_app.config["UPLOAD_FOLDER_USER"]
+        img_base_url_user = current_app.config["USER_IMAGE_BASE_URL"]
+        allowed_extensions = current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
+
         file = request.files.get('file')
         data = request.form.to_dict()
 
-        if not data.get("first_name") or not data.get("last_name") or not data.get("email") or not data.get("password") or not data.get("rola"):
-            return jsonify({"message": "All required fields must be filled!"}), 400
+        # Validating text fields with Marshmallow
+        try:
+            data = add_user_schema.load(request.form)
+        except ValidationError as err:
+            return jsonify({"errors": err.messages}), 400
+        
+        # Provera da li email postoji
+        cursor.execute("SELECT id FROM user WHERE email = %s", (data["email"],))
+        if cursor.fetchone():
+            return jsonify({"message": "User with this email already exists!"}), 409
 
-        password = generate_password_hash(data['password'])
+        password_hash = generate_password_hash(data['password'])
+
+        # Image is required only for professors
+        if data['rola'] == 'professor' and (not file or file.filename == ""):
+            return jsonify({"message": "Image is required!"}), 400
+
+        # Ako fajl postoji → sačuvaj ga
+        if file and file.filename != "":
+            # Check exte.
+            if not allowed_file(file.filename):
+                allowed_extensions = current_app.config.get("ALLOWED_IMAGE_EXTENSIONS", set())
+                return jsonify({
+                "message": f"Invalid image format. Allowed: {', '.join(allowed_extensions)}"
+                }), 400
+
+        # Provera veličine fajla (max 2MB)
+            if not allowed_file_size(file, max_size_mb=2):
+                return jsonify({"message": "File is too large. Max size is 2MB."}), 400
+        
+            file_url = save_uploaded_file(file, upload_folder_user,
+                              img_base_url_user)
+
+        # Ako nema fajla i nije professor → stavlja default
+        else:
+            filename = current_app.config["DEFAULT_USER_IMAGE"]
+            file_url = f"{img_base_url_user.rstrip('/')}/{filename}"
+
         query = """
-        INSERT INTO user (first_name, last_name, email, phone_number, biography, password_hash, rola, user_image_url)
+        INSERT INTO user 
+        (first_name, last_name, email, phone_number, biography, password_hash, rola, user_image_url)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
-        values = (data['first_name'], data['last_name'], data['email'], data['phone_number'], data['biography'],
-                  password, data['rola'], None)
-
-        cursor.execute(query, values)
-
-        cursor.execute("SELECT LAST_INSERT_ID() ")
-        last_id = cursor.fetchone()
-        last_id = last_id.get('LAST_INSERT_ID()')
-
-        if file:
-            name_without_extension, file_extension = os.path.splitext(
-                file.filename)
-            img_name = name_without_extension+str(last_id)+file_extension
-            file.save(os.path.join(UPLOAD_FOLDER_USER, img_name))
-
-        else:
-            img_name = 'anonymous'+'.png'
-
-        file_url = str(img_base_url_user+img_name)
-
-        query = "UPDATE user SET user_image_url=%s WHERE id=%s"
-
-        values = (file_url, last_id)
+        values = (
+            data['first_name'],
+            data['last_name'],
+            data['email'],
+            data.get('phone_number'),
+            data.get('biography'),
+            password_hash,
+            data['rola'],
+            file_url
+        )
 
         cursor.execute(query, values)
         con.commit()
 
-        return jsonify({"message": "You've added new user!"}), 200
+        return jsonify({"message": "You've added new user!"}), 201
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "Error!"})
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
+# Current Course Schema for Validation
+current_course_schema = AddCurrentCourseSchema()
 
 @admin_bp.route("/add-current-course", methods=["POST"])
 @jwt_required()
@@ -375,9 +455,37 @@ def add_current_course():
     try:
         con, cursor = get_db_connection()
 
-        # Dobijanje podataka iz zahteva
-        data = request.json
+        # Validating text fields with Marshmallow
+        try:
+            data = current_course_schema.load(request.json)
+        except ValidationError as err:
+            return jsonify({"errors": err.messages}), 400
+        
+        # Checking whether the course (language) for which we are adding a current course exists
+        cursor.execute("SELECT id FROM course WHERE id = %s", (data['course_id'],))
+        course = cursor.fetchone()
+        if not course:
+            return jsonify({"error": f"Course with id {data['course_id']} does not exist"}), 400
+        
+        # Checking if the professor exists
+        cursor.execute(
+            "SELECT id FROM user WHERE id = %s AND rola = %s",
+            (data['user_id'], "professor")
+        )
+        if not cursor.fetchone():
+            return jsonify({"error": f"User (professor) with id {data['user_id']} does not exist"}), 400
 
+        #check if the course with the same term and professor has already been added 
+        cursor.execute("""
+            SELECT id FROM current_courses 
+            WHERE course_id = %s 
+            AND user_id = %s 
+            AND NOT (%s > end_at OR %s < start_at)
+            """, (data['course_id'], data['user_id'], data['start_at'], data['end_at']))
+
+        if cursor.fetchone():
+            return jsonify({"error": "This course is already scheduled for this professor in the given period."}), 400
+        
         query = """
             INSERT INTO current_courses (course_id, user_id, price, start_at, end_at, max_members, level,location,lessons)
             VALUES (%s,  %s, %s, %s, %s, %s, %s,%s, %s)
@@ -388,50 +496,102 @@ def add_current_course():
         cursor.execute(query, values)
         con.commit()
 
-        return jsonify({"message": "Course has been successfully added to current courses."}), 200
+        return jsonify({"message": "Course has been successfully added to current courses."}), 201
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
+# Course Schema for Validation
+course_schema = AddCourseSchema()
 
 @admin_bp.route("/add-course", methods=["POST"])
 @jwt_required()
 @role_required(["admin"])
 def add_course():
+
+    con = cursor = None
+
     try:
         con, cursor = get_db_connection()
 
-        file = request.files['file']
-        file_url = str(img_base_url_course+file.filename)
+        upload_folder_course = current_app.config["UPLOAD_FOLDER_COURSE"]
+        img_base_url_course = current_app.config["COURSE_IMAGE_BASE_URL"]
+        allowed_extensions = current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
 
-        if file:
-            file.save(os.path.join(UPLOAD_FOLDER_COURSE, file.filename))
-
-        else:
-            return jsonify({"message": "Image is required!"})
-
+        file = request.files.get("file")
         data = request.form.to_dict()
 
-        if 'name' not in data or 'language' not in data:
-            return jsonify({"message": "Name and language fields are required!"})
+        # Validating text fields with Marshmallow
+        try:
+            data = course_schema.load(request.form)
+        except ValidationError as err:
+            return jsonify({"errors": err.messages}), 400
+        
+        data["language"] = data["language"].strip().lower()
+        data["name"] = data["name"].strip().lower()
+        
+        query_check = "SELECT id FROM course WHERE name = %s OR language = %s"
+        cursor.execute(query_check, (data["name"], data["language"]))
+        existing_course = cursor.fetchone()
+
+        if existing_course:
+            return jsonify({"message": "Course with this name or language already exists!"}), 400
+        
+        if not file or file.filename == "":
+            return jsonify({"message": "Image is required!"}), 400
+
+        # Provera ekstenzije
+        if not allowed_file(file.filename):
+            allowed_extensions = current_app.config.get("ALLOWED_IMAGE_EXTENSIONS", set())
+            return jsonify({
+            "message": f"Invalid image format. Allowed: {', '.join(allowed_extensions)}"
+            }), 400
+
+        # Provera veličine fajla (max 2MB)
+        if not allowed_file_size(file, max_size_mb=2):
+            return jsonify({"message": "File is too large. Max size is 2MB."}), 400
+
+        # generisati UUID i sačuvati fajl
+        original_filename = secure_filename(file.filename)
+        ext = original_filename.rsplit(".", 1)[-1].lower()
+        filename = f"{uuid.uuid4()}.{ext}"
+        file_url = f"{img_base_url_course.rstrip('/')}/{filename}"
+        file.save(os.path.join(upload_folder_course, filename))
+        # file_url = save_uploaded_file(file, upload_folder_course,
+        #                       img_base_url_course)
 
         query = """
-        INSERT INTO course (name, course_image_url,language)
-        VALUES (%s, %s, %s)
+            INSERT INTO course (name, course_image_url, language)
+            VALUES (%s, %s, %s)
         """
-        values = (data['name'], file_url,
-                  data['language'])
+        values = (data["name"], file_url, data["language"])
 
         cursor.execute(query, values)
         con.commit()
-        return jsonify({"message": "You've added new course sucessfully!"}), 200
+
+        return jsonify({"message": "You've added new course successfully!"}), 201
 
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return ("Error")
+        print(f"[add_course] {e}")
+        if con:
+            con.rollback()
+        return jsonify({"message": "Internal server error"}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
+# Instead of a real delete, it is better to use a soft delete
 @admin_bp.route("/delete-course/<int:id>", methods=['DELETE'])
 @jwt_required()
 @role_required(["admin"])
@@ -444,16 +604,25 @@ def delete_course(id):
         DELETE FROM course WHERE id = %s;
         """
 
-        cursor.execute(query, (id, ))
-
+        cursor.execute(query, (id,))
         con.commit()
 
-        return jsonify({"message": "Course deleted sucessfully."}), 200
+        if cursor.rowcount == 0:
+            return jsonify({"message": "Course not found."}), 404
+
+        return jsonify({"message": "Course deleted successfully."}), 200
+
 
     except Exception as e:
 
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while deleting the course."}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @admin_bp.route("/delete-current-course/<int:id>", methods=['DELETE'])
@@ -464,19 +633,28 @@ def delete_current_course(id):
         con, cursor = get_db_connection()
 
         query = """
-        DELETE FROM current_courses WHERE id = %s;
-        """
+            DELETE FROM current_courses WHERE id = %s;
+            """
 
         cursor.execute(query, (id,))
-
         con.commit()
 
-        return jsonify({"message": "Course deleted sucessfully."}), 200
+        if cursor.rowcount == 0:
+            return jsonify({"message": "Course not found."}), 404
+
+        return jsonify({"message": "Course deleted successfully."}), 200
+
 
     except Exception as e:
 
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while deleting the course."}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @admin_bp.route("/delete-user/<int:id>", methods=['DELETE'])
@@ -495,9 +673,20 @@ def delete_user(id):
 
         con.commit()
 
+        if cursor.rowcount == 0:
+            return jsonify({"message": "User not found."}), 404
+
         return jsonify({"message": "User deleted sucessfully."}), 200
 
     except Exception as e:
 
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while deleting the user."}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
+
+#to do on delete delete images

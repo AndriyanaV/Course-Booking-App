@@ -1,11 +1,13 @@
 <template>
-  <div v-if="loading || !user" class="w-full flex justify-center items-center h-full">
+  <!-- Loader -->
+	<div v-show="loading" class="w-full flex justify-center items-center h-full">
     <Loader />
   </div>
-  <div v-else class="lg:w-[500px] flex flex-col gap-[40px]">
+  <!-- Form Container -->
+  <div v-show="!loading" class="lg:w-[500px] flex flex-col gap-[40px]">
     <div class="user-form-container w-full">
 
-      <Form ref="userForm" :validation-schema="schema" :initial-values="initialValues" @submit="updateUserProfile"
+      <Form ref="userForm" :validation-schema="schema"  @submit="updateUserProfile"
         class="w-full flex flex-col gap-[20px]">
 
         <!-- Image -->
@@ -69,22 +71,13 @@
           <ErrorMessage name="lastName" class="error-form-message" />
         </div>
 
-        <!-- Email -->
-        <div class="user-input-container">
-          <label class="label-form">
-            Email <span class="span-required">*</span>
-          </label>
-          <Field name="email" type="email" class="user-input-update" />
-          <ErrorMessage name="email" class="error-form-message" />
-        </div>
-
         <!-- Phone number -->
         <div class="user-input-container">
           <label class="label-form">Phone Number</label>
           <Field name="phoneNumber" class="user-input-update" />
         </div>
 
-        <Button text="Update" type="submit" />
+        <Button text="Update" type="submit"/>
       </Form>
 
     </div>
@@ -101,32 +94,26 @@ import { useImagePreview } from "@/composables/useImagePreview";
 import Loader from "@/components/Loader.vue";
 import { computed } from "vue";
 
-const initialValues = computed(() => {
-  if (!props.user) return {};
-
-  return {
-    firstName: props.user.first_name || "",
-    lastName: props.user.last_name || "",
-    email: props.user.email || "",
-    phoneNumber: props.user.phone_number || "",
-    image: null,
-  };
-});
-
 const props = defineProps({
   user: Object,
   loading: {
 		type: Boolean,
+		required: false,
 		default: false
-	} 
+	}
 });
 
 const emit = defineEmits(["userProfileUpdated"]);
 
 const userForm = ref(null);
+
+let userRole = ref('')
+
 const { preview: imagePreview, setFile } = useImagePreview();
 
-const schema = userProfileUpdateSchema(imagePreview);
+const schema = computed(() =>
+  userProfileUpdateSchema(imagePreview, userRole.value)
+);
 
 const removeImage = (setValue
 ) => {
@@ -152,12 +139,13 @@ watch(
     userForm.value.setValues({
       firstName: user.first_name || "",
       lastName: user.last_name || "",
-      email: user.email || "",
       phoneNumber: user.phone_number || "",
       image: null,
     });
 
     imagePreview.value = user.user_image_url || null;
+    userRole.value = user.rola;
+    
   },
   { immediate: true }
 );

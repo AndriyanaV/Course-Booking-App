@@ -1,10 +1,11 @@
-
+import os
 from blueprints.current_courses.routes import current_courses_bp
 from blueprints.auth.routes import auth_bp
 from blueprints.users.routes import users_bp
 from blueprints.admin.routes import admin_bp
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask import Flask, jsonify, request, send_from_directory
+from config import Config
 import mysql.connector
 from datetime import datetime
 import pymysql
@@ -17,12 +18,12 @@ app.config["JWT_SECRET_KEY"] = 'e2b6fc2a9bfb5d70d4d5c7ad67e2a6f5016a82c49e9bc0af
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=3)
 jwt = JWTManager(app)
 
+app.config.from_object(Config)
 
 app.register_blueprint(admin_bp, url_prefix='/admin')
 app.register_blueprint(users_bp, url_prefix='/users')
 app.register_blueprint(current_courses_bp, url_prefix='/current-courses')
 app.register_blueprint(auth_bp, url_prefix='/')
-
 
 @jwt.unauthorized_loader
 def missing_token_callback(error):
@@ -31,11 +32,22 @@ def missing_token_callback(error):
 
 @app.route("/uploads/course/<file_name>", methods=['GET'])
 def return_course_img(file_name):
-    try:
-        return send_from_directory('uploads/course', file_name)
-    except FileNotFoundError:
-        return ('error')
+    # Novi folder
+    folder_new = app.config["UPLOAD_FOLDER_COURSE"]
+    file_path_new = os.path.join(folder_new, file_name)
+    
+    if os.path.exists(file_path_new):
+        return send_from_directory(folder_new, file_name)
 
+    # Stari folder
+    folder_old = "uploads/course"
+    file_path_old = os.path.join(folder_old, file_name)
+    
+    if os.path.exists(file_path_old):
+        return send_from_directory(folder_old, file_name)
+
+    # Ako ne postoji ni u jednom
+    return "File not found", 404
 
 @app.route("/uploads/user/<file_name>", methods=['GET'])
 def return_user_img(file_name):

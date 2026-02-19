@@ -1,9 +1,10 @@
 <template>
-	<section class="w-full py-[150px] flex flex-col justify-center items-center bg-[#f5f5f4] lg:px-[40px] px-[20px]  h-full">
+	<section
+		class="w-full py-[150px] flex flex-col justify-center items-center bg-[#f5f5f4] lg:px-[40px] px-[20px]  h-full">
 		<div
 			class="container max-w-[1320px] mx-auto flex flex-col justify-center items-center text-center lg:gap-[60px] gap-[40px]">
-			<Heading heading="Add New Course for Selected Language" color="#46A5BA" class="w-full font-bold  text-center" fontSize="46"
-				fontWeight="600" />
+			<Heading heading="Add New Course for Selected Language" color="#46A5BA"
+				class="w-full font-bold  text-center" fontSize="46" fontWeight="600" />
 			<CurrentCourseForm buttonText="Add Course" @currentCourseChange="addActiveCourse" />
 		</div>
 	</section>
@@ -37,8 +38,16 @@ const addActiveCourse = async (form) => {
 			.push(`/all-current-courses/${id}`)
 			.then(() => toast.success(response.data.message));
 	} catch (error) {
-		toast.error(error.response?.data?.message || error.message);
-		console.log(error)
+		if (error.response?.data?.errors) {
+			const messages = Object.values(error.response.data.errors)
+				.flat()
+				.map(msg => `• ${msg}`) // bullet
+				.join("\n");
+			toast.error(messages);
+		} else {
+			toast.error(error.response?.data?.message || error.message);
+		}
+		console.log(error);
 	}
 };
 </script>
