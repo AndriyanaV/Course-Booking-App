@@ -3,6 +3,7 @@ from database import get_db_connection
 from utils import check_course_availability
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from decoraotrs import role_required
+from utils.get_file_url import get_file_url
 
 current_courses_bp = Blueprint('current_courses', __name__)
 
@@ -52,6 +53,15 @@ def get_courses():
         values = (language, level)
         cursor.execute(query, values)
         data = cursor.fetchall()
+
+        for course in data:
+            course["course_image_url"] = get_file_url(
+            course.get("course_image_url"),
+            folder_type="course",
+            default="default_course.png"
+        )
+
+
 
         # return jsonify(data)
         aviable_courses = []

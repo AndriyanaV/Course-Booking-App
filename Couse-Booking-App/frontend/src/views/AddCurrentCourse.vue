@@ -24,8 +24,8 @@ const id = Number(route.query.courseId);
 const addActiveCourse = async (form) => {
 	try {
 		const response = await axios.post("api/admin/add-current-course", {
-			course_id: id,
-			user_id: form.professor,
+			course_id: id,                
+	        user_id: form.professor,      
 			price: form.price,
 			start_at: form.startAt,
 			end_at: form.endAt,

@@ -11,6 +11,7 @@ import uuid
 from schemas.course.add_course_schema import AddCourseSchema
 from schemas.course.add_current_course_schema import AddCurrentCourseSchema
 from schemas.course.update_course_schema import UpdateCourseSchema
+from schemas.course.update_current_course import UpdateCurrentCourseSchema
 from schemas.user.add_user_schema import AddUserSchema
 from utils.file_utils import allowed_file, allowed_file_size
 from utils.get_file_url import get_file_url
@@ -20,6 +21,7 @@ from utils.save_uploaded_file import save_uploaded_file
 admin_bp = Blueprint('admin', __name__)
 
 
+update_current_course_schema = UpdateCurrentCourseSchema()
 # UPDATE
 @admin_bp.route("/update-current-course/<int:id>", methods=['PUT'])
 @jwt_required()
@@ -28,36 +30,75 @@ def update_current_course(id):
     try:
         con, cursor = get_db_connection()
 
-        data = request.json
+        # Uzmi JSON podatke
+        data = request.json 
 
-        cursor.execute("SELECT * FROM current_courses WHERE id = %s", (id,))
+        # Uzmi trenutne vrednosti iz baze
+        cursor.execute("SELECT * FROM current_courses WHERE id=%s", (id,))
         current_course = cursor.fetchone()
+        if not current_course:
+            return jsonify({"message": "Current course not found"}), 404
 
-        professor = data.get('professor', current_course['user_id'])
-        price = data.get('price', current_course['price'])
-        start_at = data.get('start_at', current_course['start_at'])
-        end_at = data.get('end_at', current_course['end_at'])
-        level = data.get('level', current_course['level'])
-        location = data.get('location', current_course['location'])
-        max_members = data.get('max_members', current_course['max_members'])
-        lessons = data.get('lessons', current_course['lessons'])
+        # Validacija opcionih polja
+        try:
+            validated_data = update_current_course_schema.load(data)
+        except ValidationError as err:
+            return jsonify({"errors": err.messages}), 400
 
+        # Kombinuj stare i nove vrednosti
+        professor = validated_data.get('user_id', current_course['user_id'])
+        price = validated_data.get('price', current_course['price'])
+        start_at = validated_data.get('start_at', current_course['start_at'])
+        end_at = validated_data.get('end_at', current_course['end_at'])
+        level = validated_data.get('level', current_course['level'])
+        location = validated_data.get('location', current_course['location'])
+        max_members = validated_data.get('max_members', current_course['max_members'])
+        lessons = validated_data.get('lessons', current_course['lessons'])
+        course_id =  current_course['course_id']
+
+        #  provera da li profesor i kurs postoje, ako su poslati
+        if 'user_id' in validated_data:
+            cursor.execute("SELECT id FROM user WHERE id=%s AND rola='professor'", (professor,))
+            if not cursor.fetchone():
+                return jsonify({"message": f"Professor with id {professor} does not exist"}), 400
+
+        if 'course_id' in validated_data:
+            cursor.execute("SELECT id FROM course WHERE id=%s", (course_id,))
+            if not cursor.fetchone():
+                return jsonify({"message": f"Course with id {course_id} does not exist"}), 400
+
+        # Provera preklapanja termina ako je start_at, end_at ili profesor poslato
+        if any(k in validated_data for k in ['start_at', 'end_at', 'user_id', 'course_id']):
+            cursor.execute("""
+                SELECT id FROM current_courses
+                WHERE course_id=%s AND user_id=%s AND id != %s
+                AND NOT (%s > end_at OR %s < start_at)
+            """, (course_id, professor, id, start_at, end_at))
+            if cursor.fetchone():
+                return jsonify({"message": "This course is already scheduled for this professor in the given period."}), 400
+
+        # Update
         query = """
-        UPDATE current_courses
-        SET user_id=%s, price = %s,  start_at = %s, end_at = %s, level = %s, location = %s,max_members=%s, lessons=%s
-        WHERE id = %s
+            UPDATE current_courses
+            SET user_id=%s, course_id=%s, price=%s, start_at=%s, end_at=%s,
+                level=%s, location=%s, max_members=%s, lessons=%s
+            WHERE id=%s
         """
-        values = (
-            professor, price, start_at, end_at, level, location, max_members, lessons, id
-        )
-
+        values = (professor, course_id, price, start_at, end_at, level, location, max_members, lessons, id)
         cursor.execute(query, values)
         con.commit()
+
         return jsonify({"message": "Current course updated successfully."}), 200
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return jsonify({"message": "Error"}), 500
+        return jsonify({"message": "An error occurred while updating the course."}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 img_base_url_user = 'http://127.0.0.1:5000/uploads/user/'
@@ -116,7 +157,7 @@ def update_user_info(id):
         print(f"An unexpected error occurred: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
-# User Schema for Validation
+# Course update Schema for Validation
 update_course_schema = UpdateCourseSchema()
 
 @admin_bp.route("/update-course/<int:id>", methods=['PUT'])
@@ -513,12 +554,8 @@ def add_current_course():
     try:
         con, cursor = get_db_connection()
 
-        # Validating text fields with Marshmallow
-        try:
-            data = current_course_schema.load(request.json)
-        except ValidationError as err:
-            return jsonify({"errors": err.messages}), 400
-        
+        data = request.json
+
         # Checking whether the course (language) for which we are adding a current course exists
         cursor.execute("SELECT id FROM course WHERE id = %s", (data['course_id'],))
         course = cursor.fetchone()
@@ -529,7 +566,7 @@ def add_current_course():
         cursor.execute(
             "SELECT id FROM user WHERE id = %s AND rola = %s",
             (data['user_id'], "professor")
-        )
+            )
         if not cursor.fetchone():
             return jsonify({"error": f"User (professor) with id {data['user_id']} does not exist"}), 400
 
@@ -540,16 +577,23 @@ def add_current_course():
             AND user_id = %s 
             AND NOT (%s > end_at OR %s < start_at)
             """, (data['course_id'], data['user_id'], data['start_at'], data['end_at']))
-
+        
         if cursor.fetchone():
             return jsonify({"error": "This course is already scheduled for this professor in the given period."}), 400
+        
+        # Validating text fields with Marshmallow
+        try:
+            validated_data = current_course_schema.load(request.json)
+        except ValidationError as err:
+            return jsonify({"errors": err.messages}), 400
+        
         
         query = """
             INSERT INTO current_courses (course_id, user_id, price, start_at, end_at, max_members, level,location,lessons)
             VALUES (%s,  %s, %s, %s, %s, %s, %s,%s, %s)
             """
-        values = (data['course_id'], data['user_id'], data['price'],  data['start_at'],
-                  data['end_at'], data['max_members'], data['level'], data['location'], data['lessons'])
+        values = (validated_data['course_id'], validated_data['user_id'], validated_data['price'],  validated_data['start_at'],
+                  validated_data['end_at'], validated_data['max_members'], validated_data['level'], validated_data['location'], validated_data['lessons'])
 
         cursor.execute(query, values)
         con.commit()

@@ -36,7 +36,10 @@ class AddCurrentCourseSchema(Schema):
     )
     location = fields.Str(
         required=True,
-        validate=validate.Length(min=1),
+        validate=[
+        validate.Length(min=1, error="Location cannot be empty"),
+        validate.Regexp(r"\S", error="Location cannot be empty or whitespace only")
+        ],
         error_messages={"required": "Location is required"}
     )
     lessons = fields.Int(
@@ -46,10 +49,10 @@ class AddCurrentCourseSchema(Schema):
     )
     level = fields.Str(
         required=True,
-        validate=validate.OneOf(
-            LEVELS,
-            error="Please choose a valid level"
-        ),
+        validate=[
+        validate.OneOf(LEVELS, error="Please choose a valid level"),
+        validate.Regexp(r"\S", error="Level cannot be empty or whitespace only")
+        ],
         error_messages={"required": "Level is required"}
     )
     

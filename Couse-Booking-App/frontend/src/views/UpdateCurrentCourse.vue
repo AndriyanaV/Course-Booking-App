@@ -46,7 +46,7 @@ const updateActiveCourse = async (form) => {
 		const response = await axios.put(
 			`api/admin/update-current-course/${courseId}`,
 			{
-				professor: form.professor,
+				user_id: form.professor,
 				price: form.price,
 				start_at: form.startAt,
 				end_at: form.endAt,
