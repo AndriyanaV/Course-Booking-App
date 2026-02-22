@@ -5,7 +5,7 @@
 			class="container max-w-[1320px] mx-auto flex flex-col justify-center items-center text-center lg:gap-[60px] gap-[40px]">
 			<Heading heading="Update User Info" color="#46A5BA" class="w-full font-bold  text-center" fontSize="46"
 				fontWeight="600" />
-			<UserForm :user="user" buttonText="Update User Info" :isAddMode="isAddMode" @userChange="updateUser" />
+			<UserForm :user="user" buttonText="Update User Info" :isAddMode="isAddMode" :loading="loading" @userChange="updateUser" />
 		</div>
 	</section>
 </template>
@@ -24,17 +24,23 @@ const route = useRoute();
 const router = useRouter();
 const userId = Number(route.query.userId);
 const user = ref({});
+const loading = ref(true)
 
 const getUserInfo = async () => {
 	try {
+		loading.value = true
 		const response = await axios.get(`api/admin/get-user/${userId}`);
 		user.value = response.data;
 	} catch (error) {
-		toast(error.message || error.response.data.message);
+		toast.error(error.response?.data?.message || error.message);
+		
+	}finally{
+		loading.value = false
 	}
 };
 
 const updateUser = async (form) => {
+	console.log('update user')
 	const formData = new FormData();
 	formData.append("first_name", form.firstName);
 	formData.append("last_name", form.lastName);
@@ -42,8 +48,8 @@ const updateUser = async (form) => {
 	formData.append("file", form.image);
 	formData.append("phone_number", form.phoneNumber);
 	formData.append("biography", form.biography);
-	formData.append("password", form.password);
-	formData.append("rola", form.rola);
+	// formData.append("password", form.password);
+	formData.append("rola", form.role);
 
 	try {
 		const response = await axios.put(
@@ -52,7 +58,7 @@ const updateUser = async (form) => {
 		);
 		router.push("/all-users").then(() => toast.success(response.data.message));
 	} catch (error) {
-		toast.error(error.message);
+		toast.error(error.response?.data?.message || error.message);
 	}
 };
 

@@ -107,7 +107,27 @@ body {
 }
 
 .user-input-update {
-  @apply w-full rounded-lg border border-none transition text-gray-500 text-[14px] focus:outline-none bg-transparent p-[15px];
+  @apply w-full rounded-lg border  transition text-gray-500 text-[14px] focus:outline-none bg-transparent p-[15px];
+}
+
+.custom-button-container {
+   @apply  lg:h-[44px] lg:min-w-[150px] w-fit h-[40px] min-w-[100px]
+}
+
+.custom-button {
+  @apply bg-[#46A5BA] hover:bg-[#4096a9] text-white font-bold w-full py-2 px-4 rounded h-full min-w-[100px]
+}
+
+.span-required {
+  @apply text-red-500 text-sm
+}
+
+.error-form-message {
+  @apply text-red-500 text-sm
+}
+
+.form-layout {
+  @apply w-full flex flex-col gap-[40px] py-[40px]
 }
 
 html {

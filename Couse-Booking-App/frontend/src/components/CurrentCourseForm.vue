@@ -1,247 +1,169 @@
 <template>
-	<div class="lg:w-[1200px] bg-white lg:py-[40px] py-[20px] lg:px-[40px] px-[20px] rounded shadow">
-		<div class="w-full">
-			<form class="w-full flex flex-col lg:gap-[20px] gap-[40px] lg:py-[40px] py-[40px]" @submit.prevent="handleCurrentCourseChange()">
-				<div class="form-row">
-					<div class="column">
-						<label for="max_members" class="label-form">
-							Price ($) <span class="text-red-500"> * </span>
-						</label>
-						<div class="input-container">
-							<input
-								v-model="form.price"
-								type="text"
-								placeholder="Enter price of course"
-								id="price"
-								name="price"
-								class="input-el"
-							/>
-						</div>
-					</div>
-					<div class="column">
-						<label for="max_members" class="label-form">
-							Max Members <span class="text-red-500"> * </span>
-						</label>
-						<div class="input-container">
-							<input
-								v-model="form.members"
-								type="text"
-								placeholder="Enter max members of course"
-								id="max_members"
-								name="max_members"
-								class="input-el"
-							/>
-						</div>
-					</div>
-				</div>
-				<div class="form-row">
-					<div class="column">
-						<label for="max_members" class="label-form">
-							Start Date <span class="text-red-500"> * </span>
-						</label>
-						<div class="input-container">
-							<input
-								v-model="form.startAt"
-								type="datetime-local"
-								placeholder="Enter start date of course"
-								id="start_at"
-								name="start_at"
-								class="input-el  bg-white"
-							/>
-						</div>
-					</div>
-					<div class="column">
-						<label for="max_members" class="label-form">
-							End Date <span class="text-red-500"> * </span></label
-						>
-						<div class="input-container">
-							<input
-								v-model="form.endAt"
-								type="date"
-								placeholder="Enter end date of course"
-								id="end_at"
-								name="end_at"
-								class="input-el bg-white"
-							/>
-						</div>
-					</div>
-				</div>
-				<div class="form-row">
-					<div class="column">
-						<label for="location" class="label-form">
-							Location <span class="text-red-500"> * </span>
-						</label>
-						<div class="input-container">
-							<input
-								v-model="form.location"
-								type="text"
-								placeholder="Enter location of course"
-								id="location"
-								name="location"
-								class="input-el"
-							/>
-						</div>
-					</div>
-					<div class="column">
-						<label for="max_members" class="label-form"
-							>Number of Lessons <span class="text-red-500"> * </span>
-						</label>
-						<div class="input-container">
-							<input
-								v-model="form.lessons"
-								type="number"
-								placeholder="Enter number of lessons of course"
-								id="lessons"
-								name="lessons "
-								class="input-el"
-							/>
-						</div>
-					</div>
-				</div>
-				<div class="form-row">
-					<div class="column">
-						<label for="location" class="label-form">
-							Level <span class="text-red-500"> * </span></label
-						>
-						<div class="input-container">
-							<select
-								v-model="form.level"
-								id="countries"
-								class="h-[64px] bg-white border border-gray-300 text-black text-sm  rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							>
-								<option selected disabled>Choose a Level</option>
-								<option value="beginner">Beginner</option>
-								<option value="intermediate">Intermediate</option>
-								<option value="advanced">Advanced</option>
-							</select>
-						</div>
-					</div>
-					<div class="column">
-						<label for="max_members" class="label-form">
-							Professor <span class="text-red-500"> * </span>
-						</label>
-						<div class="input-container">
-							<select
-								v-model="form.professor"
-								id="countries"
-								class="h-[64px] bg-white border border-gray-300 text-black text-sm  rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-							>
-								<option
-									v-for="professor in professors"
-									:key="professor.id"
-									:value="professor.id"
-								>
-									{{ professor.first_name }} {{ professor.last_name }}
-								</option>
-							</select>
-						</div>
-					</div>
-				</div>
+  <!-- Loader -->
+ <div v-show="loading" class="w-full flex justify-center items-center h-full">
+    <Loader />
+  </div>
 
-				<div class="w-full flex items-center justify-start mt-[20px]">
-					<Button :text="buttonText" @click="handleCurrentCourseChange" />
-				</div>
-			</form>
-		</div>
-	</div>
+  <!-- Form -->
+  <div  v-show="!loading" class="lg:w-[1200px] bg-white lg:py-[40px] py-[20px] lg:px-[40px] px-[20px] rounded shadow">
+    <div class="w-full">
+      <Form
+        ref="courseForm"
+        :validation-schema="schema"
+        :initial-values="initialValues"
+        @submit="handleCurrentCourseChange"
+        class="w-full flex flex-col gap-[40px] py-[40px]"
+      >
+        <!-- First row: price & max members -->
+        <div class="form-row">
+          <div class="column">
+            <label for="price" class="label-form">Price ($)<span class="span-required">*</span></label>
+            <Field name="price" type="number" class="input-el" />
+            <ErrorMessage name="price" class="error-form-message" />
+          </div>
+          <div class="column">
+            <label for="maxMembers" class="label-form">Max Members <span class="span-required">*</span></label>
+            <Field name="maxMembers" type="number" class="input-el" />
+            <ErrorMessage name="maxMembers" class="error-form-message" />
+          </div>
+        </div>
+
+        <!-- dates -->
+        <div class="form-row">
+          <div class="column">
+            <label for="startAt" class="label-form">Start Date <span class="span-required">*</span></label>
+            <Field name="startAt" type="datetime-local" class="input-el bg-white" />
+            <ErrorMessage name="startAt" class="error-form-message" />
+          </div>
+          <div class="column">
+            <label for="endAt" class="label-form">End Date <span class="span-required">*</span></label>
+            <Field name="endAt" type="date" class="input-el bg-white" />
+            <ErrorMessage name="endAt" class="error-form-message" />
+          </div>
+        </div>
+
+        <!-- location and lessons -->
+        <div class="form-row">
+          <div class="column">
+            <label for="location" class="label-form">Location <span class="span-required">*</span></label>
+            <Field name="location" type="text" class="input-el bg-white" />
+            <ErrorMessage name="location" class="error-form-message" />
+          </div>
+          <div class="column">
+            <label for="lessons" class="label-form">Number of lessons <span class="span-required">*</span></label>
+            <Field name="lessons" type="number" class="input-el bg-white" />
+            <ErrorMessage name="lessons" class="error-form-message" />
+          </div>
+        </div>
+
+        <!-- level and professor -->
+        <div class="form-row">
+          <div class="column">
+            <label for="level" class="label-form">Level <span class="span-required">*</span></label>
+            <Field name="level" as="select" class="input-el">
+              <option disabled value="">Choose a Level</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </Field>
+            <ErrorMessage name="level" class="error-form-message" />
+          </div>
+          <div class="column">
+            <label for="professor" class="label-form">Professor <span class="span-required">*</span></label>
+            <Field name="professor" as="select" class="input-el">
+              <option disabled value="">Choose a Professor</option>
+              <option v-for="professor in professors" :key="professor.id" :value="professor.id">
+                {{ professor.first_name }} {{ professor.last_name }}
+              </option>
+            </Field>
+            <ErrorMessage name="professor" class="error-form-message" />
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="w-full flex items-center justify-start mt-[20px]">
+          <Button :text="buttonText" />
+        </div>
+      </Form>
+    </div>
+  </div>
 </template>
 
 <script setup>
-	import { ref, onMounted, watch } from "vue";
-	import axios from "axios";
-	import { useRoute, useRouter } from "vue-router";
-	import { toast } from "vue3-toastify";
-	import Button from "./Button.vue";
+import { ref, computed, watch, onMounted } from "vue";
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
+import axios from "axios";
+import Button from "./Button.vue";
+import { convertToDateFormat } from "@/utils/convertToDateFormat";
+import { convertToDateTimeFormat } from "@/utils/convertToDateTimeFormat";
+import { currentCourseSchema} from "@/validation/currentCourseSchema.js";
+import Loader from "@/components/Loader.vue";
 
-	const props = defineProps({
-		course: Object,
-		buttonText: String,
-	});
-
-	const emit = defineEmits(["currentCourseChange"]);
-
-	const router = useRouter();
-
-	const professors = ref("");
-
-	const form = ref({
-		price: "",
-		members: "",
-		startAt: "",
-		endAt: "",
-		lessons: "",
-		professor: "",
-		location: "",
-		level: "",
-	});
-
-	function convertToDateFormat(dateString) {
-		const date = new Date(dateString);
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, "0");
-		const day = String(date.getDate()).padStart(2, "0");
-
-		return `${year}-${month}-${day}`;
+const props = defineProps({
+  course: Object,
+  buttonText: String,
+  loading: {
+		type: Boolean,
+		required: false,
+		default: false
 	}
+});
 
-	function convertToDateTimeFormat(dateTimeString) {
-		const date = new Date(dateTimeString);
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, "0"); // Dodaj nulu ako je mesec jednocifren
-		const day = String(date.getDate()).padStart(2, "0"); // Dodaj nulu ako je dan jednocifren
-		const hours = String(date.getHours()).padStart(2, "0"); // Dodaj nulu ako je sat jednocifren
-		const minutes = String(date.getMinutes()).padStart(2, "0"); // Dodaj nulu ako su minuti jednocifreni
+const emit = defineEmits(["currentCourseChange"]);
 
-		return `${year}-${month}-${day}T${hours}:${minutes}`;
-	}
+const courseForm = ref(null);
+const professors = ref([]);
 
-	watch(
-		() => props.course,
-		(newCourse) => {
-			if (newCourse) {
-				form.value.price = newCourse.price || "";
-				form.value.members = newCourse.max_members || "";
-				form.value.startAt = convertToDateTimeFormat(newCourse.start_at) || "";
-				form.value.endAt = convertToDateFormat(newCourse.end_at) || "";
-				form.value.lessons = newCourse.lessons || "";
-				form.value.professor = newCourse.user_id || "";
-				form.value.location = newCourse.location || "";
-				form.value.level = newCourse.level || "";
-			}
-		},
-		{ immediate: true }
-	);
+const schema = currentCourseSchema();
 
-	const handleCurrentCourseChange = () => {
-		if (
-			!form.value.price ||
-			!form.value.members ||
-			!form.value.startAt ||
-			!form.value.endAt ||
-			!form.value.lessons ||
-			!form.value.professor ||
-			!form.value.location ||
-			!form.value.level
-		) {
-			toast.error("Please enter all fields.");
-			return;
-		}
-		emit("currentCourseChange", form.value);
-	};
+/* Computed initial values */
+const initialValues = computed(() => ({
+  price: props.course?.price || "",
+  maxMembers: props.course?.max_members || "",
+  startAt: convertToDateTimeFormat(props.course?.start_at) || "",
+  endAt: convertToDateFormat(props.course?.end_at) || "",
+  lessons: props.course?.lessons || "",
+  professor: props.course?.user_id || "",
+  location: props.course?.location || "",
+  level: props.course?.level || "",
+}));
 
-	const getProfessors = async () => {
-		try {
-			const response = await axios.get("api/admin/get-professors");
-			professors.value = response.data;
-		} catch (error) {
-			toast.error(error);
-		}
-	};
+/* Watch API course for edit mode */
+watch(
+  () => props.course,
+  (newCourse) => {
+    if (!newCourse) return;
+    if (courseForm.value) {
+      courseForm.value.setValues({
+        price: newCourse.price || "",
+        maxMembers: newCourse.max_members || "",
+        startAt: convertToDateTimeFormat(newCourse.start_at) || "",
+        endAt: convertToDateFormat(newCourse.end_at) || "",
+        lessons: newCourse.lessons || "",
+        professor: newCourse.user_id || "",
+        location: newCourse.location || "",
+        level: newCourse.level || "",
+      });
+    }
+  },
+  { immediate: true }
+);
 
-	onMounted(() => {
-		getProfessors();
-	});
+/* Submit */
+const handleCurrentCourseChange = (values) => {
+  emit("currentCourseChange", values);
+};
+
+/* Fetch professors */
+const getProfessors = async () => {
+  try {
+    const res = await axios.get("api/admin/get-professors");
+    professors.value = res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+onMounted(() => getProfessors());
 </script>
-
-<style scoped>
-</style>

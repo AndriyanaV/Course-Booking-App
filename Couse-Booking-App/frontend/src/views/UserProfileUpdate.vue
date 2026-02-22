@@ -2,7 +2,7 @@
 	<section
 		class="w-full flex justify-center items-start bg-gradient-to-b from-[#2d3cff]/20 to-white min-h-screen py-[150px] lg:px-[40px] px-[20px]">
 		<div class="container max-w-[1320px] mx-auto flex flex-col justify-center items-center  text-center">
-			<UserProfileUpdateForm :user="user" @userProfileUpdated="updateUserInfo" />
+			<UserProfileUpdateForm :user="user" :loading="loading" @userProfileUpdated="updateUserInfo" />
 		</div>
 	</section>
 </template>
@@ -20,12 +20,17 @@ const userId = route.query.userId;
 
 const user = ref(null);
 
+const loading = ref(true)
+
 const getUserProfileInfo = async () => {
 	try {
+		loading.value = true
 		const response = await axios.get("api/users/user-profile");
 		user.value = response.data;
 	} catch (error) {
 		toast.error(error.response?.data?.message || error.message);
+	}finally{
+		loading.value = false
 	}
 };
 
@@ -33,13 +38,12 @@ const updateUserInfo = async (form) => {
 	const formData = new FormData();
 	formData.append("first_name", form.firstName);
 	formData.append("last_name", form.lastName);
-	formData.append("email", form.email);
-	formData.append("phone_number", form.pnumber);
+	formData.append("phone_number", form.phoneNumber);
 	formData.append("file", form.image);
-
+	
 	try {
 		const response = await axios.put(
-			`api/admin/update-user/${userId}`,
+			`api/users/update-user/${userId}`,
 			formData
 		);
 		router

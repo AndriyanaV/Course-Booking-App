@@ -16,7 +16,7 @@
 
 <script setup>
 import { defineEmits } from 'vue';
-import {defineProps } from 'vue';
+// import {defineProps } from 'vue';
 
 const props = defineProps({
 	confirmCard: Boolean,

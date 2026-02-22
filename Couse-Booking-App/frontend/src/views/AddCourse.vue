@@ -20,7 +20,7 @@ const router = useRouter();
 
 const addCourse = async (form) => {
 	const formData = new FormData();
-	formData.append("name", form.name);
+	formData.append("name", form.name.toLowerCase());
 	formData.append("language", form.language.toLowerCase());
 	formData.append("file", form.image);
 
@@ -30,7 +30,16 @@ const addCourse = async (form) => {
 			.push("/all-courses")
 			.then(() => toast.success(response.data.message));
 	} catch (error) {
-		toast.error(error.response?.data?.message || error.message);
+		if (error.response?.data?.errors) {
+			const messages = Object.values(error.response.data.errors)
+				.flat()
+				.map(msg => `• ${msg}`) // bullet
+				.join("\n");
+			toast.error(messages);
+		} else {
+			toast.error(error.response?.data?.message || error.message);
+		}
+		console.log(error);
 	}
 };
 </script>

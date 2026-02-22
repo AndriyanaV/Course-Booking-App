@@ -1,137 +1,152 @@
 <template>
-	<div class="lg:w-[500px] flex flex-col items-start justify-start text-center gap-[40px]">
-		<!-- <Heading heading="Update Profile Info" color="#2E42BE" class="w-full font-bold" fontSize="32" /> -->
-		<div class="user-form-container min-w-[100%]">
-			<form @submit.prevent="updateUserProfile()" class="w-full h-full gap-[20px]  flex flex-col">
-				<div class="image-cotainer w-full flex flex-col gap-[10px] h-fit relative istems-start">
-					<label for="image" class="label-form w-full text-start">Image</label>
-					<div class="w-full h-[200px]">
-						<div class="flex items-start justify-center w-full">
-							<label for="dropzone-file"
-								class="flex flex-col items-center justify-center lg:w-[40%] h-[200px] border-2 border-gray-100 border-solid rounded-lg cursor-pointer bg-white   hover:bg-gray-100  absolute left-0">
-								<div class="flex flex-col items-center justify-center pt-5 pb-6 realtive">
-									<div v-if="form.imagePreview">
-										<img :src="form.imagePreview" alt="Image preview" style="max-width: 100px"
-											class="aboslute top-0" />
-									</div>
-									<svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400 absolute"
-										aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-										viewBox="0 0 20 16">
-										<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-											stroke-width="2"
-											d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-									</svg>
-									<p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-										<span class="font-semibold">Click to upload</span> or drag and
-										drop
-									</p>
-									<!-- <p class="text-xs text-gray-500 dark:text-gray-400">
-										SVG, PNG, JPG or GIF (MAX. 800x400px)
-									</p> -->
-								</div>
-								<input id="dropzone-file" type="file" class="hidden" @change="handleFileChange" />
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="w-full flex justify-center py-[5px]"></div>
-				<div class="user-input-container ">
-					<label for="first_name" class="label-form">
-						First Name <span class="text-red-500"> * </span></label>
-					<div class="user-input-update-container">
-						<input v-model="form.firstName" class="user-input-update" type="text" />
-					</div>
-				</div>
-				<div class="user-input-container">
-					<label for="last_name" class="label-form">
-						Last Name <span class="text-red-500"> * </span>
-					</label>
-					<div class="user-input-update-container">
-						<input v-model="form.lastName" class="user-input-update" type="text" />
-					</div>
-				</div>
-				<div class="user-input-container ">
-					<label for="email" class="label-form">
-						Email address <span class="text-red-500"> * </span>
-					</label>
-					<div class="user-input-update-container">
-						<input v-model="form.email" class="user-input-update" type="text" />
-					</div>
-				</div>
-				<div class="user-input-container ">
-					<label for="pnumber" class="label-form"> Phone Number </label>
-					<div class="user-input-update-container">
-						<input v-model="form.pnumber" class="user-input-update" type="text" />
-					</div>
-				</div>
-				<div class="user-input-container ">
-					<Button text="Update" @button-clicked="handleFileChange"></Button>
-				</div>
-			</form>
-		</div>
-	</div>
+  <!-- Loader -->
+	<div v-show="loading" class="w-full flex justify-center items-center h-full">
+    <Loader />
+  </div>
+  <!-- Form Container -->
+  <div v-show="!loading" class="lg:w-[500px] flex flex-col gap-[40px]">
+    <div class="user-form-container w-full">
+
+      <Form ref="userForm" :validation-schema="schema"  @submit="updateUserProfile"
+        class="w-full flex flex-col gap-[20px]">
+
+        <!-- Image -->
+        <div class="w-full flex flex-col gap-[10px]">
+          <label class="label-form text-start">
+            Image <span class="span-required">*</span>
+          </label>
+
+          <Field name="image" v-slot="{ setValue, errorMessage }">
+            <label class="flex flex-col items-center justify-center lg:w-[40%] h-[200px]
+                     border-2 border-gray-100 rounded-lg cursor-pointer hover:bg-gray-100 relative">
+              <img v-if="imagePreview" :src="imagePreview" class="absolute max-h-[120px]" />
+
+              <svg v-else class="w-8 h-8 mb-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 20 16">
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M13 13h3a3 3 0 0 0 0-6h-.025
+                  A5.56 5.56 0 0 0 16 6.5
+                  5.5 5.5 0 0 0 5.207 5.021
+                  C5.137 5.017 5.071 5 5 5
+                  a4 4 0 0 0 0 8h2.167
+                  M10 15V6m0 0L8 8m2-2 2 2" />
+              </svg>
+
+              <p class="text-sm text-gray-500">
+                Click to upload
+              </p>
+
+              <input type="file" class="hidden" accept="image/png, image/jpeg" @change="(e) => {
+                setValue(e.target.files[0]);
+                setFile(e.target.files[0]);
+              }" />
+              <button v-if="imagePreview" type="button"
+                class=" absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-700 rounded-full p-1 shadow"
+                @click.stop="removeImage(setValue)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </label>
+
+            <p class="error-form-message">{{ errorMessage }}</p>
+          </Field>
+        </div>
+
+        <!-- First name -->
+        <div class="user-input-container">
+          <label class="label-form">
+            First Name <span class="span-required">*</span>
+          </label>
+          <Field name="firstName" class="user-input-update" />
+          <ErrorMessage name="firstName" class="error-form-message" />
+        </div>
+
+        <!-- Last name -->
+        <div class="user-input-container">
+          <label class="label-form">
+            Last Name <span class="span-required">*</span>
+          </label>
+          <Field name="lastName" class="user-input-update" />
+          <ErrorMessage name="lastName" class="error-form-message" />
+        </div>
+
+        <!-- Phone number -->
+        <div class="user-input-container">
+          <label class="label-form">Phone Number</label>
+          <Field name="phoneNumber" class="user-input-update" />
+        </div>
+
+        <Button text="Update" type="submit"/>
+      </Form>
+
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, watch } from "vue";
-import { toast } from "vue3-toastify";
-import Heading from "./Heading.vue";
+import { Form, Field, ErrorMessage } from "vee-validate";
+import * as yup from "yup";
 import Button from "./Button.vue";
+import { userProfileUpdateSchema } from "@/validation/userProfileUpdateSchema.js";
+import { useImagePreview } from "@/composables/useImagePreview";
+import Loader from "@/components/Loader.vue";
+import { computed } from "vue";
+
 const props = defineProps({
-	user: Object,
+  user: Object,
+  loading: {
+		type: Boolean,
+		required: false,
+		default: false
+	}
 });
 
 const emit = defineEmits(["userProfileUpdated"]);
 
-const form = ref({
-	firstName: "",
-	lastName: "",
-	email: "",
-	pnumber: "",
-	image: "",
-	imagePreview: "",
-});
+const userForm = ref(null);
 
-const handleFileChange = (event) => {
-	const file = event.target.files[0];
-	if (!file) {
-		form.value.image = null;
-		form.value.imagePreview = null;
-		return;
-	}
-	if (!file.type.startsWith("image/")) {
-		toast.error("Please upload a valid image file!");
-		return;
-	}
-	form.value.image = file;
-	form.value.imagePreview = URL.createObjectURL(file);
-};
+let userRole = ref('')
 
-watch(
-	() => props.user, 
-	(newUser) => {
-		if (newUser) {
-			form.value.firstName = newUser.first_name || "";
-			form.value.lastName = newUser.last_name || "";
-			form.value.email = newUser.email || "";
-			form.value.pnumber = newUser.phone_number || "";
-			form.value.userImage = newUser.user_image_url || "";
-			form.value.imagePreview = newUser.user_image_url;
-		}
-	},
-	{ immediate: true } 
+const { preview: imagePreview, setFile } = useImagePreview();
+
+const schema = computed(() =>
+  userProfileUpdateSchema(imagePreview, userRole.value)
 );
 
-const updateUserProfile = () => {
-	if (!form.value.firstName || !form.value.lastName || !form.value.email) {
-		toast.error("Enter all required fields.");
-		return;
-	}
-	emit("userProfileUpdated", form.value);
+const removeImage = (setValue
+) => {
+  imagePreview.value = null
+  setValue(null)
+
+  // Reset file input to solve problem when we remove image and try to add it again 
+  const inputEl = document.querySelector('input[type="file"]');
+  if (inputEl) inputEl.value = "";
+}
+
+/* Submit */
+const updateUserProfile = (values) => {
+  emit("userProfileUpdated", values);
 };
+
+/* Edit mode */
+watch(
+  () => props.user,
+  (user) => {
+    if (!user || !userForm.value) return;
+
+    userForm.value.setValues({
+      firstName: user.first_name || "",
+      lastName: user.last_name || "",
+      phoneNumber: user.phone_number || "",
+      image: null,
+    });
+
+    imagePreview.value = user.user_image_url || null;
+    userRole.value = user.rola;
+    
+  },
+  { immediate: true }
+);
 </script>
-
-
-
-
-<style></style>
