@@ -1,3 +1,4 @@
+from shlex import quote
 from flask import Blueprint, app, current_app, jsonify, request
 from database import get_db_connection
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -9,8 +10,10 @@ from marshmallow import ValidationError
 import uuid
 from schemas.course.add_course_schema import AddCourseSchema
 from schemas.course.add_current_course_schema import AddCurrentCourseSchema
+from schemas.course.update_course_schema import UpdateCourseSchema
 from schemas.user.add_user_schema import AddUserSchema
 from utils.file_utils import allowed_file, allowed_file_size
+from utils.get_file_url import get_file_url
 from utils.save_uploaded_file import save_uploaded_file
 
 
@@ -113,6 +116,8 @@ def update_user_info(id):
         print(f"An unexpected error occurred: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
+# User Schema for Validation
+update_course_schema = UpdateCourseSchema()
 
 @admin_bp.route("/update-course/<int:id>", methods=['PUT'])
 @jwt_required()
@@ -121,22 +126,53 @@ def update_course(id):
     try:
         con, cursor = get_db_connection()
 
-        query = "SELECT  * FROM course WHERE id=%s"
-        cursor.execute(query, (id,))
+        upload_folder_course = current_app.config["UPLOAD_FOLDER_COURSE"]
+        allowed_extensions = current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
+
+        cursor.execute("SELECT * FROM course WHERE id=%s", (id,))
         course = cursor.fetchone()
+        if not course:
+            return jsonify({"message": "Course not found"}), 404
 
         file = request.files.get('file')
+        data = request.form.to_dict()
+
+        try:
+            validated_data = update_course_schema.load(
+            data,
+            unknown="exclude"  # ili unknown=EXCLUDE
+            )
+        except ValidationError as err:
+            return jsonify({"errors": err.messages}), 400
 
         if file:
-            file_url = str(img_base_url_course+file.filename)
-            file.save(os.path.join(UPLOAD_FOLDER_COURSE, file.filename))
+            old_filename = course.get('course_image_url')
+            # Check extension
+            if not allowed_file(file.filename):
+                allowed_extensions = current_app.config.get("ALLOWED_IMAGE_EXTENSIONS", set())
+                return jsonify({
+                "message": f"Invalid image format. Allowed: {', '.join(allowed_extensions)}"
+                }), 400
 
+            # Check file size (max 2MB)
+            if not allowed_file_size(file, max_size_mb=2):
+                return jsonify({"message": "File is too large. Max size is 2MB."}), 400
+
+       
+            filename = save_uploaded_file(file,upload_folder_course)
+
+            # Remove old image
+            if old_filename and old_filename != "default_course.png":
+                old_path = os.path.join(upload_folder_course, old_filename)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+            
         else:
-            file_url = course['course_image_url']
+            filename = course['course_image_url']
 
-        data = request.form.to_dict()
-        name = data.get('name', course['name'])
-        language = data.get('language', course['language'])
+        
+        name = validated_data.get('name', course['name']).strip().lower()
+        language = validated_data.get('language', course['language']).strip().lower()
 
         query = """
         UPDATE course
@@ -145,7 +181,7 @@ def update_course(id):
         """
 
         values = (
-            name, file_url, language, id
+            name, filename, language, id
         )
 
         cursor.execute(query, values)
@@ -155,9 +191,14 @@ def update_course(id):
         return jsonify({"message": "Course details updated successfully."}), 200
 
     except Exception as e:
-
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while updating the course."}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 # READ
@@ -234,7 +275,7 @@ def get_user(id):
 def get_all_current_courses(id):
     try:
         con, cursor = get_db_connection()
-        print('RUtaa')
+        
 
         # level = request.args.get('level', '%')
         # if (level == ""):
@@ -256,6 +297,14 @@ def get_all_current_courses(id):
         cursor.execute(query, values)
         data = cursor.fetchall()
         print(data)
+
+        for course in data:
+            course["course_image_url"] = get_file_url(
+            course.get("course_image_url"),
+            folder_type="course",
+            default="default_course.png"
+        )
+        
         return jsonify(data)
     
 
@@ -273,28 +322,32 @@ def get_all_current_courses(id):
 @jwt_required()
 @role_required(["admin"])
 def get_all_courses():
+    con, cursor = None, None  # Inicijalizujemo konekciju i cursor
     try:
         con, cursor = get_db_connection()
 
-        # language = request.args.get('language', "%")
-
-        # if (language == ""):
-        #     language = '%'
         language = request.args.get('language') or '%'
 
-        query = """
-        SELECT * FROM course WHERE language LIKE %s;
-        """
-
+        query = "SELECT id, name, course_image_url, language FROM course WHERE language LIKE %s;"
         cursor.execute(query, (language,))
         data = cursor.fetchall()
+
+        # Generate url for course image
+        for course in data:
+            course["course_image_url"] = get_file_url(
+            course.get("course_image_url"),
+            folder_type="course",
+            default="default_course.png"
+        )
+
         return jsonify(data)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An error occurred while fetching courses."}), 500
-    
+
     finally:
+        # Close connection
         if cursor:
             cursor.close()
         if con:
@@ -318,6 +371,11 @@ def get_course(id):
         # if no course
         if not data:
             return jsonify({"message": "Course not found"}), 404
+        
+        data["course_image_url"] = get_file_url(
+            data.get("course_image_url"),
+            folder_type="course",
+            default="default_course.png")
         
         return jsonify(data)
 
@@ -522,7 +580,6 @@ def add_course():
         con, cursor = get_db_connection()
 
         upload_folder_course = current_app.config["UPLOAD_FOLDER_COURSE"]
-        img_base_url_course = current_app.config["COURSE_IMAGE_BASE_URL"]
         allowed_extensions = current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
 
         file = request.files.get("file")
@@ -547,31 +604,24 @@ def add_course():
         if not file or file.filename == "":
             return jsonify({"message": "Image is required!"}), 400
 
-        # Provera ekstenzije
+        # Check extension
         if not allowed_file(file.filename):
             allowed_extensions = current_app.config.get("ALLOWED_IMAGE_EXTENSIONS", set())
             return jsonify({
             "message": f"Invalid image format. Allowed: {', '.join(allowed_extensions)}"
             }), 400
 
-        # Provera veličine fajla (max 2MB)
+        # Check file size (max 2MB)
         if not allowed_file_size(file, max_size_mb=2):
             return jsonify({"message": "File is too large. Max size is 2MB."}), 400
 
-        # generisati UUID i sačuvati fajl
-        original_filename = secure_filename(file.filename)
-        ext = original_filename.rsplit(".", 1)[-1].lower()
-        filename = f"{uuid.uuid4()}.{ext}"
-        file_url = f"{img_base_url_course.rstrip('/')}/{filename}"
-        file.save(os.path.join(upload_folder_course, filename))
-        # file_url = save_uploaded_file(file, upload_folder_course,
-        #                       img_base_url_course)
-
+       
+        filename = save_uploaded_file(file,upload_folder_course)
         query = """
             INSERT INTO course (name, course_image_url, language)
             VALUES (%s, %s, %s)
         """
-        values = (data["name"], file_url, data["language"])
+        values = (data["name"], filename, data["language"])
 
         cursor.execute(query, values)
         con.commit()

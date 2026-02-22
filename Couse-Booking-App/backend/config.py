@@ -1,17 +1,30 @@
 import os
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
 class Config:
-    # Course images
-    UPLOAD_FOLDER_COURSE = os.getenv("UPLOAD_FOLDER_COURSE", "uploads/course")
-    COURSE_IMAGE_BASE_URL = os.getenv("COURSE_IMAGE_BASE_URL", "http://127.0.0.1:5000/uploads/course/")
+    BASE_URL = os.getenv(
+        "BASE_URL",
+        "http://127.0.0.1:5000"
+    )
 
-    # User images
-    UPLOAD_FOLDER_USER = os.getenv("UPLOAD_FOLDER_USER", "uploads/user")
-    USER_IMAGE_BASE_URL = os.getenv("USER_IMAGE_BASE_URL", "http://127.0.0.1:5000/uploads/user/")
+    
+    # Upload folders
+    UPLOAD_FOLDER_COURSE = os.path.join(BASE_DIR, "uploads", "course")
+    UPLOAD_FOLDER_USER = os.path.join(BASE_DIR, "uploads", "user")
 
+    # Base URL for images
+    COURSE_IMAGE_BASE_URL = f"{BASE_URL}/uploads/course/"
+    USER_IMAGE_BASE_URL = f"{BASE_URL}/uploads/user/"
+
+    
     # Allowed extensions
     ALLOWED_IMAGE_EXTENSIONS = set(
-        e.lower() for e in os.getenv("ALLOWED_IMAGE_EXTENSIONS", "jpg,jpeg,png,webp").split(",")
+        e.strip().lower()
+        for e in os.getenv(
+            "ALLOWED_IMAGE_EXTENSIONS",
+            "jpg,jpeg,png,webp"
+        ).split(",")
     )
 
     DEFAULT_USER_IMAGE = "anonymous.png"

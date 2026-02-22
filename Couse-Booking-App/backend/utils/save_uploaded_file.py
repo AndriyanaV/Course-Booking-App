@@ -1,33 +1,20 @@
-import os
-import uuid
+import os, uuid
 from werkzeug.utils import secure_filename
+from flask import current_app
 
-def save_uploaded_file(file, upload_folder, base_url):
+def save_uploaded_file(file, folder):
     """
-    Save uploaded file safely with UUID name and return its URL.
-    Works exactly like your original snippet.
-    
-    Args:
-        file: Werkzeug FileStorage object
-        upload_folder: folder gde se čuva fajl (string)
-        base_url: base URL za fajlove
-
-    Returns:
-        file_url (str)
+    Save uploaded file in given folder with a UUID filename.
+    Returns the filename (not full URL).
     """
-    if not file or file.filename == "":
+    if not file:
         return None
-
-    # Secure filename i UUID
+    
     original_filename = secure_filename(file.filename)
     ext = original_filename.rsplit(".", 1)[-1].lower()
     filename = f"{uuid.uuid4()}.{ext}"
-
-    # Kreiraj folder ako ne postoji
-    os.makedirs(upload_folder, exist_ok=True)
-
-    # Sačuvaj fajl
-    file.save(os.path.join(upload_folder, filename))
-
-    # Vrati URL fajla
-    return f"{base_url.rstrip('/')}/{filename}"
+    
+    path = os.path.join(folder, filename)
+    file.save(path)
+    
+    return filename
