@@ -188,6 +188,7 @@ watch(
 );
 
 const handleUserChange = (values) => {
+	console.log(values)
 	emit("userChange", values);
 };
 </script>

@@ -1,11 +1,11 @@
-from marshmallow import Schema, fields, validate, validates_schema, ValidationError
+from marshmallow import EXCLUDE, Schema, fields, validate, validates_schema, ValidationError
 
 from constants.constants import ROLES
 
 class AddUserSchema(Schema):
     first_name = fields.Str(
         required=True,
-        validate=validate.Length(min=1),  # ne dozvoljava prazan string
+        validate=validate.Length(min=1),  
         error_messages={"required": "First name is required"}
     )
 
@@ -42,7 +42,11 @@ class AddUserSchema(Schema):
         error_messages={"required": "Please confirm password"}
     )
 
-    biography = fields.Str(allow_none=True)
+    biography = fields.Str(
+        required=False,
+        allow_none=True,
+        validate=validate.Length(max=500)
+    )
 
     @validates_schema
     def validate_custom(self, data, **kwargs):
@@ -57,3 +61,5 @@ class AddUserSchema(Schema):
                 raise ValidationError({"biography": ["Biography is required for professors"]})
             if len(bio) > 500:
                 raise ValidationError({"biography": ["Biography can be max 500 characters"]})
+    class Meta:
+        unknown = EXCLUDE
