@@ -27,4 +27,5 @@ class Config:
         ).split(",")
     )
 
-    DEFAULT_USER_IMAGE = "anonymous.png"
+    DEFAULT_USER_IMAGE = "default_user.png"
+    DEFAULT_COURSE_IMAGE = "default_course.png"

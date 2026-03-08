@@ -32,7 +32,7 @@ const addUser = async (form) => {
 	formData.append("biography", form.biography);
 	formData.append("password", form.password);
 	formData.append("retype_password", form.retypePassword)
-	formData.append("rola", form.rola);
+	formData.append("rola", form.role);
 
 	try {
 		const response = await axios.post("api/admin/add-user", formData);
@@ -42,7 +42,7 @@ const addUser = async (form) => {
 		if (error.response?.data?.errors) {
 			const messages = Object.values(error.response.data.errors)
 				.flat()
-				.map(msg => `• ${msg}`) // bullet
+				.map(msg => `• ${msg}`) //bullet for errors
 				.join("\n");
 			toast.error(messages);
 		} else {

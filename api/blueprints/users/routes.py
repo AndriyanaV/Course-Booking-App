@@ -1,4 +1,6 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
+from marshmallow import ValidationError
+from utils.get_file_url import get_file_url
 from database import get_db_connection
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from decoraotrs import role_required
@@ -6,8 +8,11 @@ from utils import check_course_availability
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 import pymysql
-
+from schemas.user.update_user_profile_schema import UpdateUserProfileSchema
+from utils.file_utils import allowed_file, allowed_file_size
+from utils.save_uploaded_file import save_uploaded_file
 from utils.common import book_course
+import os
 
 users_bp = Blueprint('users', __name__)
 
@@ -17,6 +22,8 @@ users_bp = Blueprint('users', __name__)
 def show_user_profile():
 
     con, cursor = get_db_connection()
+
+    default_user_image = current_app.config["DEFAULT_USER_IMAGE"]
 
     claims = get_jwt()
     user_id = claims.get('user_id')
@@ -32,12 +39,23 @@ def show_user_profile():
 
         if not data:
             return jsonify({"error": f"User with id {user_id} not found."}), 404
+        
+        data["user_image_url"] = get_file_url(
+            data.get("user_image_url"),
+            folder_type="user",
+            default=default_user_image)
 
         return jsonify(data)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"error": "Internal server error"}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @users_bp.route("/user-courses", methods=["GET"])
@@ -81,6 +99,12 @@ def show_user_courses():
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "Error"})
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @users_bp.route("/book-course/<int:id>", methods=["POST"])
@@ -121,9 +145,16 @@ def check_course(id):
             return book_course(course_id)
         else:
             return jsonify({"message": "All seats are reserved!"})
+        
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"message": "An unexpected error occurred, please try again later."}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 @users_bp.route("/professor-courses", methods=["GET"])
@@ -163,6 +194,12 @@ def show_professor_courses():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 
 
 #Update user profile route 
@@ -172,6 +209,15 @@ def update_user_info(id):
     try:
         con, cursor = get_db_connection()
 
+        upload_folder_user = current_app.config["UPLOAD_FOLDER_USER"]
+        allowed_extensions = current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
+        default_user_image = current_app.config["DEFAULT_USER_IMAGE"]
+
+        file = request.files.get('file')
+        data = request.form.to_dict()
+
+        remove_image = request.form.get("remove_image")
+
         query = "SELECT  * FROM user WHERE id=%s"
         cursor.execute(query, (id,))
         user = cursor.fetchone()
@@ -179,22 +225,53 @@ def update_user_info(id):
         if not user:
             return jsonify({"error": f"User with id {id} not found."}), 404
 
-        file = request.files.get('file')
+        schema = UpdateUserProfileSchema()
+        schema.context = {"current_user": user}
 
-        # Process image
+         # Validation - text fields
+        try:
+            validated_data = schema.load(
+            data,
+            unknown="exclude"  
+            )
+        except ValidationError as err:
+            print("Validation errors:", err.messages)
+            return jsonify({"errors": err.messages}), 400
+
+        filename = user['user_image_url']
+
         if file:
-            file_url = str(img_base_url_user+file.filename)
-            file.save(os.path.join(UPLOAD_FOLDER_USER, file.filename))
+            old_filename =  user['user_image_url']
+            # Check extension
+            if not allowed_file(file.filename):
+                allowed_extensions = current_app.config.get("ALLOWED_IMAGE_EXTENSIONS", set())
+                return jsonify({
+                "message": f"Invalid image format. Allowed: {', '.join(allowed_extensions)}"
+                }), 400
 
+            # Check file size (max 2MB)
+            if not allowed_file_size(file, max_size_mb=5):
+                return jsonify({"message": "File is too large. Max size is 2MB."}), 400
+
+            # Save new image
+            filename = save_uploaded_file(file,upload_folder_user)
+
+            # Remove old image
+            if old_filename and old_filename != default_user_image:
+                old_path = os.path.join(upload_folder_user, old_filename)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
         else:
-            file_url = user['user_image_url']
+            if remove_image == "true":
+                filename = default_user_image
+            else:
+                filename = user['user_image_url']
+        
 
-        data = request.form.to_dict()
-
-        firstName = data.get('first_name', user['first_name'])
-        lastName = data.get('last_name', user['last_name'])
-        phoneNumber = data.get('phone_number', user['phone_number'])
-        biography = user['biography']
+        firstName = validated_data.get('first_name', user['first_name'])
+        lastName = validated_data.get('last_name', user['last_name'])
+        phoneNumber = validated_data.get('phone_number', user['phone_number'])
+        biography = validated_data.get('biography', user['biography'])
         rola = user['rola']  
         email = user['email']  
         hashed_password = user['password_hash']  
@@ -206,7 +283,7 @@ def update_user_info(id):
         """
 
         values = (firstName, lastName, email, phoneNumber,
-                  biography, file_url, hashed_password, rola, id)
+                  biography, filename, hashed_password, rola, id)
 
         cursor.execute(query, values)
         con.commit()
@@ -215,4 +292,10 @@ def update_user_info(id):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return jsonify({"error": "Internal server error"}), 500
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
 

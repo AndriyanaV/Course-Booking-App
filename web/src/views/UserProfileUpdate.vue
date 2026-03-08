@@ -39,7 +39,9 @@ const updateUserInfo = async (form) => {
 	formData.append("first_name", form.firstName);
 	formData.append("last_name", form.lastName);
 	formData.append("phone_number", form.phoneNumber);
+	formData.append("remove_image", form.removeImage);
 	formData.append("file", form.image);
+	formData.append("biography", form.biography);
 	
 	try {
 		const response = await axios.put(

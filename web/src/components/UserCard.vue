@@ -19,8 +19,8 @@
 					</p>
 				</div>
 				<div class="w-full flex items-center h-[33%] justify-center pt-[20px]">
-					<p v-if="user.phone_number" class="text-gray-600  text-[16px]">
-						{{ user.phone_number }}
+					<p  class="text-gray-600  text-[16px]">
+						{{ user.phone_number || 'Not provided'}}
 					</p>
 				</div>
 			</div>

@@ -16,8 +16,8 @@ export const courseSchema = (imagePreviewRef) =>
         if (!file) return true;
         return ["image/png", "image/jpeg"].includes(file.type);
       })
-      .test("fileSize", "Image size should not exceed 2MB", (file) => {
+      .test("fileSize", "Image size should not exceed 5MB", (file) => {
         if (!file) return true;
-        return file.size <= 2 * 1024 * 1024;
+        return file.size <= 5 * 1024 * 1024;
       }),
   });

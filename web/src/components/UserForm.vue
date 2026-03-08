@@ -1,10 +1,10 @@
 <template>
 	<!-- Loader -->
 	<div v-show="loading" class="w-full flex justify-center items-center h-full">
-    <Loader />
-  </div>
+		<Loader />
+	</div>
 
-  <!-- Form -->
+	<!-- Form -->
 	<div v-show="!loading" class="lg:w-[1200px] h-auto bg-white py-[20px] lg:px-[40px] px-[20px] rounded-[14px]">
 		<div class="form wraper w-full flex flex-col gap-[40px]">
 
@@ -50,8 +50,21 @@
 					</div>
 					<div class="column">
 						<label for="phoneNumber" class="label-form">Phone Number </label>
-						<Field name="phoneNumber" type="text" class="input-el" id="phoneNumber" />
-						<ErrorMessage name="phoneNumber" class="error-form-message" />
+						<div class="flex gap-2 items-center h-full">
+							<!-- Country code select -->
+							<select v-model="selectedCountryCode"
+								class="border border-gray-300 rounded-xl px-3 py-[14px] bg-gray-50 text-gray-700 cursor-pointer">
+								<option v-for="c in countryCodes" :key="c.code" :value="c.code">
+									{{ c.label }}
+								</option>
+							</select>
+
+							<!-- Phone number input -->
+							<Field name="phoneNumber" type="text"
+								class="border border-gray-500 rounded-xl px-3 py-[14px] w-full text-gray-500"
+								placeholder="Not provided" />
+							<ErrorMessage name="phoneNumber" class="text-red-500 text-sm" />
+						</div>
 					</div>
 				</div>
 
@@ -73,7 +86,7 @@
 				<Field name="role" v-slot="{ value }">
 					<div v-if="value === 'professor'" class="column">
 						<label class="label-form">Biography</label>
-						<Field as="textarea" name="biography" rows="4" class="input-el" />
+						<Field as="textarea" name="biography" rows="4" class="input-el" placeholder="Not provided" />
 						<ErrorMessage name="biography" class="error-form-message" />
 					</div>
 				</Field>
@@ -98,6 +111,7 @@
 							<input type="file" accept="image/png, image/jpeg" class="hidden" @change="(e) => {
 								setValue(e.target.files[0]);
 								setFile(e.target.files[0]);
+								userForm.setFieldValue('removeImage', false)
 							}" />
 							<button v-if="imagePreview" type="button"
 								class=" absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-700 rounded-full p-1 shadow"
@@ -134,6 +148,7 @@ import Loader from "@/components/Loader.vue";
 import { userSchema } from "@/validation/userSchema.js";
 import { useImagePreview } from "@/composables/useImagePreview";
 import { ROLES } from "@/constants/roles";
+import { countryCodes } from "@/constants/countryCode";
 
 const props = defineProps({
 	user: Object,
@@ -146,18 +161,36 @@ const props = defineProps({
 	}
 });
 
+const selectedCountryCode = ref(countryCodes[0].code)
+
+// Phone number is optional filed
+// Biography is required only for prof
+const initialValues = {
+	firstName: "",
+	lastName: "",
+	email: "",
+	role: "",
+	phoneNumber: "",
+	biography: "",
+	image: null,
+	removeImage: false
+}
+
 const emit = defineEmits(["userChange"]);
 
 const userForm = ref(null);
 const { preview: imagePreview, setFile } = useImagePreview();
 
-const schema = userSchema(props.isAddMode, imagePreview);
+const schema = userSchema(props.isAddMode, imagePreview, selectedCountryCode);
 
 
 const removeImage = (setValue
 ) => {
 	imagePreview.value = null
 	setValue(null)
+
+	//User removed image - important for edit mood
+	userForm.value.setFieldValue("removeImage", true)
 
 	// Reset file input to solve problem when we remove image and try to add it again 
 	const inputEl = document.querySelector('input[type="file"]');
@@ -172,13 +205,29 @@ watch(
 	(newUser) => {
 		if (!newUser || !userForm.value) return;
 
+
+		let localNumber = "";
+		let prefix = "+381";
+
+
+		if (newUser.phone_number) {
+			// pronađi prefix iz countryCodes
+			const country = countryCodes.find(c => newUser.phone_number.startsWith(c.code));
+			if (country) {
+				prefix = country.code;
+				localNumber = newUser.phone_number.slice(country.code.length); // ostatak posle prefixa
+			} else {
+				localNumber = newUser.phone_number; // fallback ako prefix nije prepoznat
+			}
+		}
+
 		userForm.value.setValues({
-			firstName: newUser.first_name || "",
-			lastName: newUser.last_name || "",
-			email: newUser.email || "",
-			role: newUser.rola || "",
-			phoneNumber: newUser.phone_number || "",
-			biography: newUser.biography || "",
+			firstName: newUser.first_name,
+			lastName: newUser.last_name,
+			email: newUser.email,
+			role: newUser.rola,
+			phoneNumber: localNumber,
+			biography: newUser.biography ? newUser.biography : "",
 			image: null,
 		});
 
@@ -188,7 +237,21 @@ watch(
 );
 
 const handleUserChange = (values) => {
-	emit("userChange", values);
+	let fullNumber = "";
+
+	// ako postoji lokalni broj, spajamo prefix + lokalni broj
+	if (values.phoneNumber && values.phoneNumber.trim() !== "") {
+		fullNumber = selectedCountryCode.value + values.phoneNumber.trim();
+	}
+
+	const payload = {
+		...values,
+		phoneNumber: fullNumber // ako nema lokalnog broja, šaljemo ""
+	}
+
+
+	console.log(payload)
+	emit("userChange", payload)
 };
 </script>
 
