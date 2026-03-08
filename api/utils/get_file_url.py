@@ -8,8 +8,11 @@ def get_file_url(filename: str, folder_type: str, default=None) -> str:
     folder_type: 'course' ili 'user' 
     default: filename default slike ako ne postoji
     """
-    if not filename:
+    if not filename and folder_type == "course":
         return f"{current_app.config['COURSE_IMAGE_BASE_URL']}{default}" if default else None
+    
+    if not filename and folder_type == "user":
+        return f"{current_app.config['USER_IMAGE_BASE_URL']}{default}" if default else None
 
     if folder_type == "course":
         base_url = current_app.config['COURSE_IMAGE_BASE_URL']

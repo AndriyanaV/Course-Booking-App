@@ -56,12 +56,13 @@ watch(
 			firstName.value = newUser.first_name || "";
 			lastName.value = newUser.last_name || "";
 			email.value = newUser.email || "";
-			pnumber.value = newUser.phone_number || "";
+			pnumber.value = newUser.phone_number ?? "Not provided";
 			userImage.value = newUser.user_image_url || "";
 		}
 	},
 	{ immediate: true } // Odmah prilikom inicijalizacije
 );
+
 </script>
 
 <style></style>

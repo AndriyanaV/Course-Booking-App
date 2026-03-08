@@ -19,9 +19,9 @@ export const userProfileUpdateSchema = (imagePreview, userRole) => {
         if (!file) return true;
         return ["image/png", "image/jpeg"].includes(file.type);
       })
-      .test("fileSize", "Image must be under 2MB", (file) => {
+      .test("fileSize", "Image must be under 5MB", (file) => {
         if (!file) return true;
-        return file.size <= 2 * 1024 * 1024;
+        return file.size <= 5 * 1024 * 1024;
       }),
   });
 };

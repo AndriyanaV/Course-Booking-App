@@ -40,15 +40,14 @@ const getUserInfo = async () => {
 };
 
 const updateUser = async (form) => {
-	console.log('update user')
 	const formData = new FormData();
 	formData.append("first_name", form.firstName);
 	formData.append("last_name", form.lastName);
 	formData.append("email", form.email);
 	formData.append("file", form.image);
+	formData.append("remove_image", form.removeImage);
 	formData.append("phone_number", form.phoneNumber);
 	formData.append("biography", form.biography);
-	// formData.append("password", form.password);
 	formData.append("rola", form.role);
 
 	try {

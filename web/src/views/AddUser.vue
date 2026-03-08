@@ -42,7 +42,7 @@ const addUser = async (form) => {
 		if (error.response?.data?.errors) {
 			const messages = Object.values(error.response.data.errors)
 				.flat()
-				.map(msg => `• ${msg}`) //bullet
+				.map(msg => `• ${msg}`) //bullet for errors
 				.join("\n");
 			toast.error(messages);
 		} else {

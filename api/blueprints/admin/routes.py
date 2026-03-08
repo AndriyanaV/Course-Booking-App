@@ -112,6 +112,14 @@ def update_user_info(id):
 
         upload_folder_user = current_app.config["UPLOAD_FOLDER_USER"]
         allowed_extensions = current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
+        default_user_image = current_app.config["DEFAULT_USER_IMAGE"]
+
+        file = request.files.get('file')
+        data = request.form.to_dict()
+
+        remove_image = request.form.get("remove_image")
+
+        print("Received data:", data)
 
         query = "SELECT  * FROM user WHERE id=%s"
         cursor.execute(query, (id,))
@@ -120,18 +128,18 @@ def update_user_info(id):
         if not user:
             return jsonify({"error": "User not found"}), 404
         print(type(user))
+
         schema = UpdateUserSchema()
-        schema.context["current_user"] = user
+        schema.context = {"current_user": user}
 
-        file = request.files.get('file')
-        data = request.form.to_dict()
-
+        # Validation - text fields
         try:
             validated_data = schema.load(
             data,
             unknown="exclude"  
             )
         except ValidationError as err:
+            print("Validation errors:", err.messages)
             return jsonify({"errors": err.messages}), 400
         
         filename = user['user_image_url']
@@ -146,17 +154,22 @@ def update_user_info(id):
                 }), 400
 
             # Check file size (max 2MB)
-            if not allowed_file_size(file, max_size_mb=2):
+            if not allowed_file_size(file, max_size_mb=5):
                 return jsonify({"message": "File is too large. Max size is 2MB."}), 400
 
             # Save new image
             filename = save_uploaded_file(file,upload_folder_user)
 
             # Remove old image
-            if old_filename and old_filename != "default_user.png":
+            if old_filename and old_filename != default_user_image:
                 old_path = os.path.join(upload_folder_user, old_filename)
                 if os.path.exists(old_path):
                     os.remove(old_path)
+        else:
+            if remove_image == "true":
+                filename = default_user_image
+            else:
+                filename = user['user_image_url']
             
        
         password = validated_data.get("password")
@@ -209,6 +222,7 @@ def update_course(id):
 
         upload_folder_course = current_app.config["UPLOAD_FOLDER_COURSE"]
         allowed_extensions = current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
+        default_course_image = current_app.config["DEFAULT_COURSE_IMAGE"]
 
         cursor.execute("SELECT * FROM course WHERE id=%s", (id,))
         course = cursor.fetchone()
@@ -236,14 +250,14 @@ def update_course(id):
                 }), 400
 
             # Check file size (max 2MB)
-            if not allowed_file_size(file, max_size_mb=2):
+            if not allowed_file_size(file, max_size_mb=5):
                 return jsonify({"message": "File is too large. Max size is 2MB."}), 400
 
             # Save new image
             filename = save_uploaded_file(file,upload_folder_course)
 
             # Remove old image
-            if old_filename and old_filename != "default_course.png":
+            if old_filename and old_filename != default_course_image:
                 old_path = os.path.join(upload_folder_course, old_filename)
                 if os.path.exists(old_path):
                     os.remove(old_path)
@@ -290,6 +304,9 @@ def update_course(id):
 def get_all_users():
     try:
         con, cursor = get_db_connection()
+
+        default_user_image = current_app.config["DEFAULT_USER_IMAGE"]
+
         query = """
         SELECT id,
             first_name,
@@ -308,7 +325,7 @@ def get_all_users():
             user["user_image_url"] = get_file_url(
             user.get("user_image_url"),
             folder_type="user",
-            default="default_user.png"
+            default=default_user_image
         )
             
         return jsonify(data)
@@ -330,6 +347,8 @@ def get_user(id):
     try:
         con, cursor = get_db_connection()
 
+        default_user_image = current_app.config["DEFAULT_USER_IMAGE"]
+
         query = """
         SELECT id,
             first_name,
@@ -350,7 +369,7 @@ def get_user(id):
         data["user_image_url"] = get_file_url(
             data.get("user_image_url"),
             folder_type="user",
-            default="default_user.png")
+            default=default_user_image)
         
         return jsonify(data)
 
@@ -418,6 +437,8 @@ def get_all_courses():
     try:
         con, cursor = get_db_connection()
 
+        default_course_image = current_app.config["DEFAULT_COURSE_IMAGE"]
+
         language = request.args.get('language') or '%'
 
         query = "SELECT id, name, course_image_url, language FROM course WHERE language LIKE %s;"
@@ -429,7 +450,7 @@ def get_all_courses():
             course["course_image_url"] = get_file_url(
             course.get("course_image_url"),
             folder_type="course",
-            default="default_course.png"
+            default=default_course_image
         )
 
         return jsonify(data)
@@ -453,6 +474,8 @@ def get_course(id):
     try:
         con, cursor = get_db_connection()
 
+        default_course_image = current_app.config["DEFAULT_COURSE_IMAGE"]
+
         query = """
         SELECT * FROM course WHERE id=%s;
         """
@@ -467,7 +490,7 @@ def get_course(id):
         data["course_image_url"] = get_file_url(
             data.get("course_image_url"),
             folder_type="course",
-            default="default_course.png")
+            default=default_course_image)
         
         return jsonify(data)
 
@@ -517,56 +540,46 @@ add_user_schema = AddUserSchema()
 @role_required(["admin"])
 def add_user():
     try:
-        con = None
-        cursor = None
         con, cursor = get_db_connection()
 
         upload_folder_user = current_app.config["UPLOAD_FOLDER_USER"]
-        img_base_url_user = current_app.config["USER_IMAGE_BASE_URL"]
         allowed_extensions = current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
 
-        file = request.files.get('file')
-        data = request.form.to_dict()
+        file = request.files.get('file')  # optional image
+        data = request.form.to_dict()      # svi ostali Field-ovi
 
-        # Check if email exists
-        cursor.execute("SELECT id FROM user WHERE email = %s", (data["email"],))
-        if cursor.fetchone():
-            return jsonify({"message": "User with this email already exists!"}), 409
-
-        print(request.form.to_dict())
-
-        # Validating text fields with Marshmallow
+        # Marshmallow validacija
         try:
             validated_data = add_user_schema.load(data)
         except ValidationError as err:
             return jsonify({"errors": err.messages}), 400
-        
+
+        # Check if email exists
+        cursor.execute("SELECT id FROM user WHERE email = %s", (validated_data["email"],))
+        if cursor.fetchone():
+            return jsonify({"message": "User with this email already exists!"}), 409
+
         password_hash = generate_password_hash(validated_data['password'])
 
-        # Image is required only for professors
+        # Image required only for professors
         if validated_data['rola'] == 'professor' and (not file or file.filename == ""):
-            return jsonify({"message": "Image is required!"}), 400
+            return jsonify({"message": "Image is required for professors"}), 400
 
-       # If the file exists save it
+        # Ako file postoji, sačuvaj
         if file and file.filename != "":
-            # Check exte.
             if not allowed_file(file.filename):
-                allowed_extensions = current_app.config.get("ALLOWED_IMAGE_EXTENSIONS", set())
                 return jsonify({
-                "message": f"Invalid image format. Allowed: {', '.join(allowed_extensions)}"
+                    "message": f"Invalid image format. Allowed: {', '.join(allowed_extensions)}"
                 }), 400
 
-        # Check file size (max 2MB)
-            if not allowed_file_size(file, max_size_mb=2):
-                return jsonify({"message": "File is too large. Max size is 2MB."}), 400
-        
-            filename = save_uploaded_file(file,upload_folder_user)
+            if not allowed_file_size(file, max_size_mb=5):
+                return jsonify({"message": "File is too large. Max 2MB."}), 400
 
-        # If there is no file and it is not a professor,it sets the default
+            filename = save_uploaded_file(file, upload_folder_user)
         else:
             filename = current_app.config["DEFAULT_USER_IMAGE"]
-           
 
+        # Insert u DB
         query = """
         INSERT INTO user 
         (first_name, last_name, email, phone_number, biography, password_hash, rola, user_image_url)
@@ -576,8 +589,8 @@ def add_user():
             validated_data['first_name'],
             validated_data['last_name'],
             validated_data['email'],
-            validated_data['phone_number'],
-            validated_data['biography'],
+            validated_data.get('phone_number'),
+            validated_data.get('biography'),
             password_hash,
             validated_data['rola'],
             filename
@@ -590,8 +603,7 @@ def add_user():
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return jsonify({"message": "Error!"})
-    
+        return jsonify({"message": "Error!"}), 500
     finally:
         if cursor:
             cursor.close()
@@ -609,6 +621,12 @@ def add_current_course():
         con, cursor = get_db_connection()
 
         data = request.json
+
+        # Validating text fields with Marshmallow
+        try:
+            validated_data = current_course_schema.load(request.json)
+        except ValidationError as err:
+            return jsonify({"errors": err.messages}), 400
 
         # Checking whether the course (language) for which we are adding a current course exists
         cursor.execute("SELECT id FROM course WHERE id = %s", (data['course_id'],))
@@ -634,14 +652,7 @@ def add_current_course():
         
         if cursor.fetchone():
             return jsonify({"error": "This course is already scheduled for this professor in the given period."}), 400
-        
-        # Validating text fields with Marshmallow
-        try:
-            validated_data = current_course_schema.load(request.json)
-        except ValidationError as err:
-            return jsonify({"errors": err.messages}), 400
-        
-        
+            
         query = """
             INSERT INTO current_courses (course_id, user_id, price, start_at, end_at, max_members, level,location,lessons)
             VALUES (%s,  %s, %s, %s, %s, %s, %s,%s, %s)
@@ -679,6 +690,7 @@ def add_course():
 
         upload_folder_course = current_app.config["UPLOAD_FOLDER_COURSE"]
         allowed_extensions = current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
+        default_course_image = current_app.config["DEFAULT_COURSE_IMAGE"]
 
         file = request.files.get("file")
         data = request.form.to_dict()
@@ -710,8 +722,8 @@ def add_course():
             }), 400
 
         # Check file size (max 2MB)
-        if not allowed_file_size(file, max_size_mb=2):
-            return jsonify({"message": "File is too large. Max size is 2MB."}), 400
+        if not allowed_file_size(file, max_size_mb=5):
+            return jsonify({"message": "File is too large. Max size is 5MB."}), 400
 
        
         filename = save_uploaded_file(file,upload_folder_course)
@@ -749,6 +761,7 @@ def delete_course(id):
         con, cursor = get_db_connection()
 
         upload_folder_course = current_app.config["UPLOAD_FOLDER_COURSE"]
+        default_course_image = current_app.config["DEFAULT_COURSE_IMAGE"]
 
         cursor.execute("SELECT course_image_url FROM course WHERE id = %s", (id,))
         course = cursor.fetchone()
@@ -758,7 +771,7 @@ def delete_course(id):
         
         filename = course['course_image_url']
 
-        if filename and filename != "default_user.png":
+        if filename and filename != default_course_image:
                 old_path = os.path.join(upload_folder_course, filename)
                 if os.path.exists(old_path):
                     os.remove(old_path)
@@ -830,6 +843,7 @@ def delete_user(id):
         con, cursor = get_db_connection()
 
         upload_folder_user = current_app.config["UPLOAD_FOLDER_USER"]
+        default_user_image = current_app.config["DEFAULT_USER_IMAGE"]
 
         cursor.execute("SELECT user_image_url FROM user WHERE id = %s", (id,))
         user = cursor.fetchone()
@@ -839,7 +853,7 @@ def delete_user(id):
         
         filename = user['user_image_url']
 
-        if filename and filename != "default_user.png":
+        if filename and filename != default_user_image:
                 old_path = os.path.join(upload_folder_user, filename)
                 if os.path.exists(old_path):
                     os.remove(old_path)
