@@ -147,6 +147,14 @@ The database schema includes all necessary relations between users, courses, and
 
 Constraints such as foreign key, unique, and not null ensure data integrity
 
+## Note on Data Input
+In this project, some database fields can be `null`.  
+This mainly applies to optional fields that are not required during initial entry, such as:
+- User phone number
+- Biography 
+- Using `null` allows for consistent database queries and avoids errors when retrieving or filtering data.
+- This ensures that updates or additional information can be easily added later without breaking existing records.
+
 ###  Design
 I personally created the UI/UX design for this project using Figma. You can explore the design prototypes and layouts here:
 - https://www.figma.com/design/lj9NpxwlBdyBu8ZFl2oA3m/Untitled?node-id=0-1&p=f&t=AOxtfI94z72n4Gzc-0
