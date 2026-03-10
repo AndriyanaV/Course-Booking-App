@@ -5,8 +5,8 @@
 
 ### User Account for Testing
 
-- **Username:** `mila.milic@example.com`
-- **Password:** `milamilic11`
+- **Username:** `marko.markovic@example.com`
+- **Password:** `markomarkovic11`
 
 ### Professor Account for Testing
 
