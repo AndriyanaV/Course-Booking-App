@@ -10,8 +10,8 @@
 
 ### Professor Account for Testing
 
-- **Username:** `ivan.ivic@example.com`
-- **Password:** `ivanivic11`
+- **Username:** `jovana.donova@example.com`
+- **Password:** `jovanadonova11`
 
 
 ### Running Backend (Flask):
