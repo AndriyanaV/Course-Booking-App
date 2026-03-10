@@ -147,6 +147,9 @@ The database schema includes all necessary relations between users, courses, and
 
 Constraints such as foreign key, unique, and not null ensure data integrity
 
+### Database Design
+![ER Diagram](docs/ER-diagram.png)
+
 ## Note on Data Input
 In this project, some database fields can be `null`.  
 This mainly applies to optional fields that are not required during initial entry, such as:
