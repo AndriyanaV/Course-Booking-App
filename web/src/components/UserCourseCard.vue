@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { formatDate } from "@/composables/formatDate.js";
+import { formatDate } from "@/utils/formatDate.js";
 import Button from "./Button.vue";
 
 const props = defineProps({

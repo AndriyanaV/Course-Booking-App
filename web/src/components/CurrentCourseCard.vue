@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { formatDate } from "@/composables/formatDate.js";
+import { formatDate } from "@/utils/formatDate.js";
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";

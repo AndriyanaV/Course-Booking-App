@@ -73,7 +73,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { formatDate } from "@/composables/formatDate.js";
+import { formatDate } from "@/utils/formatDate.js";
 
 const props = defineProps({
 	course: Object,

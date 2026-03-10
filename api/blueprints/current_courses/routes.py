@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from database import get_db_connection
 from utils import check_course_availability
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -92,6 +92,9 @@ def get_courses():
 def show_clicked_course(id):
     try:
         con, cursor = get_db_connection()
+
+        default_user_image = current_app.config["DEFAULT_USER_IMAGE"]
+        
         query = """
             SELECT course.*,
                 current_courses.*,
@@ -107,6 +110,12 @@ def show_clicked_course(id):
         """
         cursor.execute(query, (id,))
         data = cursor.fetchone()
+
+        data["user_image_url"] = get_file_url(
+            data.get("user_image_url"),
+            folder_type="user",
+            default = default_user_image)
+    
         return jsonify(data)
 
     except Exception as e:

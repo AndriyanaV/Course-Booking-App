@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-	import { formatDate } from "@/composables/formatDate.js";
+	import { formatDate } from "@/utils/formatDate.js";
 	import { ref, onMounted, watch } from "vue";
 
 	const props = defineProps({

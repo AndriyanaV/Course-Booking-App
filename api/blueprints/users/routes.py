@@ -65,6 +65,8 @@ def show_user_courses():
     try:
         con, cursor = get_db_connection()
 
+        default_course_image = current_app.config["DEFAULT_COURSE_IMAGE"]
+
         claims = get_jwt()
         user_id = claims.get('user_id')
 
@@ -94,6 +96,15 @@ def show_user_courses():
         cursor.execute(query, (user_id,))
 
         data = cursor.fetchall()
+
+        # generate img url
+        for course in data:
+            course["course_image_url"] = get_file_url(
+            course.get("course_image_url"),
+            folder_type="course",
+            default=default_course_image
+        )
+            
         return jsonify(data)
 
     except Exception as e:
@@ -164,6 +175,8 @@ def show_professor_courses():
     try:
         con, cursor = get_db_connection()
 
+        default_course_image = current_app.config["DEFAULT_COURSE_IMAGE"]
+
         claims = get_jwt()
         user_id = claims.get('user_id')
 
@@ -190,6 +203,14 @@ def show_professor_courses():
         cursor.execute(query, (user_id,))
 
         data = cursor.fetchall()
+
+        # generate img url
+        for course in data:
+            course["course_image_url"] = get_file_url(
+            course.get("course_image_url"),
+            folder_type="course",
+            default=default_course_image
+        )
         return jsonify(data)
 
     except Exception as e:
